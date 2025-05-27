@@ -79,8 +79,8 @@ class TrashBin(Sprite):
     ) -> None:
         super().__init__(path, (0, 600))
         self._left_key, self._right_key = control
-        self.score = 0
-        self.bin_category = category 
+        self._score = 0
+        self._bin_category = category 
 
     def movement(self, keys, vel: int = data.DEFAULT_PLAYER_VEL) -> None:
         if keys[self._left_key] and self._rect.topleft[0] > 0:
@@ -91,8 +91,11 @@ class TrashBin(Sprite):
     def check_collision(self, trashes: list[Trash]):
         for trash in trashes:
             if self._rect.colliderect(trash.get_rect()):
-                self.score += 1 if trash.get_category() == self.bin_category else -1
+                self._score += 1 if trash.get_category() == self._bin_category else -1
                 trash.set_alive(False)
+
+    def get_score(self) -> int:
+        return self._score
 
 general_bin = TrashBin(
     Path(data.GENERAL_IMG_PATH),
@@ -108,13 +111,9 @@ recyclable_bin = TrashBin(
     (pygame.K_COMMA, pygame.K_PERIOD), TrashCategories.RECYCLABLE)
 trashes: list[Trash] = []
 
-def show_score() -> None:
-    screen.blit(font.render(f"General score: {general_bin.score}", False, (255, 255, 255)), (50, 50))
-    screen.blit(font.render(f"Organic score: {organic_bin.score}", False, (255, 255, 255)), (350, 50))
-    screen.blit(font.render(f"Hazardous score: {hazardous_bin.score}", False, (255, 255, 255)), (650, 50))
-    screen.blit(font.render(f"Recyclable score: {recyclable_bin.score}", False, (255, 255, 255)), (950, 50))
+def event_loop() -> None:
+    global running
 
-while running:
     for event in pygame.event.get():
         match event.type:
             case pygame.QUIT:
@@ -122,11 +121,7 @@ while running:
             case Trash.SPAWN_EVENT:
                 trashes.append(Trash())
 
-    keys = pygame.key.get_pressed()
-    screen.fill((0, 0, 0))
-
-    show_score()
-
+def trash_bins_loop() -> None:
     general_bin.movement(keys)
     general_bin.check_collision(trashes)
     general_bin.draw()
@@ -143,6 +138,7 @@ while running:
     recyclable_bin.check_collision(trashes)
     recyclable_bin.draw()
 
+def trashes_loop() -> None:
     # Loop backward to prevent skipping while deleting trashes.
     for i in range(len(trashes) - 1, -1, -1):
         trashes[i].movement()
@@ -150,6 +146,22 @@ while running:
 
         if not trashes[i].is_alive():
             del trashes[i]
+
+def show_score() -> None:
+    screen.blit(font.render(f"General score: {general_bin.get_score()}", False, (255, 255, 255)), (50, 50))
+    screen.blit(font.render(f"Organic score: {organic_bin.get_score()}", False, (255, 255, 255)), (350, 50))
+    screen.blit(font.render(f"Hazardous score: {hazardous_bin.get_score()}", False, (255, 255, 255)), (650, 50))
+    screen.blit(font.render(f"Recyclable score: {recyclable_bin.get_score()}", False, (255, 255, 255)), (950, 50))
+
+while running:
+    event_loop()
+
+    keys = pygame.key.get_pressed()
+    screen.fill((0, 0, 0))
+
+    show_score()
+    trash_bins_loop()
+    trashes_loop()
 
     pygame.display.flip()
     clock.tick(data.MAX_FPS)
