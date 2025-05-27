@@ -83,9 +83,9 @@ class TrashBin(Sprite):
         self.bin_category = category 
 
     def movement(self, keys, vel: int = data.DEFAULT_PLAYER_VEL) -> None:
-        if keys[self._left_key]:
+        if keys[self._left_key] and self._rect.topleft[0] > 0:
             self._rect.centerx -= vel
-        elif keys[self._right_key]:
+        elif keys[self._right_key] and self._rect.topright[0] < data.SCREEN_WIDTH:
             self._rect.centerx += vel 
 
     def check_collision(self, trashes: list[Trash]):
