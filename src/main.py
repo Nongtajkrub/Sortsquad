@@ -16,6 +16,12 @@ def draw_text(
 ) -> None:
     screen.blit(font.render(text, True, color), pos)
 
+class Direction(Enum):
+    LEFT = 0
+    RIGHT = 1
+    TOP = 2
+    BOTTOM = 3
+
 class Sprite:
     def __init__(
         self,
@@ -27,6 +33,12 @@ class Sprite:
 
     def rotate(self, value) -> None:
         self._image = pygame.transform.rotate(self._image, value)
+
+    def flipx(self) -> None:
+        self._image = pygame.transform.flip(self._image, True, False)
+
+    def flipy(self) -> None:
+        self._image = pygame.transform.flip(self._image, False, True)
 
     def draw(self) -> None:
         screen.blit(self._image, self._rect.center)
@@ -132,6 +144,7 @@ class TrashBin(Sprite):
         super().__init__(path, (0, data.DEFAULT_PLAYER_Y))
 
         self._left_key, self._right_key = control
+        self._facing = Direction.RIGHT
         self._score = 0
         self._bin_category = category
 
@@ -141,11 +154,20 @@ class TrashBin(Sprite):
 
     def _movement_loop(self, keys) -> None:
         velocity = data.DEFAULT_PLAYER_VEL if self._power_up != PowerUpCategories.SPEED else data.BOOSTED_PLAYER_VEL
+
+        new_facing = self._facing
         
         if keys[self._left_key] and self._rect.topleft[0] > 0:
             self._rect.centerx -= velocity
+            new_facing = Direction.LEFT
         elif keys[self._right_key] and self._rect.topright[0] < data.SCREEN_WIDTH:
             self._rect.centerx += velocity
+            new_facing = Direction.RIGHT
+
+        if self._facing != new_facing:
+            self.flipx()
+
+        self._facing = new_facing
 
     def _score_loop(self, trashes: list[Trash]):
         for trash in trashes:
