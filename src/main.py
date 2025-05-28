@@ -286,6 +286,4 @@ while running:
     pygame.display.flip()
     current_time += clock.tick(data.MAX_FPS)
 
-    print(clock.get_fps())
-
 pygame.quit()
