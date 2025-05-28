@@ -127,7 +127,7 @@ class Trash(Sprite):
 class TrashBin(Sprite):
     def __init__(
         self,
-        path: Path,  control: tuple[int, int], category: TrashCategories
+        path: Path, control: tuple[int, int], category: TrashCategories
     ) -> None:
         super().__init__(path, (0, data.DEFAULT_PLAYER_Y))
 
@@ -155,7 +155,13 @@ class TrashBin(Sprite):
                 # Do not decrement point if SHIELD power up is enable.
                 decrement = -1 if self._power_up != PowerUpCategories.SHIELD else 0
                 self._score += increment if trash.get_category() == self._bin_category else decrement
-                trash.despawn()
+
+                # Only despawn trash if shield power up is disable
+                if self._power_up == PowerUpCategories.SHIELD:
+                    if trash.get_category() == self._bin_category:
+                        trash.despawn()
+                else:
+                    trash.despawn()
 
     def _power_up_loop(self, power_up: PowerUp) -> None:
         if self._power_up_applied_tick != None and current_time - self._power_up_applied_tick > data.POWER_UP_TIME:
@@ -253,4 +259,3 @@ while running:
     current_time += clock.tick(data.MAX_FPS)
 
 pygame.quit()
-
