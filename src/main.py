@@ -6,9 +6,15 @@ pygame.init()
 
 screen = pygame.display.set_mode(data.SCREEN_DIMENSION)
 clock = pygame.time.Clock()
-font = pygame.font.Font(None, 24)
+font = pygame.font.Font(data.FONT_PATH, 24)
 current_time = 0
 running = True
+
+def draw_text(
+    text: str,
+    pos: tuple[int, int], color: tuple[int, int, int] = (255, 255, 255)
+) -> None:
+    screen.blit(font.render(text, True, color), pos)
 
 class Sprite:
     def __init__(
@@ -133,7 +139,7 @@ class TrashBin(Sprite):
         self._power_up_applied_tick: int | None = None 
         self._power_up_shield_sprite = Sprite(Path(data.SHIELD_IMG_PATH))
 
-    def movement(self, keys) -> None:
+    def _movement_loop(self, keys) -> None:
         velocity = data.DEFAULT_PLAYER_VEL if self._power_up != PowerUpCategories.SPEED else data.BOOSTED_PLAYER_VEL
         
         if keys[self._left_key] and self._rect.topleft[0] > 0:
@@ -141,7 +147,7 @@ class TrashBin(Sprite):
         elif keys[self._right_key] and self._rect.topright[0] < data.SCREEN_WIDTH:
             self._rect.centerx += velocity
 
-    def check_collision(self, trashes: list[Trash], power_up: PowerUp):
+    def _score_loop(self, trashes: list[Trash]):
         for trash in trashes:
             if self._rect.colliderect(trash.get_rect()):
                 # Double point increment if DOUBLE_POINT power up is enable.
@@ -150,30 +156,39 @@ class TrashBin(Sprite):
                 decrement = -1 if self._power_up != PowerUpCategories.SHIELD else 0
                 self._score += increment if trash.get_category() == self._bin_category else decrement
                 trash.despawn()
-                
+
+    def _power_up_loop(self, power_up: PowerUp) -> None:
+        if self._power_up_applied_tick != None and current_time - self._power_up_applied_tick > data.POWER_UP_TIME:
+            self._power_up = None
+            self._power_up_applied_tick = None
+
         if power_up.is_alive() and self._rect.colliderect(power_up.get_rect()):         
             self._power_up_applied_tick = current_time
             self._power_up = power_up.get_category()
             power_up.despawn()
 
-    def power_up_loop(self) -> None:
-        if self._power_up_applied_tick != None and current_time - self._power_up_applied_tick > data.POWER_UP_TIME:
-            self._power_up = None
-            self._power_up_applied_tick = None
-        
+    def _graphic_loop(self) -> None:
         # Show power up on player head.
         if self._power_up != None:
-            label = self._power_up.to_string()
-            pos = (self._rect.centerx, data.DEFAULT_PLAYER_Y - 30)
-            screen.blit(font.render(label, False, (255, 255, 255)), pos)
+            draw_text(
+                self._power_up.to_string(),
+                (self._rect.centerx, data.DEFAULT_PLAYER_Y - 50))
 
             # Show shield effect on player if the shield power up is enable.
             if self._power_up == PowerUpCategories.SHIELD:
                 self._power_up_shield_sprite._rect.center = self._rect.center
                 self._power_up_shield_sprite.draw()
-            
-    def get_score(self) -> int:
-        return self._score
+
+        draw_text(
+            f"Score: {self._score}",
+            (self._rect.centerx, data.DEFAULT_PLAYER_Y - 30))
+
+    def loop(self, keys, trashes: list[Trash], power_up: PowerUp) -> None:
+        self._movement_loop(keys)
+        self._score_loop(trashes)
+        self._power_up_loop(power_up)
+        self._graphic_loop()
+        self.draw()
 
 general_bin = TrashBin(
     Path(data.GENERAL_IMG_PATH),
@@ -203,25 +218,12 @@ def event_loop() -> None:
                 power_up.spawn()
 
 def trash_bins_loop() -> None:
-    general_bin.movement(keys)
-    general_bin.check_collision(trashes, power_up)
-    general_bin.draw()
-    general_bin.power_up_loop()
+    keys = pygame.key.get_pressed()
 
-    organic_bin.movement(keys)
-    organic_bin.check_collision(trashes, power_up)
-    organic_bin.draw()
-    organic_bin.power_up_loop()
-
-    hazardous_bin.movement(keys)
-    hazardous_bin.check_collision(trashes, power_up)
-    hazardous_bin.draw()
-    hazardous_bin.power_up_loop()
-
-    recyclable_bin.movement(keys)
-    recyclable_bin.check_collision(trashes, power_up)
-    recyclable_bin.draw()
-    recyclable_bin.power_up_loop()
+    general_bin.loop(keys, trashes, power_up)
+    organic_bin.loop(keys, trashes, power_up)
+    hazardous_bin.loop(keys, trashes, power_up)
+    recyclable_bin.loop(keys, trashes, power_up)
 
 def trashes_loop() -> None:
     # Loop backward to prevent skipping while deleting trashes.
@@ -237,19 +239,12 @@ def power_up_loops() -> None:
         power_up.movement()
         power_up.draw()
 
-def show_score() -> None:
-    screen.blit(font.render(f"General score: {general_bin.get_score()}", False, (255, 255, 255)), (50, 50))
-    screen.blit(font.render(f"Organic score: {organic_bin.get_score()}", False, (255, 255, 255)), (350, 50))
-    screen.blit(font.render(f"Hazardous score: {hazardous_bin.get_score()}", False, (255, 255, 255)), (650, 50))
-    screen.blit(font.render(f"Recyclable score: {recyclable_bin.get_score()}", False, (255, 255, 255)), (950, 50))
-
 while running:
     event_loop()
 
     keys = pygame.key.get_pressed()
     screen.fill((0, 0, 0))
 
-    show_score()
     trash_bins_loop()
     trashes_loop()
     power_up_loops()
