@@ -5,6 +5,10 @@ import pygame, data, random
 pygame.init()
 
 screen = pygame.display.set_mode(data.SCREEN_DIMENSION)
+background_sky = pygame.transform.scale(
+    pygame.image.load(data.SKY_IMG_PATH), screen.get_size()).convert()
+background_grass = pygame.transform.scale(
+    pygame.image.load(data.GRASS_IMG_PATH), (screen.get_width(), 100)).convert_alpha()
 clock = pygame.time.Clock()
 font = pygame.font.Font(data.FONT_PATH, 24)
 current_time = 0
@@ -12,7 +16,7 @@ running = True
 
 def draw_text(
     text: str,
-    pos: tuple[int, int], color: tuple[int, int, int] = (255, 255, 255)
+    pos: tuple[int, int], color: tuple[int, int, int] = (0, 0, 0)
 ) -> None:
     screen.blit(font.render(text, True, color), pos)
 
@@ -28,17 +32,17 @@ class Sprite:
         path: Path,
         pos: tuple[int, int] = (0, 0), scale: tuple[int, int] = (100, 100)
     ) -> None:
-        self._image = pygame.transform.scale(pygame.image.load(path), scale) 
+        self._image = pygame.transform.scale(pygame.image.load(path), scale).convert_alpha()
         self._rect = self._image.get_rect(center=pos)
 
     def rotate(self, value) -> None:
         self._image = pygame.transform.rotate(self._image, value)
 
     def flipx(self) -> None:
-        self._image = pygame.transform.flip(self._image, True, False)
+        self._image = pygame.transform.flip(self._image, True, False).convert_alpha()
 
     def flipy(self) -> None:
-        self._image = pygame.transform.flip(self._image, False, True)
+        self._image = pygame.transform.flip(self._image, False, True).convert_alpha()
 
     def draw(self) -> None:
         screen.blit(self._image, self._rect.center)
@@ -90,7 +94,7 @@ class PowerUp(Sprite):
     pygame.time.set_timer(SPAWN_EVENT, data.POWER_UP_SPAWN_FREQ)
     
     def __init__(self) -> None:
-        super().__init__(Path(data.GENERAL_IMG_PATH), scale=(150, 50))
+        super().__init__(Path(data.POWER_UP_IMG_PATH), scale=(50, 50))
         self._category: PowerUpCategories | None = None
 
     def movement(self) -> None:
@@ -272,6 +276,8 @@ while running:
 
     keys = pygame.key.get_pressed()
     screen.fill((0, 0, 0))
+    screen.blit(background_sky, (0, 0))
+    screen.blit(background_grass, (0, data.SCREEN_HEIGHT - 100))
 
     trash_bins_loop()
     trashes_loop()
@@ -279,5 +285,7 @@ while running:
 
     pygame.display.flip()
     current_time += clock.tick(data.MAX_FPS)
+
+    print(clock.get_fps())
 
 pygame.quit()

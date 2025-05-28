@@ -4,11 +4,16 @@ SCREEN_HEIGHT = SCREEN_DIMENSION[1]
 
 ASSETS_PATH = "/home/nongtajkrub/Coding/Python/trash-game/assets/"
 
+SKY_IMG_PATH = ASSETS_PATH + "sky.jpg"
+
 HAZARDOUS_IMG_PATH = ASSETS_PATH + "dangerous_bin.png"
 RECYCLABLE_IMG_PATH = ASSETS_PATH + "recycle_bin.png"
 ORGANIC_IMG_PATH = ASSETS_PATH + "batties_maybe_bin.png"
 GENERAL_IMG_PATH = ASSETS_PATH + "general_bin.png"
+
+POWER_UP_IMG_PATH = ASSETS_PATH + "powerup.png"
 SHIELD_IMG_PATH = ASSETS_PATH + "shield.png"
+GRASS_IMG_PATH = ASSETS_PATH + "grass.png"
 
 FONT_PATH = ASSETS_PATH + "sugar_fruit.otf"
 
