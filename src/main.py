@@ -86,7 +86,7 @@ class PowerUp(Sprite):
     def is_alive(self) -> bool:
         return self._category != None
 
-    def get_category(self) -> PowerUpCategories:
+    def get_category(self) -> PowerUpCategories | None:
         return self._category
 
 class Trash(Sprite):
@@ -106,8 +106,8 @@ class Trash(Sprite):
     def get_category(self) -> TrashCategories:
         return self._category
 
-    def set_alive(self, value) -> None:
-        self._alive = value
+    def despawn(self) -> None:
+        self._alive = False 
 
     def is_alive(self) -> bool:
         if self._rect.centery > data.SCREEN_HEIGHT:
@@ -127,7 +127,7 @@ class TrashBin(Sprite):
         self._power_up: PowerUpCategories | None = None
         self._power_up_applied_tick: int | None = None 
 
-    def movement(self, keys, vel: int = data.DEFAULT_PLAYER_VEL) -> None:
+    def movement(self, keys) -> None:
         velocity = data.DEFAULT_PLAYER_VEL if self._power_up != PowerUpCategories.SPEED else data.BOOSTED_PLAYER_VEL
         
         if keys[self._left_key] and self._rect.topleft[0] > 0:
@@ -140,7 +140,7 @@ class TrashBin(Sprite):
             if self._rect.colliderect(trash.get_rect()):
                 increment_score = 1 if self._power_up != PowerUpCategories.DOUBLE_POINT else 2
                 self._score += increment_score if trash.get_category() == self._bin_category else -1
-                trash.set_alive(False)
+                trash.despawn()
                 
         if power_up.is_alive() and self._rect.colliderect(power_up.get_rect()):         
             self._power_up_applied_tick = current_time
@@ -152,8 +152,11 @@ class TrashBin(Sprite):
             self._power_up = None
             self._power_up_applied_tick = None
         
+        # Show power up on player head.
         if self._power_up != None:
-            screen.blit(font.render(self._power_up.to_string(), False, (255, 255, 255)), (self._rect.centerx, data.DEFAULT_PLAYER_Y - 30))
+            label = self._power_up.to_string()
+            pos = (self._rect.centerx, data.DEFAULT_PLAYER_Y - 30)
+            screen.blit(font.render(label, False, (255, 255, 255)), pos)
             
     def get_score(self) -> int:
         return self._score
