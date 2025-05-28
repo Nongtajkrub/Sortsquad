@@ -56,6 +56,13 @@ class PowerUpCategories(Enum):
     @classmethod
     def random(cls):
         return random.choice(list(cls))
+    
+    def to_string(self):
+        match self:
+            case PowerUpCategories.SPEED:
+                return "Speed"
+            case PowerUpCategories.DOUBLE_POINT:
+                return "Double Point"
 
 class PowerUp(Sprite):
     SPAWN_EVENT = SPAWN_EVENT = pygame.USEREVENT + 2
@@ -113,7 +120,7 @@ class TrashBin(Sprite):
         self,
         path: Path,  control: tuple[int, int], category: TrashCategories
     ) -> None:
-        super().__init__(path, (0, 600))
+        super().__init__(path, (0, data.DEFAULT_PLAYER_Y))
         self._left_key, self._right_key = control
         self._score = 0
         self._bin_category = category
@@ -140,10 +147,13 @@ class TrashBin(Sprite):
             self._power_up = power_up.get_category()
             power_up.despawn()
 
-    def loop(self) -> None:
+    def power_up_loop(self) -> None:
         if self._power_up_applied_tick != None and current_time - self._power_up_applied_tick > data.POWER_UP_TIME:
             self._power_up = None
             self._power_up_applied_tick = None
+        
+        if self._power_up != None:
+            screen.blit(font.render(self._power_up.to_string(), False, (255, 255, 255)), (self._rect.centerx, data.DEFAULT_PLAYER_Y - 30))
             
     def get_score(self) -> int:
         return self._score
@@ -179,22 +189,22 @@ def trash_bins_loop() -> None:
     general_bin.movement(keys)
     general_bin.check_collision(trashes, power_up)
     general_bin.draw()
-    general_bin.loop()
+    general_bin.power_up_loop()
 
     organic_bin.movement(keys)
     organic_bin.check_collision(trashes, power_up)
     organic_bin.draw()
-    organic_bin.loop()
+    organic_bin.power_up_loop()
 
     hazardous_bin.movement(keys)
     hazardous_bin.check_collision(trashes, power_up)
     hazardous_bin.draw()
-    hazardous_bin.loop()
+    hazardous_bin.power_up_loop()
 
     recyclable_bin.movement(keys)
     recyclable_bin.check_collision(trashes, power_up)
     recyclable_bin.draw()
-    recyclable_bin.loop()
+    recyclable_bin.power_up_loop()
 
 def trashes_loop() -> None:
     # Loop backward to prevent skipping while deleting trashes.
