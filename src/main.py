@@ -52,6 +52,7 @@ class TrashCategories(Enum):
 class PowerUpCategories(Enum):
     SPEED = 0
     DOUBLE_POINT = 1
+    SHIELD = 2
     
     @classmethod
     def random(cls):
@@ -63,13 +64,15 @@ class PowerUpCategories(Enum):
                 return "Speed"
             case PowerUpCategories.DOUBLE_POINT:
                 return "Double Point"
+            case PowerUpCategories.SHIELD:
+                return "Shield"
 
 class PowerUp(Sprite):
     SPAWN_EVENT = SPAWN_EVENT = pygame.USEREVENT + 2
     pygame.time.set_timer(SPAWN_EVENT, data.POWER_UP_SPAWN_FREQ)
     
     def __init__(self) -> None:
-        super().__init__(Path(data.GENERAL_IMG_PATH), (0, 0), (150, 50))
+        super().__init__(Path(data.GENERAL_IMG_PATH), scale=(150, 50))
         self._category: PowerUpCategories | None = None
 
     def movement(self) -> None:
@@ -121,11 +124,14 @@ class TrashBin(Sprite):
         path: Path,  control: tuple[int, int], category: TrashCategories
     ) -> None:
         super().__init__(path, (0, data.DEFAULT_PLAYER_Y))
+
         self._left_key, self._right_key = control
         self._score = 0
         self._bin_category = category
+
         self._power_up: PowerUpCategories | None = None
         self._power_up_applied_tick: int | None = None 
+        self._power_up_shield_sprite = Sprite(Path(data.SHIELD_IMG_PATH))
 
     def movement(self, keys) -> None:
         velocity = data.DEFAULT_PLAYER_VEL if self._power_up != PowerUpCategories.SPEED else data.BOOSTED_PLAYER_VEL
@@ -138,8 +144,11 @@ class TrashBin(Sprite):
     def check_collision(self, trashes: list[Trash], power_up: PowerUp):
         for trash in trashes:
             if self._rect.colliderect(trash.get_rect()):
-                increment_score = 1 if self._power_up != PowerUpCategories.DOUBLE_POINT else 2
-                self._score += increment_score if trash.get_category() == self._bin_category else -1
+                # Double point increment if DOUBLE_POINT power up is enable.
+                increment = 1 if self._power_up != PowerUpCategories.DOUBLE_POINT else 2
+                # Do not decrement point if SHIELD power up is enable.
+                decrement = -1 if self._power_up != PowerUpCategories.SHIELD else 0
+                self._score += increment if trash.get_category() == self._bin_category else decrement
                 trash.despawn()
                 
         if power_up.is_alive() and self._rect.colliderect(power_up.get_rect()):         
@@ -157,6 +166,11 @@ class TrashBin(Sprite):
             label = self._power_up.to_string()
             pos = (self._rect.centerx, data.DEFAULT_PLAYER_Y - 30)
             screen.blit(font.render(label, False, (255, 255, 255)), pos)
+
+            # Show shield effect on player if the shield power up is enable.
+            if self._power_up == PowerUpCategories.SHIELD:
+                self._power_up_shield_sprite._rect.center = self._rect.center
+                self._power_up_shield_sprite.draw()
             
     def get_score(self) -> int:
         return self._score
