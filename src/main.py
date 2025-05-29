@@ -71,6 +71,26 @@ class TrashCategories(Enum):
             case TrashCategories.GENERAL:
                 return Path(data.GENERAL_IMG_PATH)
 
+class OrganicTrashes(Enum):
+    APPLE = 0
+    BANANA = 1
+    VEGETABLE = 2
+
+class HazardousTrashes(Enum):
+    BATTERIES = 0
+    ELECTRONICS = 1
+    BLEACH = 2
+
+class RecyclableTrashes(Enum):
+    BOTTLE = 0
+    COCACOLA = 1
+    PAPER = 2
+
+class GeneralTrashes(Enum):
+    SHOES = 0
+    FOAM = 1
+    CIGARETTE = 2
+
 class PowerUpCategories(Enum):
     SPEED = 0
     DOUBLE_POINT = 1
