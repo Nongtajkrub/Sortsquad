@@ -28,6 +28,7 @@ while Title:
     if event.type == pygame.QUIT:
       Title = False
     elif event.type == pygame.MOUSEBUTTONDOWN:
+      #uses this to find the corners of the buttons
       print(mouse)
   if hoverd:
     screen.blit(TitleHover, (0, 0))  
