@@ -50,6 +50,60 @@ class Sprite:
     def get_rect(self) -> pygame.rect.Rect:
         return self._rect
 
+class OrganicTrashes(Enum):
+    APPLE = 0
+    BANANA = 1
+    VEGETABLE = 2
+
+    @classmethod
+    def random(cls):
+        return random.choice(list(cls))
+
+    def to_path(self) -> Path:
+        match self:
+            case OrganicTrashes.APPLE: return Path(data.APPLE_IMG_PATH)
+            case OrganicTrashes.BANANA: return Path(data.BANANA_IMG_PATH)
+            case OrganicTrashes.VEGETABLE: return Path(data.VEGETABLE_IMG_PATH)
+
+class HazardousTrashes(Enum):
+    BATTERY = 0
+    ELECTRONIC = 1
+    BLEACH = 2
+
+    @classmethod
+    def random(cls):
+        return random.choice(list(cls))
+
+    def to_path(self) -> Path:
+        match self:
+            case HazardousTrashes.BATTERY: return Path(data.BATTERY_IMG_PATH)
+            case HazardousTrashes.ELECTRONIC: return Path(data.ELECTRONIC_IMG_PATH)
+            case HazardousTrashes.BLEACH: return Path(data.BLEACH_IMG_PATH)
+
+class RecyclableTrashes(Enum):
+    BOTTLE = 0
+    COCACOLA = 1
+    PAPER = 2
+
+    @classmethod
+    def random(cls):
+        return random.choice(list(cls))
+
+    def to_path(self) -> Path:
+        return Path(data.RECYCLABLE_IMG_PATH)
+
+class GeneralTrashes(Enum):
+    SHOES = 0
+    FOAM = 1
+    CIGARETTE = 2
+
+    @classmethod
+    def random(cls):
+        return random.choice(list(cls))
+
+    def to_path(self) -> Path:
+        return Path(data.GENERAL_IMG_PATH)
+
 class TrashCategories(Enum):
     ORGANIC = 0
     HAZARDOUS = 1 
@@ -60,36 +114,12 @@ class TrashCategories(Enum):
     def random(cls):
         return random.choice(list(cls))
 
-    def to_path(self) -> Path:
+    def to_trash(self):
         match self:
-            case TrashCategories.ORGANIC:
-                return Path(data.ORGANIC_IMG_PATH)
-            case TrashCategories.HAZARDOUS:
-                return Path(data.HAZARDOUS_IMG_PATH)
-            case TrashCategories.RECYCLABLE:
-                return Path(data.RECYCLABLE_IMG_PATH)
-            case TrashCategories.GENERAL:
-                return Path(data.GENERAL_IMG_PATH)
-
-class OrganicTrashes(Enum):
-    APPLE = 0
-    BANANA = 1
-    VEGETABLE = 2
-
-class HazardousTrashes(Enum):
-    BATTERIES = 0
-    ELECTRONICS = 1
-    BLEACH = 2
-
-class RecyclableTrashes(Enum):
-    BOTTLE = 0
-    COCACOLA = 1
-    PAPER = 2
-
-class GeneralTrashes(Enum):
-    SHOES = 0
-    FOAM = 1
-    CIGARETTE = 2
+            case TrashCategories.ORGANIC: return OrganicTrashes 
+            case TrashCategories.HAZARDOUS: return HazardousTrashes
+            case TrashCategories.RECYCLABLE: return RecyclableTrashes
+            case TrashCategories.GENERAL: return GeneralTrashes
 
 class PowerUpCategories(Enum):
     SPEED = 0
@@ -141,7 +171,7 @@ class Trash(Sprite):
     def __init__(self) -> None:
         self._category = TrashCategories.random()
         super().__init__(
-            self._category.to_path(),
+            self._category.to_trash().random().to_path(),
             (random.randint(0, data.SCREEN_WIDTH), -50), (50, 50))
         self._alive = True
 

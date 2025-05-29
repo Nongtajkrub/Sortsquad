@@ -11,9 +11,16 @@ RECYCLABLE_IMG_PATH = ASSETS_PATH + "recycle_bin.png"
 ORGANIC_IMG_PATH = ASSETS_PATH + "batties_maybe_bin.png"
 GENERAL_IMG_PATH = ASSETS_PATH + "general_bin.png"
 
+APPLE_IMG_PATH = ASSETS_PATH + "apple.png"
+BANANA_IMG_PATH = ASSETS_PATH + "banana.png"
+VEGETABLE_IMG_PATH = ASSETS_PATH + "vegetable.png"
+
 POWER_UP_IMG_PATH = ASSETS_PATH + "powerup.png"
 SHIELD_IMG_PATH = ASSETS_PATH + "shield.png"
 GRASS_IMG_PATH = ASSETS_PATH + "grass.png"
+BATTERY_IMG_PATH = ASSETS_PATH + "battery.png"
+ELECTRONIC_IMG_PATH = ASSETS_PATH + "electronic.png"
+BLEACH_IMG_PATH = ASSETS_PATH + "bleach.png"
 
 FONT_PATH = ASSETS_PATH + "sugar_fruit.otf"
 
