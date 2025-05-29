@@ -1,6 +1,6 @@
 from enum import Enum
 from pathlib import Path
-import pygame, data, random
+import pygame, data, random, math
 
 pygame.init()
 
@@ -176,6 +176,7 @@ class Trash(Sprite):
         self._alive = True
 
     def movement(self) -> None:
+        self._rect.centerx += round(math.sin(current_time * 0.005) * 1)
         self._rect.centery += data.DEFAULT_TRASH_VEL
 
     def get_category(self) -> TrashCategories:
