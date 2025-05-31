@@ -17,5 +17,29 @@ Think fast. Sort smart. Rule the bins.
 ---
 
 ## 📋 Todo
+# icon meaning
+❎⭕ = not done
+✅ = done
+👷🏻 = in progress
 
+# if more tasks not in task list add them
+
+Design 👷🏻
+- Title Screen ❎⭕
+- Player selection screen ❎⭕
+
+Maingame 👷🏻 
+- Trash sprites ❎⭕
+- background ❎⭕
+- Player animations ❎⭕
+
+Story 👷🏻
+- voicing ❎⭕
+- images 👷🏻
+- dialouge 👷🏻
+
+EndScreen 👷🏻
+-Leadorboard ❎⭕
+-SummaryStory ❎⭕
+(if you lose with x amount than this screen shows or it displays text about what you have accomplished)
 ---
