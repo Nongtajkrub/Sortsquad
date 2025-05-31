@@ -36,12 +36,6 @@ def draw_text(
 ) -> None:
     Game.screen.blit(Game.font.render(text, True, color), pos)
 
-class Direction(Enum):
-    LEFT = 0
-    RIGHT = 1
-    TOP = 2
-    BOTTOM = 3
-
 class Sprite:
     def __init__(
         self,
@@ -207,6 +201,12 @@ class Trash(Sprite):
         else:
             return self._alive 
 
+class Direction(Enum):
+    LEFT = 0
+    RIGHT = 1
+    TOP = 2
+    BOTTOM = 3
+
 class TrashBin(Sprite):
     def __init__(
         self,
@@ -324,7 +324,6 @@ class GameLoop:
 
         GameLoop.general_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
         GameLoop.organic_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
-        GameLoop.hazardous_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
         GameLoop.hazardous_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
         GameLoop.recyclable_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
 
