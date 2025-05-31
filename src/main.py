@@ -232,7 +232,10 @@ class TrashBin(Sprite):
         self._power_up_shield_sprite = Sprite(Path(data.SHIELD_IMG_PATH))
 
     def _movement_loop(self, keys) -> None:
-        velocity = data.DEFAULT_PLAYER_VEL if self._power_up != PowerUpCategories.SPEED else data.BOOSTED_PLAYER_VEL
+        velocity = (
+            data.DEFAULT_PLAYER_VEL if self._power_up != PowerUpCategories.SPEED 
+            else data.BOOSTED_PLAYER_VEL
+        )
 
         new_facing = self._facing
         
@@ -267,7 +270,10 @@ class TrashBin(Sprite):
                     trash.despawn()
 
     def _power_up_loop(self, power_up: PowerUp) -> None:
-        if self._power_up_applied_tick != None and Game.current_time - self._power_up_applied_tick > data.POWER_UP_TIME:
+        if (
+            self._power_up_applied_tick != None 
+            and Game.current_time - self._power_up_applied_tick > data.POWER_UP_TIME
+        ):
             self._power_up = None
             self._power_up_applied_tick = None
 
