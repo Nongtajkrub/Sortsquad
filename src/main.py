@@ -16,10 +16,12 @@ class Game:
     SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
     clock = pygame.time.Clock()
     font = Font(Path(data.FONT_PATH)) 
+
     current_time = 0
     current_time_sec = 0
     running = True
     ended = False
+    PLAYER_COUNT = 4
 
     background_sky = pygame.transform.scale(
         pygame.image.load(data.SKY_IMG_PATH), screen.get_size()).convert()
@@ -311,18 +313,20 @@ class TrashBin(Sprite):
         return self._score
 
 class GameLoop:
-    general_bin = TrashBin(
-        Path(data.GENERAL_IMG_PATH),
-        (pygame.K_a, pygame.K_s), TrashCategories.GENERAL)
-    organic_bin = TrashBin(
-        Path(data.ORGANIC_IMG_PATH),
-        (pygame.K_LEFT, pygame.K_RIGHT), TrashCategories.ORGANIC)
-    hazardous_bin = TrashBin(
-        Path(data.HAZARDOUS_IMG_PATH),
-        (pygame.K_g, pygame.K_h), TrashCategories.HAZARDOUS)
-    recyclable_bin = TrashBin(
-        Path(data.RECYCLABLE_IMG_PATH),
-        (pygame.K_COMMA, pygame.K_PERIOD), TrashCategories.RECYCLABLE)
+    bins: tuple[TrashBin, TrashBin, TrashBin, TrashBin] = (
+        TrashBin(
+            Path(data.GENERAL_IMG_PATH),
+            (pygame.K_a, pygame.K_s), TrashCategories.GENERAL),
+        TrashBin(
+            Path(data.ORGANIC_IMG_PATH),
+            (pygame.K_LEFT, pygame.K_RIGHT), TrashCategories.ORGANIC),
+        TrashBin(
+            Path(data.HAZARDOUS_IMG_PATH),
+            (pygame.K_g, pygame.K_h), TrashCategories.HAZARDOUS),
+        TrashBin(
+            Path(data.RECYCLABLE_IMG_PATH),
+            (pygame.K_COMMA, pygame.K_PERIOD), TrashCategories.RECYCLABLE)
+    )
     trashes: list[Trash] = []
     power_up = PowerUp()
 
@@ -343,10 +347,8 @@ class GameLoop:
     def _trash_bins_loop() -> None:
         keys = pygame.key.get_pressed()
 
-        GameLoop.general_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
-        GameLoop.organic_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
-        GameLoop.hazardous_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
-        GameLoop.recyclable_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
+        for bin in GameLoop.bins[:Game.PLAYER_COUNT]:
+            bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
 
     @staticmethod
     def _trashes_loop() -> None:
@@ -388,11 +390,7 @@ class GameLoop:
     def ended_loop():
         GameLoop._event_loop()
 
-        total_score = (
-            GameLoop.general_bin.get_score() +
-            GameLoop.hazardous_bin.get_score() +
-            GameLoop.recyclable_bin.get_score() + GameLoop.organic_bin.get_score()
-        )
+        total_score = sum([bin.get_score() for bin in GameLoop.bins])
     
         Game.screen.fill((0, 0, 0))
         Game.draw_text(
