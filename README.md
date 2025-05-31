@@ -1,0 +1,4 @@
+# 🗑️ Trash Game
+
+## Todo
+* ...
