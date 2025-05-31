@@ -11,9 +11,10 @@ class Game:
     font = pygame.font.Font(data.FONT_PATH, 24)
     current_time = 0
     running = True
+    ended = False
 
     END_GAME_EVENT = pygame.USEREVENT + 1
-    pygame.time.set_timer(END_GAME_EVENT, 60000)
+    pygame.time.set_timer(END_GAME_EVENT, data.END_GAME_FREQ)
 
     background_sky = pygame.transform.scale(
         pygame.image.load(data.SKY_IMG_PATH), screen.get_size()).convert()
@@ -30,11 +31,10 @@ class Game:
     def clock_tick():
         Game.current_time += Game.clock.tick(data.MAX_FPS)
 
-def draw_text(
-    text: str,
-    pos: tuple[int, int], color: tuple[int, int, int] = (0, 0, 0)
-) -> None:
-    Game.screen.blit(Game.font.render(text, True, color), pos)
+    @staticmethod
+    def draw_text(text: str, pos: tuple[int, int], color=(0, 0, 0)):
+        surf = Game.font.render(text, True, color)
+        Game.screen.blit(surf, surf.get_rect(center=pos))
 
 class Sprite:
     def __init__(
@@ -269,7 +269,7 @@ class TrashBin(Sprite):
     def _graphic_loop(self) -> None:
         # Show power up on player head.
         if self._power_up != None:
-            draw_text(
+            Game.draw_text(
                 self._power_up.to_string(),
                 (self._rect.centerx, Game.SCREEN_HEIGHT - 160))
 
@@ -278,7 +278,7 @@ class TrashBin(Sprite):
                 self._power_up_shield_sprite._rect.center = self._rect.center
                 self._power_up_shield_sprite.draw()
 
-        draw_text(
+        Game.draw_text(
             f"Score: {self._score}",
             (self._rect.centerx, Game.SCREEN_HEIGHT - 140))
 
@@ -312,7 +312,7 @@ class GameLoop:
                 case pygame.QUIT:
                     Game.running = False
                 case Game.END_GAME_EVENT:
-                    pass
+                    Game.ended = True
                 case Trash.SPAWN_EVENT:
                     GameLoop.trashes.append(Trash())
                 case PowerUp.SPAWN_EVENT:
@@ -355,8 +355,24 @@ class GameLoop:
 
         pygame.display.flip()
         Game.clock_tick()
+        
+    @staticmethod
+    def ended_loop():
+        GameLoop.event_loop()
+
+        Game.screen.fill((0, 0, 0))
+        Game.draw_text(
+            "Game Ended",
+            (round(Game.SCREEN_WIDTH / 2), round(Game.SCREEN_HEIGHT / 2)),
+            (255, 255, 255))
+
+        pygame.display.flip()
+        Game.clock_tick()
 
 while Game.running:
-    GameLoop.main_loop()
+    if not Game.ended:
+        GameLoop.main_loop()
+    else:
+        GameLoop.ended_loop()
 
 pygame.quit()
