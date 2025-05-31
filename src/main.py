@@ -344,16 +344,20 @@ class GameLoop:
             GameLoop.power_up.movement()
             GameLoop.power_up.draw()
 
+    @staticmethod
+    def main_loop() -> None:
+        GameLoop.event_loop()
+
+        Game.draw_background()
+
+        GameLoop.trash_bins_loop()
+        GameLoop.trashes_loop()
+        GameLoop.power_up_loops()
+
+        pygame.display.flip()
+        Game.clock_tick()
+
 while Game.running:
-    GameLoop.event_loop()
-
-    Game.draw_background()
-
-    GameLoop.trash_bins_loop()
-    GameLoop.trashes_loop()
-    GameLoop.power_up_loops()
-
-    pygame.display.flip()
-    Game.clock_tick()
+    GameLoop.main_loop()
 
 pygame.quit()
