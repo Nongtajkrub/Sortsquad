@@ -4,22 +4,37 @@ import pygame, data, random, math
 
 pygame.init()
 
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
-background_sky = pygame.transform.scale(
-    pygame.image.load(data.SKY_IMG_PATH), screen.get_size()).convert()
-background_grass = pygame.transform.scale(
-    pygame.image.load(data.GRASS_IMG_PATH), (screen.get_width(), 100)).convert_alpha()
-clock = pygame.time.Clock()
-font = pygame.font.Font(data.FONT_PATH, 24)
-current_time = 0
-running = True
+class Game:
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
+    clock = pygame.time.Clock()
+    font = pygame.font.Font(data.FONT_PATH, 24)
+    current_time = 0
+    running = True
+
+    END_GAME_EVENT = pygame.USEREVENT + 1
+    pygame.time.set_timer(END_GAME_EVENT, 60000)
+
+    background_sky = pygame.transform.scale(
+        pygame.image.load(data.SKY_IMG_PATH), screen.get_size()).convert()
+    background_grass = pygame.transform.scale(
+        pygame.image.load(data.GRASS_IMG_PATH), (screen.get_width(), 100)).convert_alpha()
+
+    @staticmethod
+    def draw_background():
+        Game.screen.fill((0, 0, 0))
+        Game.screen.blit(Game.background_sky, (0, 0))
+        Game.screen.blit(Game.background_grass, (0, Game.SCREEN_HEIGHT - 100))
+
+    @staticmethod
+    def clock_tick():
+        Game.current_time += Game.clock.tick(data.MAX_FPS)
 
 def draw_text(
     text: str,
     pos: tuple[int, int], color: tuple[int, int, int] = (0, 0, 0)
 ) -> None:
-    screen.blit(font.render(text, True, color), pos)
+    Game.screen.blit(Game.font.render(text, True, color), pos)
 
 class Direction(Enum):
     LEFT = 0
@@ -46,7 +61,7 @@ class Sprite:
         self._image = pygame.transform.flip(self._image, False, True).convert_alpha()
 
     def draw(self) -> None:
-        screen.blit(self._image, self._rect.center)
+        Game.screen.blit(self._image, self._rect.center)
         
     def get_rect(self) -> pygame.rect.Rect:
         return self._rect
@@ -149,11 +164,11 @@ class PowerUp(Sprite):
         self._category: PowerUpCategories | None = None
 
     def movement(self) -> None:
-        if self._rect.centery < SCREEN_HEIGHT + 30:
+        if self._rect.centery < Game.SCREEN_HEIGHT + 30:
             self._rect.centery += data.DEFAULT_POWER_UP_VEL 
 
     def spawn(self) -> None:
-        self._rect.center = (random.randint(0, SCREEN_WIDTH), 0)
+        self._rect.center = (random.randint(0, Game.SCREEN_WIDTH), 0)
         self._category = PowerUpCategories.random()
         
     def despawn(self) -> None:
@@ -166,18 +181,18 @@ class PowerUp(Sprite):
         return self._category
 
 class Trash(Sprite):
-    SPAWN_EVENT = pygame.USEREVENT + 1
+    SPAWN_EVENT = pygame.USEREVENT + 3
     pygame.time.set_timer(SPAWN_EVENT, data.TRASH_SPAWN_FREQ)
 
     def __init__(self) -> None:
         self._category = TrashCategories.random()
         super().__init__(
             self._category.to_trash().random().to_path(),
-            (random.randint(0, SCREEN_WIDTH), -50), (50, 50))
+            (random.randint(0, Game.SCREEN_WIDTH), -50), (50, 50))
         self._alive = True
 
     def movement(self) -> None:
-        self._rect.centerx += round(math.sin(current_time * 0.005) * 1)
+        self._rect.centerx += round(math.sin(Game.current_time * 0.005) * 1)
         self._rect.centery += data.DEFAULT_TRASH_VEL
 
     def get_category(self) -> TrashCategories:
@@ -187,7 +202,7 @@ class Trash(Sprite):
         self._alive = False 
 
     def is_alive(self) -> bool:
-        if self._rect.centery > SCREEN_HEIGHT:
+        if self._rect.centery > Game.SCREEN_HEIGHT:
             return False
         else:
             return self._alive 
@@ -197,7 +212,7 @@ class TrashBin(Sprite):
         self,
         path: Path, control: tuple[int, int], category: TrashCategories
     ) -> None:
-        super().__init__(path, (0, SCREEN_HEIGHT - 110))
+        super().__init__(path, (0, Game.SCREEN_HEIGHT - 110))
 
         self._left_key, self._right_key = control
         self._facing = Direction.RIGHT
@@ -216,7 +231,7 @@ class TrashBin(Sprite):
         if keys[self._left_key] and self._rect.topleft[0] > 0:
             self._rect.centerx -= velocity
             new_facing = Direction.LEFT
-        elif keys[self._right_key] and self._rect.topright[0] < SCREEN_WIDTH:
+        elif keys[self._right_key] and self._rect.topright[0] < Game.SCREEN_WIDTH:
             self._rect.centerx += velocity
             new_facing = Direction.RIGHT
 
@@ -242,12 +257,12 @@ class TrashBin(Sprite):
                     trash.despawn()
 
     def _power_up_loop(self, power_up: PowerUp) -> None:
-        if self._power_up_applied_tick != None and current_time - self._power_up_applied_tick > data.POWER_UP_TIME:
+        if self._power_up_applied_tick != None and Game.current_time - self._power_up_applied_tick > data.POWER_UP_TIME:
             self._power_up = None
             self._power_up_applied_tick = None
 
         if power_up.is_alive() and self._rect.colliderect(power_up.get_rect()):         
-            self._power_up_applied_tick = current_time
+            self._power_up_applied_tick = Game.current_time
             self._power_up = power_up.get_category()
             power_up.despawn()
 
@@ -256,7 +271,7 @@ class TrashBin(Sprite):
         if self._power_up != None:
             draw_text(
                 self._power_up.to_string(),
-                (self._rect.centerx, SCREEN_HEIGHT - 160))
+                (self._rect.centerx, Game.SCREEN_HEIGHT - 160))
 
             # Show shield effect on player if the shield power up is enable.
             if self._power_up == PowerUpCategories.SHIELD:
@@ -265,7 +280,7 @@ class TrashBin(Sprite):
 
         draw_text(
             f"Score: {self._score}",
-            (self._rect.centerx, SCREEN_HEIGHT - 180))
+            (self._rect.centerx, Game.SCREEN_HEIGHT - 180))
 
     def loop(self, keys, trashes: list[Trash], power_up: PowerUp) -> None:
         self._movement_loop(keys)
@@ -274,68 +289,71 @@ class TrashBin(Sprite):
         self._graphic_loop()
         self.draw()
 
-general_bin = TrashBin(
-    Path(data.GENERAL_IMG_PATH),
-    (pygame.K_a, pygame.K_s), TrashCategories.GENERAL)
-organic_bin = TrashBin(
-    Path(data.ORGANIC_IMG_PATH),
-    (pygame.K_LEFT, pygame.K_RIGHT), TrashCategories.ORGANIC)
-hazardous_bin = TrashBin(
-    Path(data.HAZARDOUS_IMG_PATH),
-    (pygame.K_g, pygame.K_h), TrashCategories.HAZARDOUS)
-recyclable_bin = TrashBin(
-    Path(data.RECYCLABLE_IMG_PATH),
-    (pygame.K_COMMA, pygame.K_PERIOD), TrashCategories.RECYCLABLE)
-trashes: list[Trash] = []
-power_up = PowerUp()
+class GameLoop:
+    general_bin = TrashBin(
+        Path(data.GENERAL_IMG_PATH),
+        (pygame.K_a, pygame.K_s), TrashCategories.GENERAL)
+    organic_bin = TrashBin(
+        Path(data.ORGANIC_IMG_PATH),
+        (pygame.K_LEFT, pygame.K_RIGHT), TrashCategories.ORGANIC)
+    hazardous_bin = TrashBin(
+        Path(data.HAZARDOUS_IMG_PATH),
+        (pygame.K_g, pygame.K_h), TrashCategories.HAZARDOUS)
+    recyclable_bin = TrashBin(
+        Path(data.RECYCLABLE_IMG_PATH),
+        (pygame.K_COMMA, pygame.K_PERIOD), TrashCategories.RECYCLABLE)
+    trashes: list[Trash] = []
+    power_up = PowerUp()
 
-def event_loop() -> None:
-    global running
+    @staticmethod
+    def event_loop() -> None:
+        for event in pygame.event.get():
+            match event.type:
+                case pygame.QUIT:
+                    Game.running = False
+                case Game.END_GAME_EVENT:
+                    pass
+                case Trash.SPAWN_EVENT:
+                    GameLoop.trashes.append(Trash())
+                case PowerUp.SPAWN_EVENT:
+                    GameLoop.power_up.spawn()
 
-    for event in pygame.event.get():
-        match event.type:
-            case pygame.QUIT:
-                running = False
-            case Trash.SPAWN_EVENT:
-                trashes.append(Trash())
-            case PowerUp.SPAWN_EVENT:
-                power_up.spawn()
+    @staticmethod
+    def trash_bins_loop() -> None:
+        keys = pygame.key.get_pressed()
 
-def trash_bins_loop() -> None:
-    keys = pygame.key.get_pressed()
+        GameLoop.general_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
+        GameLoop.organic_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
+        GameLoop.hazardous_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
+        GameLoop.hazardous_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
+        GameLoop.recyclable_bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
 
-    general_bin.loop(keys, trashes, power_up)
-    organic_bin.loop(keys, trashes, power_up)
-    hazardous_bin.loop(keys, trashes, power_up)
-    recyclable_bin.loop(keys, trashes, power_up)
+    @staticmethod
+    def trashes_loop() -> None:
+        # Loop backward to prevent skipping while deleting trashes.
+        for i in range(len(GameLoop.trashes) - 1, -1, -1):
+            GameLoop.trashes[i].movement()
+            GameLoop.trashes[i].draw()
 
-def trashes_loop() -> None:
-    # Loop backward to prevent skipping while deleting trashes.
-    for i in range(len(trashes) - 1, -1, -1):
-        trashes[i].movement()
-        trashes[i].draw()
+            if not GameLoop.trashes[i].is_alive():
+                del GameLoop.trashes[i]
+                
+    @staticmethod
+    def power_up_loops() -> None:
+        if GameLoop.power_up.is_alive():
+            GameLoop.power_up.movement()
+            GameLoop.power_up.draw()
 
-        if not trashes[i].is_alive():
-            del trashes[i]
-            
-def power_up_loops() -> None:
-    if power_up.is_alive():
-        power_up.movement()
-        power_up.draw()
+while Game.running:
+    GameLoop.event_loop()
 
-while running:
-    event_loop()
+    Game.draw_background()
 
-    keys = pygame.key.get_pressed()
-    screen.fill((0, 0, 0))
-    screen.blit(background_sky, (0, 0))
-    screen.blit(background_grass, (0, SCREEN_HEIGHT - 100))
-
-    trash_bins_loop()
-    trashes_loop()
-    power_up_loops()
+    GameLoop.trash_bins_loop()
+    GameLoop.trashes_loop()
+    GameLoop.power_up_loops()
 
     pygame.display.flip()
-    current_time += clock.tick(data.MAX_FPS)
+    Game.clock_tick()
 
 pygame.quit()
