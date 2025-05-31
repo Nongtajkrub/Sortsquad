@@ -39,7 +39,7 @@ Story 👷🏻
 - dialouge 👷🏻
 
 EndScreen 👷🏻
--Leadorboard ❎⭕
--SummaryStory ❎⭕
+- Leadorboard ❎⭕
+- SummaryStory ❎⭕
 
 ---
