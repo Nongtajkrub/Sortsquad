@@ -41,5 +41,5 @@ Story 👷🏻
 EndScreen 👷🏻
 -Leadorboard ❎⭕
 -SummaryStory ❎⭕
-(if you lose with x amount than this screen shows or it displays text about what you have accomplished)
+
 ---
