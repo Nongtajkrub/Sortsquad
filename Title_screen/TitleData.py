@@ -1,3 +1,3 @@
-Title = r"C:\Users\Isaac\Documents\Projects\python_projects\Title_screen\assets"
-TitleNormal = Title + r"\TrashGame.png"
-TitleHover = Title + r"\TrashGameHover.png"
+Title = r"C:\Users\ADMIN\Downloads\trash-game-project-main\trash-game-project-main\Title_screen\assets"
+TitleNormal = Title + "\\" + "TrashGame.png"
+Font = Title + "\\" + "ThaleahFat.ttf"
