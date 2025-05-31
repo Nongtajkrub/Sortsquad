@@ -257,6 +257,8 @@ class TrashBin(Sprite):
                 decrement = -1 if self._power_up != PowerUpCategories.SHIELD else 0
                 self._score += increment if trash.get_category() == self._bin_category else decrement
 
+                self._score = max(0, self._score)
+
                 # Only despawn trash if shield power up is disable
                 if self._power_up == PowerUpCategories.SHIELD:
                     if trash.get_category() == self._bin_category:
@@ -298,6 +300,9 @@ class TrashBin(Sprite):
         self._power_up_loop(power_up)
         self._graphic_loop()
         self.draw()
+
+    def get_score(self) -> int:
+        return self._score
 
 class GameLoop:
     general_bin = TrashBin(
@@ -377,10 +382,16 @@ class GameLoop:
     def ended_loop():
         GameLoop._event_loop()
 
+        total_score = (
+            GameLoop.general_bin.get_score() +
+            GameLoop.hazardous_bin.get_score() +
+            GameLoop.recyclable_bin.get_score() + GameLoop.organic_bin.get_score()
+        )
+    
         Game.screen.fill((0, 0, 0))
         Game.draw_text(
             Game.font.xlg,
-            "Game Ended",
+            f"Game Ended! Total Score {total_score}",
             (round(Game.SCREEN_WIDTH / 2), round(Game.SCREEN_HEIGHT / 2)),
             (255, 255, 255))
 
