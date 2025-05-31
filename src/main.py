@@ -70,6 +70,44 @@ class Sprite:
     def get_rect(self) -> pygame.rect.Rect:
         return self._rect
 
+# A horrible error prone animation system
+class SpriteAnimations():
+    def __init__(
+        self,
+        path: Path,
+        grid_size: int,
+        grid_count: int,
+        delay: int,
+        pos: tuple[int, int] = (0, 0), scale: tuple[int, int] = (100, 100)
+    ) -> None:
+        self._delay = delay 
+        self._last_update = Game.current_time
+        self._grid_count = grid_count
+        self._framse: list[pygame.surface.Surface] = self._generate_framse(
+            path, grid_size, scale)
+        self._current_frame = 0
+        self._rect = pygame.rect.Rect(pos, (grid_size, grid_size)) 
+
+    def _generate_framse(
+        self,
+        path: Path, grid_size: int, scale: tuple[int, int] = (100, 100)
+    ) -> list[pygame.surface.Surface]:
+        sheet = pygame.image.load(path).convert_alpha()
+
+        return [
+            pygame.transform.scale(
+                sheet.subsurface(pygame.Rect(i * grid_size, 0, grid_size, grid_size)),
+                scale)
+            for i in range(self._grid_count)
+        ]
+
+    def draw(self) -> None:
+        Game.screen.blit(self._framse[self._current_frame], self._rect)
+
+        if Game.current_time - self._last_update >= self._delay:
+            self._last_update = Game.current_time
+            self._current_frame = (self._current_frame + 1) % self._grid_count
+
 class OrganicTrashes(Enum):
     APPLE = 0
     BANANA = 1
