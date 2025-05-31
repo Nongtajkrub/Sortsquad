@@ -164,7 +164,7 @@ class PowerUp(Sprite):
         self._category: PowerUpCategories | None = None
 
     def movement(self) -> None:
-        if self._rect.centery < Game.SCREEN_HEIGHT + 30:
+        if self._rect.centery < Game.SCREEN_HEIGHT - 80:
             self._rect.centery += data.DEFAULT_POWER_UP_VEL 
 
     def spawn(self) -> None:
@@ -280,7 +280,7 @@ class TrashBin(Sprite):
 
         draw_text(
             f"Score: {self._score}",
-            (self._rect.centerx, Game.SCREEN_HEIGHT - 180))
+            (self._rect.centerx, Game.SCREEN_HEIGHT - 140))
 
     def loop(self, keys, trashes: list[Trash], power_up: PowerUp) -> None:
         self._movement_loop(keys)
