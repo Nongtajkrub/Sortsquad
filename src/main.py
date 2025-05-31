@@ -4,7 +4,8 @@ import pygame, data, random, math
 
 pygame.init()
 
-screen = pygame.display.set_mode(data.SCREEN_DIMENSION)
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
 background_sky = pygame.transform.scale(
     pygame.image.load(data.SKY_IMG_PATH), screen.get_size()).convert()
 background_grass = pygame.transform.scale(
@@ -148,11 +149,11 @@ class PowerUp(Sprite):
         self._category: PowerUpCategories | None = None
 
     def movement(self) -> None:
-        if self._rect.centery < data.DEFAULT_POWER_UP_Y:
+        if self._rect.centery < SCREEN_HEIGHT + 30:
             self._rect.centery += data.DEFAULT_POWER_UP_VEL 
 
     def spawn(self) -> None:
-        self._rect.center = (random.randint(0, data.SCREEN_WIDTH), 0)
+        self._rect.center = (random.randint(0, SCREEN_WIDTH), 0)
         self._category = PowerUpCategories.random()
         
     def despawn(self) -> None:
@@ -172,7 +173,7 @@ class Trash(Sprite):
         self._category = TrashCategories.random()
         super().__init__(
             self._category.to_trash().random().to_path(),
-            (random.randint(0, data.SCREEN_WIDTH), -50), (50, 50))
+            (random.randint(0, SCREEN_WIDTH), -50), (50, 50))
         self._alive = True
 
     def movement(self) -> None:
@@ -186,7 +187,7 @@ class Trash(Sprite):
         self._alive = False 
 
     def is_alive(self) -> bool:
-        if self._rect.centery > data.SCREEN_HEIGHT:
+        if self._rect.centery > SCREEN_HEIGHT:
             return False
         else:
             return self._alive 
@@ -196,7 +197,7 @@ class TrashBin(Sprite):
         self,
         path: Path, control: tuple[int, int], category: TrashCategories
     ) -> None:
-        super().__init__(path, (0, data.DEFAULT_PLAYER_Y))
+        super().__init__(path, (0, SCREEN_HEIGHT - 110))
 
         self._left_key, self._right_key = control
         self._facing = Direction.RIGHT
@@ -215,7 +216,7 @@ class TrashBin(Sprite):
         if keys[self._left_key] and self._rect.topleft[0] > 0:
             self._rect.centerx -= velocity
             new_facing = Direction.LEFT
-        elif keys[self._right_key] and self._rect.topright[0] < data.SCREEN_WIDTH:
+        elif keys[self._right_key] and self._rect.topright[0] < SCREEN_WIDTH:
             self._rect.centerx += velocity
             new_facing = Direction.RIGHT
 
@@ -255,7 +256,7 @@ class TrashBin(Sprite):
         if self._power_up != None:
             draw_text(
                 self._power_up.to_string(),
-                (self._rect.centerx, data.DEFAULT_PLAYER_Y - 50))
+                (self._rect.centerx, SCREEN_HEIGHT - 160))
 
             # Show shield effect on player if the shield power up is enable.
             if self._power_up == PowerUpCategories.SHIELD:
@@ -264,7 +265,7 @@ class TrashBin(Sprite):
 
         draw_text(
             f"Score: {self._score}",
-            (self._rect.centerx, data.DEFAULT_PLAYER_Y - 30))
+            (self._rect.centerx, SCREEN_HEIGHT - 180))
 
     def loop(self, keys, trashes: list[Trash], power_up: PowerUp) -> None:
         self._movement_loop(keys)
@@ -328,7 +329,7 @@ while running:
     keys = pygame.key.get_pressed()
     screen.fill((0, 0, 0))
     screen.blit(background_sky, (0, 0))
-    screen.blit(background_grass, (0, data.SCREEN_HEIGHT - 100))
+    screen.blit(background_grass, (0, SCREEN_HEIGHT - 100))
 
     trash_bins_loop()
     trashes_loop()
