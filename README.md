@@ -18,21 +18,13 @@ Think fast. Sort smart. Rule the bins.
 
 ## 📋 Todo
 
-### 👷🏻 Design 
 - Title Screen ❌
 - Player selection screen ❌
-
-### 👷🏻 Maingame
 - Trash sprites ❌
 - background ❌
 - Player animations ❌
-
-### 👷🏻 Story
-- voicing ❌
 - images 👷🏻
-- dialouge 👷🏻
-
-### 👷🏻 EndScreen
+- dialouge 👷
 - Leadorboard ❌
 - SummaryStory ❌
 
