@@ -19,4 +19,8 @@ Think fast. Sort smart. Rule the bins.
 - [ ] Atleast 6 Trashes Sprite
 - [ ] Opening Scene
 
+## Optional
+
+- [ ] New Sky Background
+
 ---
