@@ -18,14 +18,11 @@ Think fast. Sort smart. Rule the bins.
 
 ## 📋 Todo
 
-- Title Screen ❌
-- Player selection screen ❌
-- Trash sprites ❌
-- background ❌
-- Player animations ❌
-- images 👷🏻
-- dialouge 👷
-- Leadorboard ❌
-- SummaryStory ❌
+- [ ] Animation Manager
+- [ ] Portal Opening When Trashes Drop
+- [ ] All Trash Bin Sprite
+- [ ] Trash Bin Animations
+- [ ] Atleast 6 Trashes Sprite
+- [ ] Opening Scene
 
 ---
