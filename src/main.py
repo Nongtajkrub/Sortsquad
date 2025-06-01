@@ -154,44 +154,38 @@ class SpriteAnimations():
             scale=self._scale)
 
 @dataclass
-class AnimationsManagerCache:
+class AnimationHeapData:
     sprite: SpriteAnimations
-    in_use: bool = dataclasses.field(default=False)
+    _free: bool = dataclasses.field(default=True)
 
-class AnimationsManager():
-    _cache: dict[str, list[AnimationsManagerCache]] = {}
+    def is_free(self) -> bool:
+        return self._free
+
+    def free(self) -> None:
+        self._free = True 
+        self.sprite.restart()
+
+class AnimationHeap():
+    _heap: dict[str, list[AnimationHeapData]] = {}
 
     # !!! Expensive !!!
     @staticmethod
-    def cache(category: str, sprite: SpriteAnimations, n: int) -> None:
-        if sprite.is_loop():
-            raise Exception("AnimationManager does not handle loop animation")
+    def malloc(category: str, sprite: SpriteAnimations, n: int) -> None:
         if not sprite.is_cloneable():
             raise Exception("AnimationManager does not handle uncloneable animation")
 
-        AnimationsManager._cache.setdefault(category, [])
-        AnimationsManager._cache[category].extend(
-            [AnimationsManagerCache(sprite.clone()) for _ in range(n)])
+        AnimationHeap._heap.setdefault(category, [])
+        AnimationHeap._heap[category].extend(
+            [AnimationHeapData(sprite.clone()) for _ in range(n)])
 
     @staticmethod
-    def spawn(category: str, pos: tuple[int, int]) -> None:
-        for sprite in AnimationsManager._cache[category]:
-            if not sprite.in_use:
-                sprite.sprite.set_rect(pos)
-                sprite.in_use = True
-                return
+    def request(category: str) -> AnimationHeapData:
+        for sprite in AnimationHeap._heap[category]:
+            if sprite.is_free():
+                sprite._free = False 
+                return sprite
 
-        raise Exception("AnimationManager out of cache.")
-
-    @staticmethod
-    def update(category: str) -> None:
-        for sprite in AnimationsManager._cache[category]:
-            if sprite.in_use:
-                if sprite.sprite.is_finish():
-                    sprite.in_use = False
-                    sprite.sprite.restart()
-                else:
-                    sprite.sprite.draw()
+        raise Exception("AnimationManager out of memory.")
 
 class OrganicTrashes(Enum):
     APPLE = 0
@@ -311,7 +305,7 @@ class Trash(Sprite):
     SPAWN_EVENT = pygame.USEREVENT + 3
     pygame.time.set_timer(SPAWN_EVENT, data.TRASH_SPAWN_FREQ)
 
-    AnimationsManager.cache(
+    AnimationHeap.malloc(
         "portal",
         SpriteAnimations(Path(data.PORTAL_IMG_PATH), 32, 6, 100, cloneable=True),
         data.PORTAL_ANIMATION_CACHE_N)
@@ -322,14 +316,25 @@ class Trash(Sprite):
         super().__init__(
             self._category.to_trash().random().to_path(), (posx, -50), (50, 50))
         self._alive = True
-        AnimationsManager.spawn("portal", (posx, 0))
 
-    def _movement(self) -> None:
+        self._portal: None | AnimationHeapData = AnimationHeap.request("portal")
+        self._portal.sprite._rect.center = (posx, 10)
+
+    def _movement_loop(self) -> None:
         self._rect.centerx += round(math.sin(Game.current_time * 0.005) * 1)
         self._rect.centery += data.DEFAULT_TRASH_VEL
 
+    def _animation_loop(self) -> None:
+        if self._portal != None:
+            if self._portal.sprite.is_finish():
+                self._portal.free()
+                self._portal = None
+            else:
+                self._portal.sprite.draw()
+
     def loop(self) -> None:
-        self._movement()
+        self._animation_loop()
+        self._movement_loop()
         self.draw()
 
     def get_category(self) -> TrashCategories:
@@ -491,8 +496,6 @@ class GameLoop:
 
             if not GameLoop.trashes[i].is_alive():
                 del GameLoop.trashes[i]
-
-        AnimationsManager.update("portal")
                 
     @staticmethod
     def _power_up_loops() -> None:
