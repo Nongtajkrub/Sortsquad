@@ -65,6 +65,9 @@ class SpriteControls(Protocol):
     def get_rect(self) -> pygame.rect.Rect:
         ...
 
+    def set_rect(self, rect) -> None:
+        ...
+
 class Sprite(SpriteControls):
     def __init__(
         self,
@@ -88,6 +91,9 @@ class Sprite(SpriteControls):
         
     def get_rect(self) -> pygame.rect.Rect:
         return self._rect
+
+    def set_rect(self, rect) -> None:
+        self._rect = rect
 
 # A horrible error prone animation system
 class SpriteAnimations(SpriteControls):
@@ -155,6 +161,9 @@ class SpriteAnimations(SpriteControls):
     def get_rect(self) -> pygame.rect.Rect:
         return self._rect
 
+    def set_rect(self, rect) -> None:
+        self._rect = rect
+
     def is_finish(self) -> bool:
         return (not self._loop and self._current_frame == self._grid_count)
 
@@ -217,7 +226,17 @@ class AnimationCycler(SpriteControls):
         self._current_cycle = 0
 
     def next(self) -> None:
+        # Restsart the current cycle before moving on
+        self._cycle[self._current_cycle].restart()
+
         self._current_cycle = (self._current_cycle + 1) % len(self._cycle)
+
+        # Update the rect on the new cycle from the last cycle.
+        self._cycle[self._current_cycle].set_rect(
+            self._cycle[(self._current_cycle - 1) % len(self._cycle)].get_rect())
+
+    def restart(self) -> None:
+        self._current_cycle = 0
 
     def draw(self) -> None:
         this_cycle = self._cycle[self._current_cycle]
@@ -241,6 +260,10 @@ class AnimationCycler(SpriteControls):
 
     def get_rect(self) -> pygame.rect.Rect:
         return self._cycle[self._current_cycle].get_rect()
+
+    def set_rect(self, rect) -> None:
+        for sprite in self._cycle:
+            sprite.set_rect(rect)
 
 class OrganicTrashes(Enum):
     APPLE = 0
@@ -476,11 +499,9 @@ class TrashBin():
 
     def _animation_loop(self, new_velocity: int) -> None:
         if abs(self._velocity) < abs(new_velocity):
-            #print(f"Stated running! at {Game.current_time}")
-            pass
+            self._sprites.next()
         elif abs(self._velocity) > abs(new_velocity):
-            #print(f"Stoped running! at {Game.current_time}")
-            pass
+            self._sprites.restart()
 
     def _score_loop(self, trashes: list[Trash]):
         for trash in trashes:
