@@ -154,12 +154,12 @@ class SpriteAnimations():
             scale=self._scale)
 
 @dataclass
-class AnimationCache:
+class AnimationsManagerCache:
     sprite: SpriteAnimations
     in_use: bool = dataclasses.field(default=False)
 
-class AnimationCacher():
-    _cache: dict[str, list[AnimationCache]] = {}
+class AnimationsManager():
+    _cache: dict[str, list[AnimationsManagerCache]] = {}
 
     # !!! Expensive !!!
     @staticmethod
@@ -169,13 +169,13 @@ class AnimationCacher():
         if not sprite.is_cloneable():
             raise Exception("AnimationManager does not handle uncloneable animation")
 
-        AnimationCacher._cache.setdefault(category, [])
-        AnimationCacher._cache[category].extend(
-            [AnimationCache(sprite.clone()) for _ in range(n)])
+        AnimationsManager._cache.setdefault(category, [])
+        AnimationsManager._cache[category].extend(
+            [AnimationsManagerCache(sprite.clone()) for _ in range(n)])
 
     @staticmethod
     def spawn(category: str, pos: tuple[int, int]) -> None:
-        for sprite in AnimationCacher._cache[category]:
+        for sprite in AnimationsManager._cache[category]:
             if not sprite.in_use:
                 sprite.sprite.set_rect(pos)
                 sprite.in_use = True
@@ -185,7 +185,7 @@ class AnimationCacher():
 
     @staticmethod
     def update(category: str) -> None:
-        for sprite in AnimationCacher._cache[category]:
+        for sprite in AnimationsManager._cache[category]:
             if sprite.in_use:
                 if sprite.sprite.is_finish():
                     sprite.in_use = False
@@ -311,7 +311,7 @@ class Trash(Sprite):
     SPAWN_EVENT = pygame.USEREVENT + 3
     pygame.time.set_timer(SPAWN_EVENT, data.TRASH_SPAWN_FREQ)
 
-    AnimationCacher.cache(
+    AnimationsManager.cache(
         "portal",
         SpriteAnimations(Path(data.PORTAL_IMG_PATH), 32, 6, 100, cloneable=True),
         data.PORTAL_ANIMATION_CACHE_N)
@@ -322,7 +322,7 @@ class Trash(Sprite):
         super().__init__(
             self._category.to_trash().random().to_path(), (posx, -50), (50, 50))
         self._alive = True
-        AnimationCacher.spawn("portal", (posx, 0))
+        AnimationsManager.spawn("portal", (posx, 0))
 
     def _movement(self) -> None:
         self._rect.centerx += round(math.sin(Game.current_time * 0.005) * 1)
@@ -492,7 +492,7 @@ class GameLoop:
             if not GameLoop.trashes[i].is_alive():
                 del GameLoop.trashes[i]
 
-        AnimationCacher.update("portal")
+        AnimationsManager.update("portal")
                 
     @staticmethod
     def _power_up_loops() -> None:
