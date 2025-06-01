@@ -14,6 +14,7 @@ Think fast. Sort smart. Rule the bins.
 
 - [x] Animation Manager
 - [x] Portal Opening When Trashes Drop
+- [ ] Animation Cycler
 - [ ] All Trash Bin Sprite
 - [ ] Trash Bin Animations
 - [ ] Atleast 6 Trashes Sprite
