@@ -2,6 +2,7 @@ from enum import Enum
 from pathlib import Path
 import dataclasses
 from dataclasses import dataclass
+from typing import Protocol
 import pygame, data, random, math
 
 pygame.init()
@@ -48,7 +49,23 @@ class Game:
         surf = font.render(text, True, color)
         Game.screen.blit(surf, surf.get_rect(center=pos))
 
-class Sprite:
+class SpriteControls(Protocol):
+    def draw(self) -> None:
+        ...
+
+    def rotate(self, value) -> None:
+        ...
+
+    def flipx(self) -> None:
+        ...
+
+    def flipy(self) -> None:
+        ...
+        
+    def get_rect(self) -> pygame.rect.Rect:
+        ...
+
+class Sprite(SpriteControls):
     def __init__(
         self,
         path: Path,
@@ -61,10 +78,10 @@ class Sprite:
         self._image = pygame.transform.rotate(self._image, value)
 
     def flipx(self) -> None:
-        self._image = pygame.transform.flip(self._image, True, False).convert_alpha()
+        self._image = pygame.transform.flip(self._image, True, False)
 
     def flipy(self) -> None:
-        self._image = pygame.transform.flip(self._image, False, True).convert_alpha()
+        self._image = pygame.transform.flip(self._image, False, True)
 
     def draw(self) -> None:
         Game.screen.blit(self._image, self._rect.center)
@@ -73,7 +90,7 @@ class Sprite:
         return self._rect
 
 # A horrible error prone animation system
-class SpriteAnimations():
+class SpriteAnimations(SpriteControls):
     def __init__(
         self,
         path: Path,
@@ -111,8 +128,12 @@ class SpriteAnimations():
             for i in range(self._grid_count)
         ]
 
+    def restart(self) -> None:
+        self._last_update = Game.current_time
+        self._current_frame = 0
+
     def draw(self) -> None:
-        Game.screen.blit(self._framse[self._current_frame], self._rect)
+        Game.screen.blit(self._framse[self._current_frame], self.get_rect())
 
         # increment the current_frame base on whether animation loop or not.
         if Game.current_time - self._last_update >= self._delay:
@@ -121,9 +142,18 @@ class SpriteAnimations():
                 (self._current_frame + 1) % self._grid_count if self._loop
                 else min(self._current_frame + 1, self._grid_count))
 
-    def restart(self) -> None:
-        self._last_update = Game.current_time
-        self._current_frame = 0
+    def rotate(self, value) -> None:
+        for frame in self._framse:
+            frame = pygame.transform.rotate(frame, value)
+
+    def flipx(self) -> None:
+        self._framse = [pygame.transform.flip(frame, True, False) for frame in self._framse]
+
+    def flipy(self) -> None:
+        self._framse = [pygame.transform.flip(frame, False, True) for frame in self._framse]
+
+    def get_rect(self) -> pygame.rect.Rect:
+        return self._rect
 
     def is_finish(self) -> bool:
         return (not self._loop and self._current_frame == self._grid_count)
@@ -133,12 +163,6 @@ class SpriteAnimations():
 
     def is_cloneable(self) -> bool:
         return self._cloneable
-
-    def set_rect(self, pos: tuple[int ,int]) -> None:
-        self._rect.center = pos
-
-    def get_rect(self) -> pygame.rect.Rect:
-        return self._rect
 
     def clone(self) -> "SpriteAnimations":
         if not self._cloneable:
@@ -150,7 +174,7 @@ class SpriteAnimations():
             grid_count=self._grid_count,
             delay=self._delay,
             loop=self._loop,
-            pos=self._rect.topleft,
+            pos=self.get_rect().topleft,
             scale=self._scale)
 
 @dataclass
@@ -165,7 +189,7 @@ class AnimationHeapData:
         self._free = True 
         self.sprite.restart()
 
-class AnimationHeap():
+class AnimationHeap:
     _heap: dict[str, list[AnimationHeapData]] = {}
 
     # !!! Expensive !!!
@@ -186,6 +210,37 @@ class AnimationHeap():
                 return sprite
 
         raise Exception("AnimationManager out of memory.")
+
+class AnimationCycler(SpriteControls):
+    def __init__(self, cycle: tuple[SpriteAnimations, ...]) -> None:
+        self._cycle = list(cycle)
+        self._current_cycle = 0
+
+    def next(self) -> None:
+        self._current_cycle = (self._current_cycle + 1) % len(self._cycle)
+
+    def draw(self) -> None:
+        this_cycle = self._cycle[self._current_cycle]
+
+        if this_cycle.is_finish():
+            self.next()
+        else:
+            this_cycle.draw()
+            
+    def rotate(self, value) -> None:
+        for sprite in self._cycle:
+            sprite.rotate(value)
+
+    def flipx(self) -> None:
+        for sprite in self._cycle:
+            sprite.flipx()
+
+    def flipy(self) -> None:
+        for sprite in self._cycle:
+            sprite.flipy()
+
+    def get_rect(self) -> pygame.rect.Rect:
+        return self._cycle[self._current_cycle].get_rect()
 
 class OrganicTrashes(Enum):
     APPLE = 0
@@ -258,6 +313,25 @@ class TrashCategories(Enum):
             case TrashCategories.RECYCLABLE: return RecyclableTrashes
             case TrashCategories.GENERAL: return GeneralTrashes
 
+    def to_bin_animation_cycler(self) -> AnimationCycler :
+        idle_path, prerun_path, run_path = None, None, None
+
+        match self:
+            case TrashCategories.ORGANIC | TrashCategories.GENERAL:
+                idle_path = data.GENERAL_IDLE_PATH
+                prerun_path = data.GENERAL_PRERUN_PATH
+                run_path = data.GENERAL_RUN_PATH
+            case TrashCategories.RECYCLABLE | TrashCategories.HAZARDOUS:
+                idle_path = data.RECYCLABLE_IDLE_PATH
+                prerun_path = data.RECYCLABLE_PRERUN_PATH
+                run_path = data.RECYCLABLE_RUN_PATH
+
+        pos = (0, Game.SCREEN_HEIGHT - 110)
+        return AnimationCycler((
+            SpriteAnimations(Path(idle_path), 45, 8, 200, loop=True, pos=pos),
+            SpriteAnimations(Path(prerun_path), 45, 4, 100, pos=pos),
+            SpriteAnimations(Path(run_path), 45, 4, 100, loop=True, pos=pos)))
+
 class PowerUpCategories(Enum):
     SPEED = 0
     DOUBLE_POINT = 1
@@ -285,11 +359,11 @@ class PowerUp(Sprite):
         self._category: PowerUpCategories | None = None
 
     def movement(self) -> None:
-        if self._rect.centery < Game.SCREEN_HEIGHT - 80:
-            self._rect.centery += data.DEFAULT_POWER_UP_VEL 
+        if self.get_rect().centery < Game.SCREEN_HEIGHT - 80:
+            self.get_rect().centery += data.DEFAULT_POWER_UP_VEL 
 
     def spawn(self) -> None:
-        self._rect.center = (random.randint(0, Game.SCREEN_WIDTH), 0)
+        self.get_rect().center = (random.randint(0, Game.SCREEN_WIDTH), 0)
         self._category = PowerUpCategories.random()
         
     def despawn(self) -> None:
@@ -321,8 +395,8 @@ class Trash(Sprite):
         self._portal.sprite._rect.center = (posx, 10)
 
     def _movement_loop(self) -> None:
-        self._rect.centerx += round(math.sin(Game.current_time * 0.005) * 1)
-        self._rect.centery += data.DEFAULT_TRASH_VEL
+        self.get_rect().centerx += round(math.sin(Game.current_time * 0.005) * 1)
+        self.get_rect().centery += data.DEFAULT_TRASH_VEL
 
     def _animation_loop(self) -> None:
         if self._portal != None:
@@ -344,7 +418,7 @@ class Trash(Sprite):
         self._alive = False 
 
     def is_alive(self) -> bool:
-        if self._rect.centery > Game.SCREEN_HEIGHT:
+        if self.get_rect().centery > Game.SCREEN_HEIGHT:
             return False
         else:
             return self._alive 
@@ -355,15 +429,13 @@ class Direction(Enum):
     TOP = 2
     BOTTOM = 3
 
-class TrashBin(Sprite):
-    def __init__(
-        self,
-        path: Path, control: tuple[int, int], category: TrashCategories
-    ) -> None:
-        super().__init__(path, (0, Game.SCREEN_HEIGHT - 110))
+class TrashBin():
+    def __init__(self, control: tuple[int, int], category: TrashCategories) -> None:
+        self._sprites = category.to_bin_animation_cycler()
 
         self._left_key, self._right_key = control
         self._facing = Direction.RIGHT
+        self._velocity = 0
         self._score = 0
         self._bin_category = category
 
@@ -371,29 +443,48 @@ class TrashBin(Sprite):
         self._power_up_applied_tick: int | None = None 
         self._power_up_shield_sprite = Sprite(Path(data.SHIELD_IMG_PATH))
 
-    def _movement_loop(self, keys) -> None:
-        velocity = (
-            data.DEFAULT_PLAYER_VEL if self._power_up != PowerUpCategories.SPEED 
-            else data.BOOSTED_PLAYER_VEL
-        )
+    def get_rect(self) -> pygame.rect.Rect:
+        return self._sprites.get_rect()
 
+    def _calc_velocity(self) -> int:
+        return (-1 if self._facing == Direction.LEFT else 1) * (
+            data.DEFAULT_PLAYER_VEL if self._power_up != PowerUpCategories.SPEED 
+            else data.BOOSTED_PLAYER_VEL)
+
+    def _movement_loop(self, keys) -> None:
         new_facing = self._facing
+        new_velocity = 0
         
-        if keys[self._left_key] and self._rect.topleft[0] > 0:
-            self._rect.centerx -= velocity
+        if keys[self._left_key] and self.get_rect().topleft[0] > 0:
             new_facing = Direction.LEFT
-        elif keys[self._right_key] and self._rect.topright[0] < Game.SCREEN_WIDTH:
-            self._rect.centerx += velocity
+            new_velocity = self._calc_velocity()
+        elif (
+            keys[self._right_key] and self.get_rect().topright[0] < Game.SCREEN_WIDTH
+        ):
             new_facing = Direction.RIGHT
+            new_velocity = self._calc_velocity()
+
+        self.get_rect().centerx += new_velocity 
+
+        self._animation_loop(new_velocity)
+        self._velocity = new_velocity
 
         if self._facing != new_facing:
-            self.flipx()
+            self._sprites.flipx()
 
         self._facing = new_facing
 
+    def _animation_loop(self, new_velocity: int) -> None:
+        if abs(self._velocity) < abs(new_velocity):
+            #print(f"Stated running! at {Game.current_time}")
+            pass
+        elif abs(self._velocity) > abs(new_velocity):
+            #print(f"Stoped running! at {Game.current_time}")
+            pass
+
     def _score_loop(self, trashes: list[Trash]):
         for trash in trashes:
-            if self._rect.colliderect(trash.get_rect()):
+            if self.get_rect().colliderect(trash.get_rect()):
                 # Double point increment if DOUBLE_POINT power up is enable.
                 increment = 1 if self._power_up != PowerUpCategories.DOUBLE_POINT else 2
                 # Do not decrement point if SHIELD power up is enable.
@@ -417,7 +508,9 @@ class TrashBin(Sprite):
             self._power_up = None
             self._power_up_applied_tick = None
 
-        if power_up.is_alive() and self._rect.colliderect(power_up.get_rect()):         
+        if (
+            power_up.is_alive() and self.get_rect().colliderect(power_up.get_rect())
+        ):
             self._power_up_applied_tick = Game.current_time
             self._power_up = power_up.get_category()
             power_up.despawn()
@@ -428,43 +521,34 @@ class TrashBin(Sprite):
             Game.draw_text(
                 Game.font.md,
                 self._power_up.to_string(),
-                (self._rect.centerx, Game.SCREEN_HEIGHT - 160))
+                (self.get_rect().centerx, Game.SCREEN_HEIGHT - 160))
 
             # Show shield effect on player if the shield power up is enable.
             if self._power_up == PowerUpCategories.SHIELD:
-                self._power_up_shield_sprite._rect.center = self._rect.center
+                self._power_up_shield_sprite.get_rect().center = (self.get_rect().center)
                 self._power_up_shield_sprite.draw()
 
         Game.draw_text(
             Game.font.md,
             f"Score: {self._score}",
-            (self._rect.centerx, Game.SCREEN_HEIGHT - 140))
+            (self.get_rect().centerx, Game.SCREEN_HEIGHT - 140))
 
     def loop(self, keys, trashes: list[Trash], power_up: PowerUp) -> None:
         self._movement_loop(keys)
         self._score_loop(trashes)
         self._power_up_loop(power_up)
         self._graphic_loop()
-        self.draw()
+        self._sprites.draw()
 
     def get_score(self) -> int:
         return self._score
 
 class GameLoop:
-    bins: tuple[TrashBin, TrashBin, TrashBin, TrashBin] = (
-        TrashBin(
-            Path(data.GENERAL_IMG_PATH),
-            (pygame.K_a, pygame.K_s), TrashCategories.GENERAL),
-        TrashBin(
-            Path(data.ORGANIC_IMG_PATH),
-            (pygame.K_LEFT, pygame.K_RIGHT), TrashCategories.ORGANIC),
-        TrashBin(
-            Path(data.HAZARDOUS_IMG_PATH),
-            (pygame.K_g, pygame.K_h), TrashCategories.HAZARDOUS),
-        TrashBin(
-            Path(data.RECYCLABLE_IMG_PATH),
-            (pygame.K_COMMA, pygame.K_PERIOD), TrashCategories.RECYCLABLE)
-    )
+    bins: tuple[TrashBin, ...] = (
+        TrashBin((pygame.K_a, pygame.K_s), TrashCategories.GENERAL),
+        TrashBin((pygame.K_LEFT, pygame.K_RIGHT), TrashCategories.ORGANIC),
+        TrashBin((pygame.K_g, pygame.K_h), TrashCategories.HAZARDOUS),
+        TrashBin((pygame.K_COMMA, pygame.K_PERIOD), TrashCategories.RECYCLABLE))
     trashes: list[Trash] = []
     power_up = PowerUp()
 

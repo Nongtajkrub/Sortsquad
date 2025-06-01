@@ -14,7 +14,13 @@ GRASS_IMG_PATH = _ENV_PATH + "/grass.png"
 PORTAL_IMG_PATH = _ENV_PATH + "/portal.png"
 
 HAZARDOUS_IMG_PATH = _BINS_PATH + "/hazardous/static.png"
+
 RECYCLABLE_IMG_PATH = _BINS_PATH + "/recyclable/static.png"
+RECYCLABLE_IMG_PATH = _BINS_PATH + "/recyclable/static.png"
+RECYCLABLE_IDLE_PATH = _BINS_PATH + "/recyclable/idle.png"
+RECYCLABLE_PRERUN_PATH = _BINS_PATH + "/recyclable/prerunning.png"
+RECYCLABLE_RUN_PATH = _BINS_PATH + "/recyclable/running.png"
+
 ORGANIC_IMG_PATH = _BINS_PATH + "/organic/static.png"
 
 GENERAL_IMG_PATH = _BINS_PATH + "/general/static.png"
