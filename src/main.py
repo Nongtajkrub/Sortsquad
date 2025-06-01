@@ -481,9 +481,7 @@ class TrashBin():
         return self._sprites.get_rect()
 
     def _calc_velocity(self) -> int:
-        return (-1 if self._facing == Direction.LEFT else 1) * (
-            data.DEFAULT_PLAYER_VEL if self._power_up != PowerUpCategories.SPEED 
-            else data.BOOSTED_PLAYER_VEL)
+        return (-1 if self._facing == Direction.LEFT else 1) * data.DEFAULT_PLAYER_VEL
 
     def _movement_loop(self, keys) -> None:
         new_facing = self._facing
@@ -498,7 +496,9 @@ class TrashBin():
             new_facing = Direction.RIGHT
             new_velocity = self._calc_velocity()
 
-        self.get_rect().centerx += new_velocity 
+        self.get_rect().centerx += (
+            new_velocity if self._power_up != PowerUpCategories.SPEED 
+            else round(new_velocity * data.BOOSTED_PLAYER_VEL_MULTIPLIER)) 
 
         self._animation_loop(new_velocity)
         self._velocity = new_velocity
