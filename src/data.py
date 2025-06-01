@@ -16,7 +16,11 @@ PORTAL_IMG_PATH = _ENV_PATH + "/portal.png"
 HAZARDOUS_IMG_PATH = _BINS_PATH + "/hazardous/static.png"
 RECYCLABLE_IMG_PATH = _BINS_PATH + "/recyclable/static.png"
 ORGANIC_IMG_PATH = _BINS_PATH + "/organic/static.png"
+
 GENERAL_IMG_PATH = _BINS_PATH + "/general/static.png"
+GENERAL_IDLE_PATH = _BINS_PATH + "/general/idle.png"
+GENERAL_PRERUN_PATH = _BINS_PATH + "/general/prerunning.png"
+GENERAL_RUN_PATH = _BINS_PATH + "/general/running.png"
 
 APPLE_IMG_PATH = _TRASHES_PATH + "/organic/apple.png"
 BANANA_IMG_PATH = _TRASHES_PATH + "/organic/banana.png"
