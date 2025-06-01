@@ -10,12 +10,6 @@ Think fast. Sort smart. Rule the bins.
 
 ---
 
-## 📊 Progress
-
-![](https://geps.dev/progress/60)
-
----
-
 ## 📋 Todo
 
 - [ ] Animation Manager
