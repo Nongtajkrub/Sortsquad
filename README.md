@@ -12,14 +12,14 @@ Think fast. Sort smart. Rule the bins.
 
 ## 📋 Todo
 
-- [ ] Animation Manager
-- [ ] Portal Opening When Trashes Drop
+- [x] Animation Manager
+- [x] Portal Opening When Trashes Drop
 - [ ] All Trash Bin Sprite
 - [ ] Trash Bin Animations
 - [ ] Atleast 6 Trashes Sprite
 - [ ] Opening Scene
 
-## Optional
+### Optional
 
 - [ ] New Sky Background
 
