@@ -343,14 +343,22 @@ class TrashCategories(Enum):
         idle_path, prerun_path, run_path = None, None, None
 
         match self:
-            case TrashCategories.ORGANIC | TrashCategories.GENERAL:
+            case TrashCategories.ORGANIC:
+                idle_path = data.ORGANIC_IDLE_PATH
+                prerun_path = data.ORGANIC_PRERUN_PATH
+                run_path = data.ORGANIC_RUN_PATH
+            case TrashCategories.GENERAL:
                 idle_path = data.GENERAL_IDLE_PATH
                 prerun_path = data.GENERAL_PRERUN_PATH
                 run_path = data.GENERAL_RUN_PATH
-            case TrashCategories.RECYCLABLE | TrashCategories.HAZARDOUS:
+            case TrashCategories.RECYCLABLE:
                 idle_path = data.RECYCLABLE_IDLE_PATH
                 prerun_path = data.RECYCLABLE_PRERUN_PATH
                 run_path = data.RECYCLABLE_RUN_PATH
+            case TrashCategories.HAZARDOUS:
+                idle_path = data.HAZARDOUS_IDLE_PATH
+                prerun_path = data.HAZARDOUS_PRERUN_PATH
+                run_path = data.HAZARDOUS_RUN_PATH
 
         pos = (0, Game.SCREEN_HEIGHT - 110)
         return AnimationCycler((
