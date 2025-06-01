@@ -236,6 +236,9 @@ class AnimationCycler(SpriteControls):
             self._cycle[(self._current_cycle - 1) % len(self._cycle)].get_rect())
 
     def restart(self) -> None:
+        for sprite in self._cycle:
+            sprite.restart()
+
         self._current_cycle = 0
 
     def draw(self) -> None:
@@ -499,8 +502,10 @@ class TrashBin():
 
     def _animation_loop(self, new_velocity: int) -> None:
         if abs(self._velocity) < abs(new_velocity):
+            # If start running
             self._sprites.next()
         elif abs(self._velocity) > abs(new_velocity):
+            # If stop running
             self._sprites.restart()
 
     def _score_loop(self, trashes: list[Trash]):
