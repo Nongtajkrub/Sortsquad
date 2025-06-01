@@ -1,5 +1,7 @@
 from enum import Enum
 from pathlib import Path
+import dataclasses
+from dataclasses import dataclass
 import pygame, data, random, math
 
 pygame.init()
@@ -78,15 +80,24 @@ class SpriteAnimations():
         grid_size: int,
         grid_count: int,
         delay: int,
+        loop: bool = False,
+        cloneable: bool = False,
         pos: tuple[int, int] = (0, 0), scale: tuple[int, int] = (100, 100)
     ) -> None:
         self._delay = delay 
+        self._loop = loop
         self._last_update = Game.current_time
         self._grid_count = grid_count
         self._framse: list[pygame.surface.Surface] = self._generate_framse(
             path, grid_size, scale)
         self._current_frame = 0
         self._rect = pygame.rect.Rect(pos, (grid_size, grid_size)) 
+
+        self._cloneable = cloneable 
+        if cloneable:
+            self._path = path
+            self._grid_size = grid_size
+            self._scale = scale
 
     def _generate_framse(
         self,
@@ -96,17 +107,91 @@ class SpriteAnimations():
 
         return [
             pygame.transform.scale(
-                sheet.subsurface(pygame.Rect(i * grid_size, 0, grid_size, grid_size)),
-                scale)
+                sheet.subsurface(pygame.Rect(i * grid_size, 0, grid_size, grid_size)), scale)
             for i in range(self._grid_count)
         ]
 
     def draw(self) -> None:
         Game.screen.blit(self._framse[self._current_frame], self._rect)
 
+        # increment the current_frame base on whether animation loop or not.
         if Game.current_time - self._last_update >= self._delay:
             self._last_update = Game.current_time
-            self._current_frame = (self._current_frame + 1) % self._grid_count
+            self._current_frame = (
+                (self._current_frame + 1) % self._grid_count if self._loop
+                else min(self._current_frame + 1, self._grid_count))
+
+    def restart(self) -> None:
+        self._last_update = Game.current_time
+        self._current_frame = 0
+
+    def is_finish(self) -> bool:
+        return (not self._loop and self._current_frame == self._grid_count)
+
+    def is_loop(self) -> bool:
+        return self._loop
+
+    def is_cloneable(self) -> bool:
+        return self._cloneable
+
+    def set_rect(self, pos: tuple[int ,int]) -> None:
+        self._rect.center = pos
+
+    def get_rect(self) -> pygame.rect.Rect:
+        return self._rect
+
+    def clone(self) -> "SpriteAnimations":
+        if not self._cloneable:
+            raise Exception("SpriteAnimations uncloneable.")
+
+        return SpriteAnimations(
+            path=self._path,
+            grid_size=self._grid_size,
+            grid_count=self._grid_count,
+            delay=self._delay,
+            loop=self._loop,
+            pos=self._rect.topleft,
+            scale=self._scale)
+
+@dataclass
+class AnimationManagerCache:
+    sprite: SpriteAnimations
+    in_use: bool = dataclasses.field(default=False)
+
+class AnimationManager():
+    _cache: dict[str, list[AnimationManagerCache]] = {}
+
+    # !!! Expensive !!!
+    @staticmethod
+    def cache(category: str, sprite: SpriteAnimations, n: int) -> None:
+        if sprite.is_loop():
+            raise Exception("AnimationManager does not handle loop animation")
+        if not sprite.is_cloneable():
+            raise Exception("AnimationManager does not handle uncloneable animation")
+
+        AnimationManager._cache.setdefault(category, [])
+        AnimationManager._cache[category].extend(
+            [AnimationManagerCache(sprite.clone()) for _ in range(n)])
+
+    @staticmethod
+    def spawn(category: str, pos: tuple[int, int]) -> None:
+        for sprite in AnimationManager._cache[category]:
+            if not sprite.in_use:
+                sprite.sprite.set_rect(pos)
+                sprite.in_use = True
+                return
+
+        raise Exception("AnimationManager out of cache.")
+
+    @staticmethod
+    def update(category: str) -> None:
+        for sprite in AnimationManager._cache[category]:
+            if sprite.in_use:
+                if sprite.sprite.is_finish():
+                    sprite.in_use = False
+                    sprite.sprite.restart()
+                else:
+                    sprite.sprite.draw()
 
 class OrganicTrashes(Enum):
     APPLE = 0
@@ -226,16 +311,26 @@ class Trash(Sprite):
     SPAWN_EVENT = pygame.USEREVENT + 3
     pygame.time.set_timer(SPAWN_EVENT, data.TRASH_SPAWN_FREQ)
 
+    AnimationManager.cache(
+        "portal",
+        SpriteAnimations(Path(data.PORTAL_IMG_PATH), 32, 6, 100, cloneable=True),
+        data.PORTAL_ANIMATION_CACHE_N)
+
     def __init__(self) -> None:
         self._category = TrashCategories.random()
+        posx = random.randint(0, Game.SCREEN_WIDTH)
         super().__init__(
-            self._category.to_trash().random().to_path(),
-            (random.randint(0, Game.SCREEN_WIDTH), -50), (50, 50))
+            self._category.to_trash().random().to_path(), (posx, -50), (50, 50))
         self._alive = True
+        AnimationManager.spawn("portal", (posx, 0))
 
-    def movement(self) -> None:
+    def _movement(self) -> None:
         self._rect.centerx += round(math.sin(Game.current_time * 0.005) * 1)
         self._rect.centery += data.DEFAULT_TRASH_VEL
+
+    def loop(self) -> None:
+        self._movement()
+        self.draw()
 
     def get_category(self) -> TrashCategories:
         return self._category
@@ -392,11 +487,12 @@ class GameLoop:
     def _trashes_loop() -> None:
         # Loop backward to prevent skipping while deleting trashes.
         for i in range(len(GameLoop.trashes) - 1, -1, -1):
-            GameLoop.trashes[i].movement()
-            GameLoop.trashes[i].draw()
+            GameLoop.trashes[i].loop()
 
             if not GameLoop.trashes[i].is_alive():
                 del GameLoop.trashes[i]
+
+        AnimationManager.update("portal")
                 
     @staticmethod
     def _power_up_loops() -> None:

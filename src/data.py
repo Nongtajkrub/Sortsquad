@@ -1,4 +1,4 @@
-_ASSETS_PATH = "/home/nongtajkrub/Coding/Python/trash-game/assets"
+_ASSETS_PATH = "/home/nongtajkrub/Coding/Python/trash-game/assets/"
 
 _TESTS_PATH = _ASSETS_PATH + "/tests"
 _ENV_PATH = _ASSETS_PATH + "/env"
@@ -11,6 +11,7 @@ ANIMATION_TEST_IMG_PATH = _TESTS_PATH + "animation_test.png"
 
 SKY_IMG_PATH = _ENV_PATH + "/sky.jpg"
 GRASS_IMG_PATH = _ENV_PATH + "/grass.png"
+PORTAL_IMG_PATH = _ENV_PATH + "/portal.png"
 
 HAZARDOUS_IMG_PATH = _BINS_PATH + "/hazardous/static.png"
 RECYCLABLE_IMG_PATH = _BINS_PATH + "/recyclable/static.png"
@@ -39,6 +40,7 @@ POWER_UP_SPAWN_FREQ = 10000
 
 DEFAULT_TRASH_VEL = 4
 TRASH_SPAWN_FREQ = 270
+PORTAL_ANIMATION_CACHE_N = round(TRASH_SPAWN_FREQ / 12)
 
 GAME_TIME = 60000
 MAX_FPS = 60
