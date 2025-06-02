@@ -478,7 +478,24 @@ class TrashBin():
     AnimationHeap.malloc(
         "scored_animation1",
         SpriteAnimations(Path(data.SCORE_ANIMATION1_PATH), 32, 7, 50, cloneable=True),
-        data.SCORE_ANIMATION_HEAP_N)
+        data.SCORE_ANIMATION1_HEAP_N)
+
+    AnimationHeap.malloc(
+        "scored_animation2",
+        SpriteAnimations(Path(data.SCORE_ANIMATION2_PATH), 32, 7, 50, cloneable=True),
+        data.SCORE_ANIMATION2_HEAP_N)
+
+    AnimationHeap.malloc(
+        "wrong_animation1",
+        SpriteAnimations(Path(data.WRONG1_ANIMATION1_PATH), 32, 7, 50, cloneable=True),
+        data.WRONG1_ANIMATION1_HEAP_N)
+
+    """
+    AnimationHeap.malloc(
+        "wrong_animation2",
+        SpriteAnimations(Path(data.WRONG2_ANIMATION1_PATH), 32, 7, 50, cloneable=True),
+        data.WRONG2_ANIMATION1_HEAP_N)
+    """
 
     def __init__(self, control: tuple[int, int], category: TrashCategories) -> None:
         self._sprites = category.to_bin_animation_cycler()
@@ -554,8 +571,16 @@ class TrashBin():
                 self._score_animation_loop(scored)
 
     def _score_animation_loop(self, scored: bool) -> None:
-        if scored:
+        if scored and self._power_up != PowerUpCategories.DOUBLE_POINT:
             AnimationHeap.request("scored_animation1", self.get_rect().center).raii()
+        elif scored and self._power_up == PowerUpCategories.DOUBLE_POINT:
+            AnimationHeap.request("scored_animation2", self.get_rect().center).raii()
+        elif not scored and self._power_up != PowerUpCategories.SHIELD:
+            AnimationHeap.request("wrong_animation1", self.get_rect().center).raii()
+        """
+        else:
+            AnimationHeap.request("wrong_animation2", self.get_rect().center).raii()
+        """
 
     def _power_up_loop(self, power_up: PowerUp) -> None:
         if (
@@ -660,6 +685,11 @@ class GameLoop:
     def _animation_loop() -> None:
         AnimationHeap.update_raii("portal")
         AnimationHeap.update_raii("scored_animation1")
+        AnimationHeap.update_raii("scored_animation2")
+        AnimationHeap.update_raii("wrong_animation1")
+        """
+        AnimationHeap.update_raii("wrong_animation2")
+        """
 
     @staticmethod
     def _trash_bins_loop() -> None:
