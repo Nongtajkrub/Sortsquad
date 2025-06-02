@@ -17,6 +17,7 @@ Think fast. Sort smart. Rule the bins.
 - [x] Moving Cloudes
 - [x] Poster Atleast Half Done
 - [x] Scoring Animations
+- [ ] Main Menu Working
 - [ ] Atleast 10 SO-OR-WOR-NOR A-1
 
 ### Late
