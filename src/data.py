@@ -1,6 +1,7 @@
 _ASSETS_PATH = "/home/nongtajkrub/Coding/Python/trash-game/assets/"
 
 _TESTS_PATH = _ASSETS_PATH + "/tests"
+_MENU_PATH = _ASSETS_PATH + "/menu"
 _ENV_PATH = _ASSETS_PATH + "/env"
 _BINS_PATH = _ASSETS_PATH + "/bins"
 _TRASHES_PATH = _ASSETS_PATH + "/trahse"
@@ -8,6 +9,11 @@ _POWERUP_PATH = _ASSETS_PATH + "/powerup"
 _FONT_PATH = _ASSETS_PATH + "/fonts"
 
 ANIMATION_TEST_IMG_PATH = _TESTS_PATH + "animation_test.png"
+
+MENU_BUTNORMAL_IMG_PATH = _MENU_PATH + "/buttonnormal.png" 
+MENU_BUTPRESSED_IMG_PATH = _MENU_PATH + "/buttonpressed.png" 
+MENU_BUTHOVER_IMG_PATH = _MENU_PATH + "/buttonhover.png" 
+MENU_NAME_CHANGE_FREQ = 2000
 
 SKY_IMG_PATH = _ENV_PATH + "/sky.jpg"
 GRASS_IMG_PATH = _ENV_PATH + "/grass.png"

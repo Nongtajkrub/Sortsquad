@@ -14,8 +14,18 @@ class Font:
         self.lg = pygame.font.Font(path, lg)
         self.xlg = pygame.font.Font(path, xlg)
 
+class MyEvent:
+    _offset = 0
+
+    @classmethod
+    def new_timer(cls, time) -> int:
+        cls._offset += 1
+        event = pygame.USEREVENT + cls._offset
+        pygame.time.set_timer(event, time)
+        return event
+
 class GameState(Enum):
-    MAIN_MENU = 0
+    MENU = 0
     STORY = 1
     RUNNING = 2
     ENDED = 3
@@ -25,7 +35,7 @@ class Game:
     SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
     clock = pygame.time.Clock()
     font = Font(Path(data.FONT_PATH)) 
-    state = GameState.RUNNING
+    state = GameState.MENU
 
     current_time = 0
     current_time_sec = 0
@@ -415,7 +425,7 @@ class PowerUpCategories(Enum):
                 return "Shield"
 
 class PowerUp(Sprite):
-    SPAWN_EVENT = SPAWN_EVENT = pygame.USEREVENT + 2
+    SPAWN_EVENT = MyEvent.new_timer(data.POWER_UP_SPAWN_FREQ) 
     pygame.time.set_timer(SPAWN_EVENT, data.POWER_UP_SPAWN_FREQ)
     
     def __init__(self) -> None:
@@ -440,7 +450,7 @@ class PowerUp(Sprite):
         return self._category
 
 class Trash(Sprite):
-    SPAWN_EVENT = pygame.USEREVENT + 3
+    SPAWN_EVENT = MyEvent.new_timer(data.TRASH_SPAWN_FREQ) 
     pygame.time.set_timer(SPAWN_EVENT, data.TRASH_SPAWN_FREQ)
 
     AnimationHeap.malloc(
@@ -635,6 +645,34 @@ class TrashBin():
     def get_score(self) -> int:
         return self._score
 
+class MenuLoop:
+    _button_normal = Sprite(Path(data.MENU_BUTNORMAL_IMG_PATH), (600, 600), (200, 100)) 
+    _button_pressed = Sprite(Path(data.MENU_BUTPRESSED_IMG_PATH), (600, 600), (200, 100)) 
+    _button_hover = Sprite(Path(data.MENU_BUTHOVER_IMG_PATH), (600, 600), (200, 100))
+    
+    _credit_names = ["Taj Borthwick", "Pakthan Fullname", "Issac Fullname"]
+    _current_name = 0
+    _NAME_CHANGE_EVENT = MyEvent.new_timer(data.MENU_NAME_CHANGE_FREQ)
+
+    @classmethod
+    def _event_loop(cls):
+        for event in pygame.event.get():
+            match event.type:
+                case pygame.QUIT:
+                    Game.running = False
+                case cls._NAME_CHANGE_EVENT:
+                    cls._current_name = (cls._current_name + 1) % len(cls._credit_names)
+
+    @classmethod
+    def loop(cls):
+        cls._event_loop()
+        Game.clear_screen()
+        
+        Game.draw_text(Game.font.lg, cls._credit_names[cls._current_name], (600, 600), (100, 100, 100))
+
+        pygame.display.flip()
+        Game.clock_tick()
+
 class Environment:
     _background_sky = pygame.transform.scale(
         pygame.image.load(data.SKY_IMG_PATH), Game.screen.get_size()).convert()
@@ -642,7 +680,7 @@ class Environment:
         pygame.image.load(data.GRASS_IMG_PATH), (Game.screen.get_width(), 100)).convert_alpha()
 
     _cloudes: list[Sprite] = []
-    CLOUDE_SPAWN_EVENT = pygame.USEREVENT + 4
+    CLOUDE_SPAWN_EVENT = MyEvent.new_timer(data.CLOUDE_SPAWN_FREQ) 
     pygame.time.set_timer(CLOUDE_SPAWN_EVENT, data.CLOUDE_SPAWN_FREQ)
    
     @classmethod
@@ -738,7 +776,7 @@ class GameLoop:
             str(Game.current_time_sec), (round(Game.SCREEN_WIDTH / 2), 100))
 
     @classmethod
-    def main_loop(cls) -> None:
+    def loop(cls) -> None:
         cls._event_loop()
 
         Game.clear_screen()
@@ -753,12 +791,20 @@ class GameLoop:
 
         pygame.display.flip()
         Game.clock_tick()
-        
+
+class EndedLoop():
+    @staticmethod
+    def _event_loop() -> None:
+        for event in pygame.event.get():
+            match event.type:
+                case pygame.QUIT:
+                    Game.running = False
+
     @classmethod
-    def ended_loop(cls):
+    def loop(cls):
         cls._event_loop()
 
-        total_score = sum([bin.get_score() for bin in cls.bins])
+        total_score = sum([bin.get_score() for bin in GameLoop.bins])
     
         Game.screen.fill((0, 0, 0))
         Game.draw_text(
@@ -772,9 +818,11 @@ class GameLoop:
 
 while Game.running:
     match Game.state:
+        case GameState.MENU:
+            MenuLoop.loop()
         case GameState.RUNNING:
-            GameLoop.main_loop()
+            GameLoop.loop()
         case GameState.ENDED:
-            GameLoop.ended_loop()
+            EndedLoop.loop()
 
 pygame.quit()
