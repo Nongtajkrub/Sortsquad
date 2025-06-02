@@ -12,19 +12,14 @@ Think fast. Sort smart. Rule the bins.
 
 ## 📋 Todo
 
-- [x] All Trash Sprites
-- [x] Moving Cloudes
-- [ ] Poster Atleast Half Done
-- [x] Scoring Animations
-- [ ] Main Menu Working
-- [ ] Atleast 10 SO-OR-WOR-NOR A-1
+Reveal soon!
 
 ### Late
 
 - [ ] New Sky Background
-- [x] Opening Scene
-- [x] Atleast 6 Trash Sprites
-
+- [ ] Main Menu Working
+- [ ] Poster Atleast Half Done
+      
 ### Finished
 
 - [x] Animation Manager
@@ -32,5 +27,11 @@ Think fast. Sort smart. Rule the bins.
 - [x] Animation Cycler
 - [x] All Trash Bin Sprite
 - [x] Trash Bin Animations
+- [x] Atleast 10 SO-OR-WOR-NOR A-1
+- [x] Scoring Animations
+- [x] Moving Cloudes
+- [x] All Trash Sprites
+- [x] Opening Scene
+- [x] Atleast 6 Trash Sprites
 
 ---
