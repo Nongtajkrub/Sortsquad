@@ -15,7 +15,7 @@ Think fast. Sort smart. Rule the bins.
 - [ ] All Trash Sprites
 - [ ] New Floor
 - [ ] Moving Cloudes
-- [ ] Poster Atleast Half Done
+- [x] Poster Atleast Half Done
 - [ ] Better Feedback On Player Actions
 - [ ] Atleast 10 SO-OR-WOR-NOR A-1
 
@@ -23,7 +23,7 @@ Think fast. Sort smart. Rule the bins.
 
 - [ ] New Sky Background
 - [ ] Opening Scene
-- [ ] Atleast 6 Trash Sprites
+- [x] Atleast 6 Trash Sprites
 
 ### Finished
 
