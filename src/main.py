@@ -26,16 +26,9 @@ class Game:
     ended = False
     PLAYER_COUNT = 4
 
-    background_sky = pygame.transform.scale(
-        pygame.image.load(data.SKY_IMG_PATH), screen.get_size()).convert()
-    background_grass = pygame.transform.scale(
-        pygame.image.load(data.GRASS_IMG_PATH), (screen.get_width(), 100)).convert_alpha()
-
     @staticmethod
-    def draw_background():
+    def clear_screen():
         Game.screen.fill((0, 0, 0))
-        Game.screen.blit(Game.background_sky, (0, 0))
-        Game.screen.blit(Game.background_grass, (0, Game.SCREEN_HEIGHT - 100))
 
     @staticmethod
     def clock_tick():
@@ -581,6 +574,31 @@ class TrashBin():
     def get_score(self) -> int:
         return self._score
 
+class Environment:
+    background_sky = pygame.transform.scale(
+        pygame.image.load(data.SKY_IMG_PATH), Game.screen.get_size()).convert()
+    background_grass = pygame.transform.scale(
+        pygame.image.load(data.GRASS_IMG_PATH), (Game.screen.get_width(), 100)).convert_alpha()
+    cloudes: tuple[Sprite, ...] = (
+        Sprite(Path(data.CLOUDE1_IMG_PATH), (100, 200)),
+        Sprite(Path(data.CLOUDE1_IMG_PATH), (500, 250)))
+   
+    @staticmethod
+    def _draw_background():
+        Game.screen.blit(Environment.background_sky, (0, 0))
+        Game.screen.blit(Environment.background_grass, (0, Game.SCREEN_HEIGHT - 100))
+
+    @staticmethod
+    def _cloudes_loop():
+        for cloude in Environment.cloudes:
+            cloude._rect.centerx += data.DEFAULT_CLOUD_VEL
+            cloude.draw()
+
+    @staticmethod
+    def draw():
+        Environment._draw_background()
+        Environment._cloudes_loop()
+
 class GameLoop:
     bins: tuple[TrashBin, ...] = (
         TrashBin((pygame.K_a, pygame.K_s), TrashCategories.GENERAL),
@@ -635,8 +653,9 @@ class GameLoop:
     def main_loop() -> None:
         GameLoop._event_loop()
 
-        Game.draw_background()
+        Game.clear_screen()
 
+        Environment.draw()
         GameLoop._timer_graphic_loop()
         GameLoop._trash_bins_loop()
         GameLoop._trashes_loop()

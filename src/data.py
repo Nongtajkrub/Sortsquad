@@ -13,6 +13,9 @@ SKY_IMG_PATH = _ENV_PATH + "/sky.jpg"
 GRASS_IMG_PATH = _ENV_PATH + "/grass.png"
 PORTAL_IMG_PATH = _ENV_PATH + "/portal.png"
 
+CLOUDE1_IMG_PATH = _ENV_PATH + "/cloudes/cloude1.png"
+DEFAULT_CLOUD_VEL = 1
+
 HAZARDOUS_IMG_PATH = _BINS_PATH + "/hazardous/static.png"
 HAZARDOUS_IDLE_PATH = _BINS_PATH + "/hazardous/idle.png"
 HAZARDOUS_PRERUN_PATH = _BINS_PATH + "/hazardous/prerunning.png"
