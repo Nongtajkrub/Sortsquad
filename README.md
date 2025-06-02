@@ -22,7 +22,7 @@ Think fast. Sort smart. Rule the bins.
 ### Late
 
 - [ ] New Sky Background
-- [ ] Opening Scene
+- [x] Opening Scene
 - [x] Atleast 6 Trash Sprites
 
 ### Finished
