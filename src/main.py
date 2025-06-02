@@ -575,29 +575,36 @@ class TrashBin():
         return self._score
 
 class Environment:
-    background_sky = pygame.transform.scale(
+    _background_sky = pygame.transform.scale(
         pygame.image.load(data.SKY_IMG_PATH), Game.screen.get_size()).convert()
-    background_grass = pygame.transform.scale(
+    _background_grass = pygame.transform.scale(
         pygame.image.load(data.GRASS_IMG_PATH), (Game.screen.get_width(), 100)).convert_alpha()
-    cloudes: tuple[Sprite, ...] = (
-        Sprite(Path(data.CLOUDE1_IMG_PATH), (100, 200)),
-        Sprite(Path(data.CLOUDE1_IMG_PATH), (500, 250)))
+
+    _cloudes: list[Sprite] = []
+    CLOUDE_SPAWN_EVENT = pygame.USEREVENT + 4
+    pygame.time.set_timer(CLOUDE_SPAWN_EVENT, data.CLOUDE_SPAWN_FREQ)
    
-    @staticmethod
-    def _draw_background():
-        Game.screen.blit(Environment.background_sky, (0, 0))
-        Game.screen.blit(Environment.background_grass, (0, Game.SCREEN_HEIGHT - 100))
+    @classmethod
+    def draw_background(cls):
+        Game.screen.blit(cls._background_sky, (0, 0))
+        Game.screen.blit(cls._background_grass, (0, Game.SCREEN_HEIGHT - 100))
 
-    @staticmethod
-    def _cloudes_loop():
-        for cloude in Environment.cloudes:
-            cloude._rect.centerx += data.DEFAULT_CLOUD_VEL
-            cloude.draw()
+    @classmethod
+    def spawn_cloude(cls):
+        cls._cloudes.append(
+            Sprite(
+                Path(data.CLOUDE1_IMG_PATH),
+                (-100, random.choice(data.CLOUDE_SPAWN_RANGE))))
 
-    @staticmethod
-    def draw():
-        Environment._draw_background()
-        Environment._cloudes_loop()
+    @classmethod
+    def draw_cloudes(cls):
+        # Loop backward to prevent skipping while deleting cloudes.
+        for i in range(len(cls._cloudes) - 1, -1, -1):
+            cls._cloudes[i].get_rect().centerx += 2
+            cls._cloudes[i].draw()
+
+            if cls._cloudes[i].get_rect().centerx > Game.SCREEN_WIDTH:
+                del cls._cloudes[i]
 
 class GameLoop:
     bins: tuple[TrashBin, ...] = (
@@ -616,6 +623,8 @@ class GameLoop:
                     Game.running = False
                 case Trash.SPAWN_EVENT:
                     GameLoop.trashes.append(Trash())
+                case Environment.CLOUDE_SPAWN_EVENT:
+                    Environment.spawn_cloude()
                 case PowerUp.SPAWN_EVENT:
                     GameLoop.power_up.spawn()
 
@@ -655,11 +664,12 @@ class GameLoop:
 
         Game.clear_screen()
 
-        Environment.draw()
+        Environment.draw_background()
         GameLoop._timer_graphic_loop()
         GameLoop._trash_bins_loop()
         GameLoop._trashes_loop()
         GameLoop._power_up_loops()
+        Environment.draw_cloudes()
 
         pygame.display.flip()
         Game.clock_tick()

@@ -13,8 +13,10 @@ SKY_IMG_PATH = _ENV_PATH + "/sky.jpg"
 GRASS_IMG_PATH = _ENV_PATH + "/grass.png"
 PORTAL_IMG_PATH = _ENV_PATH + "/portal.png"
 
+CLOUDE_BASE_VEL = 0.6
+CLOUDE_SPAWN_RANGE = (100, 150, 200, 250, 300, 350, 400, 450, 500)
+CLOUDE_SPAWN_FREQ = 3000
 CLOUDE1_IMG_PATH = _ENV_PATH + "/cloudes/cloude1.png"
-DEFAULT_CLOUD_VEL = 1
 
 HAZARDOUS_IMG_PATH = _BINS_PATH + "/hazardous/static.png"
 HAZARDOUS_IDLE_PATH = _BINS_PATH + "/hazardous/idle.png"
