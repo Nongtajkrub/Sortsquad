@@ -446,23 +446,13 @@ class Trash(Sprite):
         self.rotate(random.randint(*data.TRASH_ROTATED_RANGE))
         self._alive = True
 
-        self._portal: None | AnimationHeapData = AnimationHeap.request("portal")
-        self._portal.sprite._rect.center = (posx, 10)
+        AnimationHeap.request("portal", (posx, 10)).raii()
 
     def _movement_loop(self) -> None:
         self.get_rect().centerx += round(math.sin(Game.current_time * 0.005) * 1)
         self.get_rect().centery += data.DEFAULT_TRASH_VEL
 
-    def _animation_loop(self) -> None:
-        if self._portal != None:
-            if self._portal.sprite.is_finish():
-                self._portal.free()
-                self._portal = None
-            else:
-                self._portal.sprite.draw()
-
     def loop(self) -> None:
-        self._animation_loop()
         self._movement_loop()
         self.draw()
 
@@ -667,13 +657,16 @@ class GameLoop:
         Game.ended = Game.current_time >= data.GAME_TIME
 
     @staticmethod
+    def _animation_loop() -> None:
+        AnimationHeap.update_raii("portal")
+        AnimationHeap.update_raii("scored_animation1")
+
+    @staticmethod
     def _trash_bins_loop() -> None:
         keys = pygame.key.get_pressed()
 
         for bin in GameLoop.bins[:Game.PLAYER_COUNT]:
             bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
-
-        AnimationHeap.update_raii("scored_animation1")
 
     @staticmethod
     def _trashes_loop() -> None:
@@ -707,6 +700,7 @@ class GameLoop:
         GameLoop._trash_bins_loop()
         GameLoop._trashes_loop()
         GameLoop._power_up_loops()
+        GameLoop._animation_loop()
         Environment.draw_cloudes()
 
         pygame.display.flip()
