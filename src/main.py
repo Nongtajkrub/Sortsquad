@@ -187,35 +187,58 @@ class SpriteAnimations(SpriteControls):
 class AnimationHeapData:
     sprite: SpriteAnimations
     _free: bool = dataclasses.field(default=True)
+    # Resource Acquisition Is Initialization
+    _raii: bool = dataclasses.field(default=False) 
 
     def is_free(self) -> bool:
         return self._free
 
+    def is_raii(self) -> bool:
+        return self._raii
+
+    def raii(self) -> None:
+        if self.sprite.is_loop():
+            raise Exception("AnimationHeap raii only work with none looping animation.")
+
+        self._raii = True
+
     def free(self) -> None:
         self._free = True 
+        self._raii = False
         self.sprite.restart()
 
 class AnimationHeap:
     _heap: dict[str, list[AnimationHeapData]] = {}
 
     # !!! Expensive !!!
-    @staticmethod
-    def malloc(category: str, sprite: SpriteAnimations, n: int) -> None:
+    @classmethod
+    def malloc(cls, category: str, sprite: SpriteAnimations, n: int) -> None:
         if not sprite.is_cloneable():
             raise Exception("AnimationManager does not handle uncloneable animation")
 
-        AnimationHeap._heap.setdefault(category, [])
-        AnimationHeap._heap[category].extend(
+        cls._heap.setdefault(category, [])
+        cls._heap[category].extend(
             [AnimationHeapData(sprite.clone()) for _ in range(n)])
 
-    @staticmethod
-    def request(category: str) -> AnimationHeapData:
-        for sprite in AnimationHeap._heap[category]:
+    @classmethod
+    def request(cls, category: str, pos: tuple[int, int] = (0, 0)) -> AnimationHeapData:
+        for sprite in cls._heap[category]:
             if sprite.is_free():
                 sprite._free = False 
+                sprite.sprite.get_rect().center = pos
                 return sprite
 
         raise Exception("AnimationManager out of memory.")
+
+    @classmethod
+    def update_raii(cls, category: str) -> None:
+        for sprite in cls._heap[category]:
+            if not sprite.is_free() and sprite.is_raii():
+                if sprite.sprite.is_finish():
+                    sprite.free()
+                else:
+                    sprite.sprite.draw()
+
 
 class AnimationCycler(SpriteControls):
     def __init__(self, cycle: tuple[SpriteAnimations, ...]) -> None:
@@ -272,7 +295,7 @@ class OrganicTrashes(Enum):
 
     @classmethod
     def random(cls):
-        return random.choice(list(cls))
+        return random.choice(list(cls)) # type: ignore[return-value]
 
     def to_path(self) -> Path:
         match self:
@@ -413,7 +436,7 @@ class Trash(Sprite):
     AnimationHeap.malloc(
         "portal",
         SpriteAnimations(Path(data.PORTAL_IMG_PATH), 32, 6, 100, cloneable=True),
-        data.PORTAL_ANIMATION_CACHE_N)
+        data.PORTAL_ANIMATION_HEAP_N)
 
     def __init__(self) -> None:
         self._category = TrashCategories.random()
@@ -462,6 +485,11 @@ class Direction(Enum):
     BOTTOM = 3
 
 class TrashBin():
+    AnimationHeap.malloc(
+        "scored_animation1",
+        SpriteAnimations(Path(data.SCORE_ANIMATION1_PATH), 32, 7, 50, cloneable=True),
+        data.SCORE_ANIMATION_HEAP_N)
+
     def __init__(self, control: tuple[int, int], category: TrashCategories) -> None:
         self._sprites = category.to_bin_animation_cycler()
 
@@ -498,7 +526,7 @@ class TrashBin():
             new_velocity if self._power_up != PowerUpCategories.SPEED 
             else round(new_velocity * data.BOOSTED_PLAYER_VEL_MULTIPLIER)) 
 
-        self._animation_loop(new_velocity)
+        self._movement_animation_loop(new_velocity)
         self._velocity = new_velocity
 
         if self._facing != new_facing:
@@ -506,7 +534,7 @@ class TrashBin():
 
         self._facing = new_facing
 
-    def _animation_loop(self, new_velocity: int) -> None:
+    def _movement_animation_loop(self, new_velocity: int) -> None:
         if abs(self._velocity) < abs(new_velocity):
             # If start running
             self._sprites.next()
@@ -521,7 +549,8 @@ class TrashBin():
                 increment = 1 if self._power_up != PowerUpCategories.DOUBLE_POINT else 2
                 # Do not decrement point if SHIELD power up is enable.
                 decrement = -1 if self._power_up != PowerUpCategories.SHIELD else 0
-                self._score += increment if trash.get_category() == self._bin_category else decrement
+                scored = trash.get_category() == self._bin_category
+                self._score += increment if scored else decrement
 
                 self._score = max(0, self._score)
 
@@ -531,6 +560,12 @@ class TrashBin():
                         trash.despawn()
                 else:
                     trash.despawn()
+
+                self._score_animation_loop(scored)
+
+    def _score_animation_loop(self, scored: bool) -> None:
+        if scored:
+            AnimationHeap.request("scored_animation1", self.get_rect().center).raii()
 
     def _power_up_loop(self, power_up: PowerUp) -> None:
         if (
@@ -637,6 +672,8 @@ class GameLoop:
 
         for bin in GameLoop.bins[:Game.PLAYER_COUNT]:
             bin.loop(keys, GameLoop.trashes, GameLoop.power_up)
+
+        AnimationHeap.update_raii("scored_animation1")
 
     @staticmethod
     def _trashes_loop() -> None:
