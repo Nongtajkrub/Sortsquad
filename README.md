@@ -13,7 +13,6 @@ Think fast. Sort smart. Rule the bins.
 ## 📋 Todo
 
 - [ ] All Trash Sprites
-- [ ] New Floor
 - [x] Moving Cloudes
 - [x] Poster Atleast Half Done
 - [x] Scoring Animations
