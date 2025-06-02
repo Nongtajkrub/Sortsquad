@@ -78,13 +78,13 @@ class Sprite(SpriteControls):
         self._rect = self._image.get_rect(center=pos)
 
     def rotate(self, value) -> None:
-        self._image = pygame.transform.rotate(self._image, value)
+        self._image = pygame.transform.rotate(self._image, value).convert_alpha()
 
     def flipx(self) -> None:
-        self._image = pygame.transform.flip(self._image, True, False)
+        self._image = pygame.transform.flip(self._image, True, False).convert_alpha()
 
     def flipy(self) -> None:
-        self._image = pygame.transform.flip(self._image, False, True)
+        self._image = pygame.transform.flip(self._image, False, True).convert_alpha()
 
     def draw(self) -> None:
         Game.screen.blit(self._image, self._rect.center)
@@ -153,10 +153,14 @@ class SpriteAnimations(SpriteControls):
             frame = pygame.transform.rotate(frame, value)
 
     def flipx(self) -> None:
-        self._framse = [pygame.transform.flip(frame, True, False) for frame in self._framse]
+        self._framse = [
+            pygame.transform.flip(frame, True, False).convert_alpha() 
+            for frame in self._framse]
 
     def flipy(self) -> None:
-        self._framse = [pygame.transform.flip(frame, False, True) for frame in self._framse]
+        self._framse = [
+            pygame.transform.flip(frame, False, True).convert_alpha() 
+            for frame in self._framse]
 
     def get_rect(self) -> pygame.rect.Rect:
         return self._rect
