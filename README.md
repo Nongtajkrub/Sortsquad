@@ -12,16 +12,25 @@ Think fast. Sort smart. Rule the bins.
 
 ## 📋 Todo
 
+- [ ] All Trash Sprites
+- [ ] New Floor
+- [ ] Moving Cloudes
+- [ ] Poster Atleast Half Done
+- [ ] Better Feedback On Player Actions
+- [ ] Atleast 10 SO-OR-WOR-NOR A-1
+
+### Late
+
+- [ ] New Sky Background
+- [ ] Opening Scene
+- [ ] Atleast 6 Trash Sprites
+
+### Finish
+
 - [x] Animation Manager
 - [x] Portal Opening When Trashes Drop
 - [x] Animation Cycler
 - [x] All Trash Bin Sprite
 - [x] Trash Bin Animations
-- [ ] Atleast 6 Trashes Sprite
-- [ ] Opening Scene
-
-### Optional
-
-- [ ] New Sky Background
 
 ---
