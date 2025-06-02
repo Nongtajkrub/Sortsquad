@@ -420,6 +420,7 @@ class Trash(Sprite):
         posx = random.randint(0, Game.SCREEN_WIDTH)
         super().__init__(
             self._category.to_trash().random().to_path(), (posx, -50), (50, 50))
+        self.rotate(random.randint(*data.TRASH_ROTATED_RANGE))
         self._alive = True
 
         self._portal: None | AnimationHeapData = AnimationHeap.request("portal")
