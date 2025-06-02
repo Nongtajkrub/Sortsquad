@@ -39,8 +39,8 @@ GENERAL_PRERUN_PATH = _BINS_PATH + "/general/prerunning.png"
 GENERAL_RUN_PATH = _BINS_PATH + "/general/running.png"
 
 APPLE_IMG_PATH = _TRASHES_PATH + "/organic/apple.png"
-BANANA_IMG_PATH = _TRASHES_PATH + "/organic/banana.png"
-VEGETABLE_IMG_PATH = _TRASHES_PATH + "/organic/vegetable.png"
+FISH_IMG_PATH = _TRASHES_PATH + "/organic/fishbone.png"
+VEGETABLE_IMG_PATH = _TRASHES_PATH + "/organic/vegatable.png"
 
 BATTERY_IMG_PATH = _TRASHES_PATH + "/hazardous/battery.png"
 ELECTRONIC_IMG_PATH = _TRASHES_PATH + "/hazardous/electronic.png"

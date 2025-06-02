@@ -277,7 +277,7 @@ class OrganicTrashes(Enum):
     def to_path(self) -> Path:
         match self:
             case OrganicTrashes.APPLE: return Path(data.APPLE_IMG_PATH)
-            case OrganicTrashes.BANANA: return Path(data.BANANA_IMG_PATH)
+            case OrganicTrashes.BANANA: return Path(data.FISH_IMG_PATH)
             case OrganicTrashes.VEGETABLE: return Path(data.VEGETABLE_IMG_PATH)
 
 class HazardousTrashes(Enum):
