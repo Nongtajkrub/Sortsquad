@@ -326,7 +326,7 @@ class HazardousTrashes(Enum):
 
 class RecyclableTrashes(Enum):
     BOTTLE = 0
-    COCACOLA = 1
+    COKE = 1
     PAPER = 2
 
     @classmethod
@@ -334,7 +334,10 @@ class RecyclableTrashes(Enum):
         return random.choice(list(cls))
 
     def to_path(self) -> Path:
-        return Path(data.RECYCLABLE_IMG_PATH)
+        match self:
+            case RecyclableTrashes.BOTTLE: return Path(data.BOTTLE_IMG_PATH)
+            case RecyclableTrashes.COKE: return Path(data.COKE_IMG_PATH)
+            case RecyclableTrashes.PAPER: return Path(data.PAPER_IMG_PATH)
 
 class GeneralTrashes(Enum):
     SHOES = 0
@@ -448,7 +451,7 @@ class Trash(Sprite):
         self._category = TrashCategories.random()
         posx = random.randint(0, Game.SCREEN_WIDTH)
         super().__init__(
-            self._category.to_trash().random().to_path(), (posx, -50), (50, 50))
+            self._category.to_trash().random().to_path(), (posx, -50), (60, 60))
         self.rotate(random.randint(*data.TRASH_ROTATED_RANGE))
         self._alive = True
 

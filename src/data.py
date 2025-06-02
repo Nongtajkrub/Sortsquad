@@ -46,6 +46,10 @@ BATTERY_IMG_PATH = _TRASHES_PATH + "/hazardous/battery.png"
 ELECTRONIC_IMG_PATH = _TRASHES_PATH + "/hazardous/electronic.png"
 BLEACH_IMG_PATH = _TRASHES_PATH + "/hazardous/bleach.png"
 
+COKE_IMG_PATH = _TRASHES_PATH + "/recyclable/coke.png"
+PAPER_IMG_PATH = _TRASHES_PATH + "/recyclable/newspaper.png"
+BOTTLE_IMG_PATH = _TRASHES_PATH + "/recyclable/waterbottle.png"
+
 POWER_UP_IMG_PATH = _POWERUP_PATH + "/powerup.png"
 SHIELD_IMG_PATH = _POWERUP_PATH + "/shield.png"
 
