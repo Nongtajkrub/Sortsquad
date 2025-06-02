@@ -16,7 +16,7 @@ Think fast. Sort smart. Rule the bins.
 - [ ] New Floor
 - [x] Moving Cloudes
 - [x] Poster Atleast Half Done
-- [ ] Better Feedback On Player Actions
+- [x] Scoring Animations
 - [ ] Atleast 10 SO-OR-WOR-NOR A-1
 
 ### Late
