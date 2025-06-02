@@ -25,7 +25,7 @@ Think fast. Sort smart. Rule the bins.
 - [ ] Opening Scene
 - [ ] Atleast 6 Trash Sprites
 
-### Finish
+### Finished
 
 - [x] Animation Manager
 - [x] Portal Opening When Trashes Drop
