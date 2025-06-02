@@ -14,16 +14,22 @@ class Font:
         self.lg = pygame.font.Font(path, lg)
         self.xlg = pygame.font.Font(path, xlg)
 
+class GameState(Enum):
+    MAIN_MENU = 0
+    STORY = 1
+    RUNNING = 2
+    ENDED = 3
+
 class Game:
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
     clock = pygame.time.Clock()
     font = Font(Path(data.FONT_PATH)) 
+    state = GameState.RUNNING
 
     current_time = 0
     current_time_sec = 0
     running = True
-    ended = False
     PLAYER_COUNT = 4
 
     @staticmethod
@@ -665,9 +671,19 @@ class GameLoop:
         TrashBin((pygame.K_COMMA, pygame.K_PERIOD), TrashCategories.RECYCLABLE))
     trashes: list[Trash] = []
     power_up = PowerUp()
+    
+    @staticmethod
+    def _end_game() -> None:
+        Game.state = GameState.ENDED
+        pygame.event.set_blocked(PowerUp.SPAWN_EVENT)
+        pygame.event.set_blocked(Trash.SPAWN_EVENT)
+        pygame.event.set_blocked(Environment.CLOUDE_SPAWN_EVENT)
 
     @staticmethod
     def _event_loop() -> None:
+        if Game.current_time >= data.GAME_TIME:
+            GameLoop._end_game()
+
         for event in pygame.event.get():
             match event.type:
                 case pygame.QUIT:
@@ -678,8 +694,6 @@ class GameLoop:
                     Environment.spawn_cloude()
                 case PowerUp.SPAWN_EVENT:
                     GameLoop.power_up.spawn()
-
-        Game.ended = Game.current_time >= data.GAME_TIME
 
     @staticmethod
     def _animation_loop() -> None:
@@ -753,9 +767,10 @@ class GameLoop:
         Game.clock_tick()
 
 while Game.running:
-    if not Game.ended:
-        GameLoop.main_loop()
-    else:
-        GameLoop.ended_loop()
+    match Game.state:
+        case GameState.RUNNING:
+            GameLoop.main_loop()
+        case GameState.ENDED:
+            GameLoop.ended_loop()
 
 pygame.quit()
