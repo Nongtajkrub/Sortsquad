@@ -20,7 +20,7 @@ Think fast. Sort smart. Rule the bins.
 
 - [ ] New Sky Background
 - [x] Main Menu Working
-- [ ] Poster Atleast Half Done
+- [x] Poster Atleast Half Done
       
 ### Finished
 
