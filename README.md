@@ -13,13 +13,13 @@ Think fast. Sort smart. Rule the bins.
 ## 📋 Todo
 
 - [ ] Poster Design Fully Done
-- [ ] Story Implemented In Game
+- [x] Story Implemented In Game
 - [ ] End Game Summary
 
 ### Late
 
 - [ ] New Sky Background
-- [ ] Main Menu Working
+- [x] Main Menu Working
 - [ ] Poster Atleast Half Done
       
 ### Finished
