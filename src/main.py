@@ -36,6 +36,8 @@ class Game:
     clock = pygame.time.Clock()
     font = Font(Path(data.FONT_PATH)) 
     state = GameState.MENU
+    mouse = pygame.mouse.get_pos()
+    keys = pygame.key.get_pressed()
 
     current_time = 0
     current_time_sec = 0
@@ -50,6 +52,11 @@ class Game:
     def clock_tick(cls):
         cls.current_time += cls.clock.tick(data.MAX_FPS)
         cls.current_time_sec = math.floor(cls.current_time / 1000)
+
+    @classmethod
+    def update_input(cls):
+        cls.mouse = pygame.mouse.get_pos()
+        cls.keys = pygame.key.get_pressed()
 
     @classmethod
     def draw_text(
@@ -97,7 +104,7 @@ class Sprite(SpriteControls):
         self._image = pygame.transform.flip(self._image, False, True).convert_alpha()
 
     def draw(self) -> None:
-        Game.screen.blit(self._image, self._rect.center)
+        Game.screen.blit(self._image, self._rect.topleft)
         
     def get_rect(self) -> pygame.rect.Rect:
         return self._rect
@@ -536,15 +543,15 @@ class TrashBin():
     def _calc_velocity(self) -> int:
         return (-1 if self._facing == Direction.LEFT else 1) * data.DEFAULT_PLAYER_VEL
 
-    def _movement_loop(self, keys) -> None:
+    def _movement_loop(self) -> None:
         new_facing = self._facing
         new_velocity = 0
         
-        if keys[self._left_key] and self.get_rect().topleft[0] > 0:
+        if Game.keys[self._left_key] and self.get_rect().topleft[0] > 0:
             new_facing = Direction.LEFT
             new_velocity = self._calc_velocity()
         elif (
-            keys[self._right_key] and self.get_rect().topright[0] < Game.SCREEN_WIDTH
+            Game.keys[self._right_key] and self.get_rect().topright[0] < Game.SCREEN_WIDTH
         ):
             new_facing = Direction.RIGHT
             new_velocity = self._calc_velocity()
@@ -635,8 +642,8 @@ class TrashBin():
             f"Score: {self._score}",
             (self.get_rect().centerx, Game.SCREEN_HEIGHT - 140))
 
-    def loop(self, keys, trashes: list[Trash], power_up: PowerUp) -> None:
-        self._movement_loop(keys)
+    def loop(self, trashes: list[Trash], power_up: PowerUp) -> None:
+        self._movement_loop()
         self._score_loop(trashes)
         self._power_up_loop(power_up)
         self._graphic_loop()
@@ -645,13 +652,60 @@ class TrashBin():
     def get_score(self) -> int:
         return self._score
 
-class MenuLoop:
-    _button_normal = Sprite(Path(data.MENU_BUTNORMAL_IMG_PATH), (600, 600), (200, 100)) 
-    _button_pressed = Sprite(Path(data.MENU_BUTPRESSED_IMG_PATH), (600, 600), (200, 100)) 
-    _button_hover = Sprite(Path(data.MENU_BUTHOVER_IMG_PATH), (600, 600), (200, 100))
+class MainLoopControls(Protocol):
+    @classmethod
+    def _event_loop(cls) -> None:
+        ...
+
+    @classmethod
+    def loop(cls) -> None:
+        ...
+
+class FadingEffect:
+    def __init__(
+        self,
+        speed: int, color: tuple[int, int, int] = (0, 0, 0), hold: int = 0
+    ) -> None:
+        self._sur = pygame.Surface(Game.screen.get_size())
+        self._sur.fill(color)
+        self._current_alpha = 0
+        self._speed = speed
+        self._hold = hold
+        self._finish_at: int | None = None
+
+    def loop(self) -> None:
+        if self._current_alpha < 255:
+            self._current_alpha += self._speed
+            self._sur.set_alpha(self._current_alpha)
+        else:
+            # Set _finish_at if it was not already set.
+            self._finish_at = (
+                Game.current_time if self._finish_at == None else self._finish_at)
+
+        Game.screen.blit(self._sur, (0, 0))
+
+    def is_finish(self) -> bool:
+        return self._finish_at != None and Game.current_time - self._finish_at > self._hold
+
+class MenuButtons:
+    def __init__(
+        self,
+        normal_path: Path,
+        hoverd_path: Path, pressed_path: Path, pos: tuple[int, int] = (0, 0)
+    ) -> None:
+        self.normal = Sprite(normal_path, pos, (200, 100)) 
+        self.hover = Sprite(hoverd_path, pos, (200, 100)) 
+        self.pressed = Sprite(pressed_path, pos, (200, 100))
+        self.is_pressed = False
+
+class MenuLoop(MainLoopControls):
+    _button = MenuButtons(
+        Path(data.MENU_BUTNORMAL_IMG_PATH),
+        Path(data.MENU_BUTHOVER_IMG_PATH),
+        Path(data.MENU_BUTPRESSED_IMG_PATH), (round(Game.SCREEN_WIDTH / 2), 600))
+    _fade_to_black = FadingEffect(5, hold=1000)
     
-    _credit_names = ["Taj Borthwick", "Pakthan Fullname", "Issac Fullname"]
-    _current_name = 0
+    _current_credit = 0
     _NAME_CHANGE_EVENT = MyEvent.new_timer(data.MENU_NAME_CHANGE_FREQ)
 
     @classmethod
@@ -660,16 +714,47 @@ class MenuLoop:
             match event.type:
                 case pygame.QUIT:
                     Game.running = False
+                case pygame.MOUSEBUTTONDOWN:
+                    if cls._button.normal._rect.collidepoint(Game.mouse):
+                        cls._button.is_pressed = True
                 case cls._NAME_CHANGE_EVENT:
-                    cls._current_name = (cls._current_name + 1) % len(cls._credit_names)
+                    cls._current_credit = (cls._current_credit + 1) % len(data.CREDITS)
+        
+        if cls._fade_to_black.is_finish():
+            Game.state = GameState.RUNNING
 
     @classmethod
-    def loop(cls):
-        cls._event_loop()
-        Game.clear_screen()
-        
-        Game.draw_text(Game.font.lg, cls._credit_names[cls._current_name], (600, 600), (100, 100, 100))
+    def _credit_loop(cls) -> None:
+        name = data.CREDITS[cls._current_credit][0]
+        color = data.CREDITS[cls._current_credit][1]
+        Game.draw_text(Game.font.xlg, name, (round(Game.SCREEN_WIDTH / 2), 200), color)
 
+    @classmethod
+    def _button_loop(cls) -> None:
+        if cls._button.is_pressed:
+            cls._button.pressed.draw()
+            return
+
+        if cls._button.normal._rect.collidepoint(Game.mouse):
+            cls._button.hover.draw()
+        else:
+            cls._button.normal.draw()
+
+    @classmethod
+    def _graphic_loop(cls) -> None:
+        if cls._button.is_pressed:
+            cls._fade_to_black.loop()
+    
+    @classmethod
+    def loop(cls):
+        Game.update_input()
+        cls._event_loop()
+
+        Game.clear_screen()
+        cls._credit_loop()
+        cls._button_loop()
+        cls._graphic_loop()
+        
         pygame.display.flip()
         Game.clock_tick()
 
@@ -705,7 +790,7 @@ class Environment:
             if cls._cloudes[i].get_rect().centerx > Game.SCREEN_WIDTH:
                 del cls._cloudes[i]
 
-class GameLoop:
+class GameLoop(MainLoopControls):
     bins: tuple[TrashBin, ...] = (
         TrashBin((pygame.K_a, pygame.K_s), TrashCategories.GENERAL),
         TrashBin((pygame.K_LEFT, pygame.K_RIGHT), TrashCategories.ORGANIC),
@@ -749,10 +834,8 @@ class GameLoop:
 
     @classmethod
     def _trash_bins_loop(cls) -> None:
-        keys = pygame.key.get_pressed()
-
         for bin in cls.bins[:Game.PLAYER_COUNT]:
-            bin.loop(keys, cls.trashes, cls.power_up)
+            bin.loop(cls.trashes, cls.power_up)
 
     @classmethod
     def _trashes_loop(cls) -> None:
@@ -777,6 +860,7 @@ class GameLoop:
 
     @classmethod
     def loop(cls) -> None:
+        Game.update_input()
         cls._event_loop()
 
         Game.clear_screen()
@@ -792,9 +876,9 @@ class GameLoop:
         pygame.display.flip()
         Game.clock_tick()
 
-class EndedLoop():
-    @staticmethod
-    def _event_loop() -> None:
+class EndedLoop(MainLoopControls):
+    @classmethod
+    def _event_loop(cls) -> None:
         for event in pygame.event.get():
             match event.type:
                 case pygame.QUIT:

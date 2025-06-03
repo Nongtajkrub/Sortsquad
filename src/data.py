@@ -1,3 +1,7 @@
+CREDITS = [
+    ("Taj Borthwick", (255, 0, 0)),
+    ("Pakthan Fullname", (0, 255, 0)), ("Issac Fullname", (0, 0, 255))]
+
 _ASSETS_PATH = "/home/nongtajkrub/Coding/Python/trash-game/assets/"
 
 _TESTS_PATH = _ASSETS_PATH + "/tests"
@@ -13,7 +17,7 @@ ANIMATION_TEST_IMG_PATH = _TESTS_PATH + "animation_test.png"
 MENU_BUTNORMAL_IMG_PATH = _MENU_PATH + "/buttonnormal.png" 
 MENU_BUTPRESSED_IMG_PATH = _MENU_PATH + "/buttonpressed.png" 
 MENU_BUTHOVER_IMG_PATH = _MENU_PATH + "/buttonhover.png" 
-MENU_NAME_CHANGE_FREQ = 2000
+MENU_NAME_CHANGE_FREQ = 1500
 
 SKY_IMG_PATH = _ENV_PATH + "/sky.jpg"
 GRASS_IMG_PATH = _ENV_PATH + "/grass.png"
