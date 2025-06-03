@@ -547,6 +547,8 @@ class TrashBin():
         self._power_up_applied_tick: int | None = None 
         self._power_up_shield_sprite = Sprite(data.SHIELD_IMG_PATH)
 
+        self._scored_sound = pygame.mixer.Sound(data.SCORED_AUD_PATH)
+
     def get_rect(self) -> pygame.rect.Rect:
         return self._sprites.get_rect()
 
@@ -600,6 +602,7 @@ class TrashBin():
                 
                 if scored:
                     Trash.sorted[self._bin_category] += 1
+                    self._scored_sound.play()
 
                 # Only despawn trash if shield power up is disable
                 if self._power_up == PowerUpCategories.SHIELD:

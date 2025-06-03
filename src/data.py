@@ -38,6 +38,7 @@ CUTSCENES_IMG_PATHS = (
 )
 
 MUSIC_PATH = _AUDIO_PATH + "/music.mp3"
+SCORED_AUD_PATH = _AUDIO_PATH + "/scored.wav"
 
 SKY_IMG_PATH = _ENV_PATH + "/sky.jpg"
 GRASS_IMG_PATH = _ENV_PATH + "/grass.png"
