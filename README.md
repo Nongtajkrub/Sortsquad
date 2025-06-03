@@ -12,9 +12,11 @@ Think fast. Sort smart. Rule the bins.
 
 ## 📋 Todo
 
+- [ ] Sound Demo
 - [ ] Poster Design Fully Done
 - [x] Story Implemented In Game
 - [ ] End Game Summary
+- [ ] SOR-OR-WOR-NOR A-2 atleast 10
 
 ### Late
 
