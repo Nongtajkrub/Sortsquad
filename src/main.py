@@ -548,6 +548,7 @@ class TrashBin():
         self._power_up_shield_sprite = Sprite(data.SHIELD_IMG_PATH)
 
         self._scored_sound = pygame.mixer.Sound(data.SCORED_AUD_PATH)
+        self._scored_sound.set_volume(0.1)
 
     def get_rect(self) -> pygame.rect.Rect:
         return self._sprites.get_rect()
