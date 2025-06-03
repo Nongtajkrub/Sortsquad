@@ -122,7 +122,7 @@ class SpriteAnimations(SpriteControls):
         delay: int,
         loop: bool = False,
         cloneable: bool = False,
-        pos: tuple[int, int] = (0, 0), scale: tuple[int, int] = (100, 100)
+        pos: tuple[int, int] = (0, 0), scale: tuple[int, int] = (100, 100) 
     ) -> None:
         self._delay = delay 
         self._loop = loop
@@ -131,7 +131,7 @@ class SpriteAnimations(SpriteControls):
         self._framse: list[pygame.surface.Surface] = self._generate_framse(
             path, grid_size, scale)
         self._current_frame = 0
-        self._rect = pygame.rect.Rect(pos, (grid_size, grid_size)) 
+        self._rect = self._framse[0].get_rect(center=pos)
 
         self._cloneable = cloneable 
         if cloneable:
@@ -407,7 +407,7 @@ class TrashCategories(Enum):
                 prerun_path = data.HAZARDOUS_PRERUN_PATH
                 run_path = data.HAZARDOUS_RUN_PATH
 
-        pos = (0, Game.SCREEN_HEIGHT - 110)
+        pos = (0, Game.SCREEN_HEIGHT - 60)
         return AnimationCycler((
             SpriteAnimations(Path(idle_path), 45, 8, 200, loop=True, pos=pos),
             SpriteAnimations(Path(prerun_path), 45, 4, 100, pos=pos),
@@ -459,6 +459,13 @@ class PowerUp(Sprite):
 class Trash(Sprite):
     SPAWN_EVENT = MyEvent.new_timer(data.TRASH_SPAWN_FREQ) 
     pygame.time.set_timer(SPAWN_EVENT, data.TRASH_SPAWN_FREQ)
+
+    sorted: dict[TrashCategories, int] = {
+        TrashCategories.ORGANIC: 0,
+        TrashCategories.HAZARDOUS: 0,
+        TrashCategories.RECYCLABLE: 0,
+        TrashCategories.GENERAL: 0
+    }
 
     AnimationHeap.malloc(
         "portal",
@@ -584,9 +591,12 @@ class TrashBin():
                 # Do not decrement point if SHIELD power up is enable.
                 decrement = -1 if self._power_up != PowerUpCategories.SHIELD else 0
                 scored = trash.get_category() == self._bin_category
-                self._score += increment if scored else decrement
 
+                self._score += increment if scored else decrement
                 self._score = max(0, self._score)
+                
+                if scored:
+                    Trash.sorted[self._bin_category] += 1
 
                 # Only despawn trash if shield power up is disable
                 if self._power_up == PowerUpCategories.SHIELD:
@@ -746,7 +756,7 @@ class MenuLoop(MainLoopControls):
             cls._fade_to_black.loop()
     
     @classmethod
-    def loop(cls):
+    def loop(cls) -> None:
         Game.update_input()
         cls._event_loop()
 
@@ -769,19 +779,19 @@ class Environment:
     pygame.time.set_timer(CLOUDE_SPAWN_EVENT, data.CLOUDE_SPAWN_FREQ)
    
     @classmethod
-    def draw_background(cls):
+    def draw_background(cls) -> None:
         Game.screen.blit(cls._background_sky, (0, 0))
         Game.screen.blit(cls._background_grass, (0, Game.SCREEN_HEIGHT - 100))
 
     @classmethod
-    def spawn_cloude(cls):
+    def spawn_cloude(cls) -> None:
         cls._cloudes.append(
             Sprite(
                 Path(data.CLOUDE1_IMG_PATH),
                 (-100, random.choice(data.CLOUDE_SPAWN_RANGE))))
 
     @classmethod
-    def draw_cloudes(cls):
+    def draw_cloudes(cls) -> None:
         # Loop backward to prevent skipping while deleting cloudes.
         for i in range(len(cls._cloudes) - 1, -1, -1):
             cls._cloudes[i].get_rect().centerx += 2
@@ -885,17 +895,35 @@ class EndedLoop(MainLoopControls):
                     Game.running = False
 
     @classmethod
-    def loop(cls):
-        cls._event_loop()
-
+    def _score_loop(cls) -> None:
         total_score = sum([bin.get_score() for bin in GameLoop.bins])
-    
-        Game.screen.fill((0, 0, 0))
+
         Game.draw_text(
             Game.font.xlg,
             f"Game Ended! Total Score {total_score}",
-            (round(Game.SCREEN_WIDTH / 2), round(Game.SCREEN_HEIGHT / 2)),
+            (round(Game.SCREEN_WIDTH / 2), 300),
             (255, 255, 255))
+
+        summaries: tuple[str, ...] = (
+            f"You sorted {Trash.sorted[TrashCategories.GENERAL]} general trashes!",
+            f"You sorted {Trash.sorted[TrashCategories.ORGANIC]} organic trashes!",
+            f"You sorted {Trash.sorted[TrashCategories.RECYCLABLE]} recyclable trashes!",
+            f"You sorted {Trash.sorted[TrashCategories.HAZARDOUS]} hazardous trashes!"
+        )
+
+        for i, summary in enumerate(summaries):
+            Game.draw_text(
+                Game.font.xlg,
+                summary,
+                (round(Game.SCREEN_WIDTH / 2), 400 + (i * 70)),
+                (255, 255, 255))
+
+    @classmethod
+    def loop(cls) -> None:
+        cls._event_loop()
+    
+        Game.screen.fill((0, 0, 0))
+        cls._score_loop()
 
         pygame.display.flip()
         Game.clock_tick()
