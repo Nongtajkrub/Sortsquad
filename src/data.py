@@ -1,7 +1,7 @@
 CREDITS = [
-    ("Taj Borthwick", (255, 0, 0)),
-    ("Pakthan Fullname", (0, 255, 0)),
-    ("Issac Fullname", (0, 0, 255))
+    ("Taj Mikky Borthwick", (255, 0, 0)),
+    ("Kritapas Maswongssa", (0, 255, 0)),
+    ("Isaac Pachara Zogg", (0, 0, 255))
 ]
 
 _ASSETS_PATH = "/home/nongtajkrub/Coding/Python/trash-game/assets"
