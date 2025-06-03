@@ -12,7 +12,9 @@ Think fast. Sort smart. Rule the bins.
 
 ## 📋 Todo
 
-Reveal soon!
+- [ ] Poster Design Fully Done
+- [ ] Story Implemented In Game
+- [ ] End Game Summary
 
 ### Late
 
