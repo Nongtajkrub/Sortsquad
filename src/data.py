@@ -8,6 +8,7 @@ _ASSETS_PATH = "/home/nongtajkrub/Coding/Python/trash-game/assets"
 
 _MENU_PATH = _ASSETS_PATH + "/menu"
 _CUTSCENE_PATH = _ASSETS_PATH + "/cutscene"
+_AUDIO_PATH = _ASSETS_PATH + "/audio"
 _ENV_PATH = _ASSETS_PATH + "/env"
 _BINS_PATH = _ASSETS_PATH + "/bins"
 _TRASHES_PATH = _ASSETS_PATH + "/trahse"
@@ -34,6 +35,8 @@ CUTSCENES_IMG_PATHS = (
     _CUTSCENE_PATH + "/12.png",
     _CUTSCENE_PATH + "/13.png",
 )
+
+MUSIC_PATH = _AUDIO_PATH + "/music.mp3"
 
 SKY_IMG_PATH = _ENV_PATH + "/sky.jpg"
 GRASS_IMG_PATH = _ENV_PATH + "/grass.png"
@@ -76,6 +79,10 @@ COKE_IMG_PATH = _TRASHES_PATH + "/recyclable/coke.png"
 PAPER_IMG_PATH = _TRASHES_PATH + "/recyclable/newspaper.png"
 BOTTLE_IMG_PATH = _TRASHES_PATH + "/recyclable/waterbottle.png"
 
+CIGARETTE_IMG_PATH = _TRASHES_PATH + "/general/ciggarette.png"
+TISSUE_IMG_PATH = _TRASHES_PATH + "/general/tissue.png"
+SHOE_IMG_PATH = _TRASHES_PATH + "/general/shoe.png" 
+
 POWER_UP_IMG_PATH = _POWERUP_PATH + "/powerup.png"
 SHIELD_IMG_PATH = _POWERUP_PATH + "/shield.png"
 
@@ -101,7 +108,7 @@ POWER_UP_SPAWN_FREQ = 10000
 
 DEFAULT_TRASH_VEL = 4
 TRASH_SPAWN_FREQ = 270
-TRASH_ROTATED_RANGE = (-15, 15)
+TRASH_ROTATED_RANGE = (-300, 300)
 PORTAL_ANIMATION_HEAP_N = round(TRASH_SPAWN_FREQ / 12)
 
 GAME_TIME = 60000

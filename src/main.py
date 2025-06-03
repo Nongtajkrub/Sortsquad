@@ -358,7 +358,7 @@ class RecyclableTrashes(Enum):
 
 class GeneralTrashes(Enum):
     SHOES = 0
-    FOAM = 1
+    TISSUE = 1
     CIGARETTE = 2
 
     @classmethod
@@ -366,7 +366,10 @@ class GeneralTrashes(Enum):
         return random.choice(list(cls))
 
     def to_path(self) -> str:
-        return data.GENERAL_IMG_PATH
+        match self:
+            case GeneralTrashes.SHOES: return data.SHOE_IMG_PATH
+            case GeneralTrashes.TISSUE: return data.TISSUE_IMG_PATH
+            case GeneralTrashes.CIGARETTE: return data.CIGARETTE_IMG_PATH
 
 class TrashCategories(Enum):
     ORGANIC = 0
@@ -785,6 +788,7 @@ class MenuLoop(MainLoopControls):
         
         if cls._fade_to_black.is_finish():
             Game.state = GameState.STORY
+            StoryLoop.begin()
 
     @classmethod
     def _credit_loop(cls) -> None:
@@ -824,6 +828,8 @@ class MenuLoop(MainLoopControls):
 class StoryLoop(MainLoopControls):
     _cutscene = LinearCutscene(data.CUTSCENES_IMG_PATHS)
 
+    pygame.mixer.music.load(data.MUSIC_PATH)
+
     @classmethod
     def _event_loop(cls) -> None:
         for event in pygame.event.get():
@@ -833,10 +839,14 @@ class StoryLoop(MainLoopControls):
                 case pygame.MOUSEBUTTONDOWN:
                     if cls._cutscene.is_finish():
                         Game.state = GameState.RUNNING
-                        GameLoop.game_started = Game.current_time
+                        GameLoop._begin()
                     else:
                         cls._cutscene.next()
     
+    @classmethod
+    def begin(cls) -> None:
+        pygame.mixer.music.play()
+
     @classmethod
     def loop(cls) -> None:
         Game.update_input()
@@ -857,6 +867,11 @@ class GameLoop(MainLoopControls):
         TrashBin((pygame.K_COMMA, pygame.K_PERIOD), TrashCategories.RECYCLABLE))
     trashes: list[Trash] = []
     power_up = PowerUp()
+
+    @classmethod
+    def _begin(cls) -> None:
+        GameLoop.game_started = Game.current_time
+        pygame.mixer.music.play(start=68)
     
     @staticmethod
     def _end_game() -> None:
