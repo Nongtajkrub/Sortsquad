@@ -4,22 +4,36 @@ CREDITS = [
     ("Issac Fullname", (0, 0, 255))
 ]
 
-_ASSETS_PATH = "/home/nongtajkrub/Coding/Python/trash-game/assets/"
+_ASSETS_PATH = "/home/nongtajkrub/Coding/Python/trash-game/assets"
 
-_TESTS_PATH = _ASSETS_PATH + "/tests"
 _MENU_PATH = _ASSETS_PATH + "/menu"
+_CUTSCENE_PATH = _ASSETS_PATH + "/cutscene"
 _ENV_PATH = _ASSETS_PATH + "/env"
 _BINS_PATH = _ASSETS_PATH + "/bins"
 _TRASHES_PATH = _ASSETS_PATH + "/trahse"
 _POWERUP_PATH = _ASSETS_PATH + "/powerup"
 _FONT_PATH = _ASSETS_PATH + "/fonts"
 
-ANIMATION_TEST_IMG_PATH = _TESTS_PATH + "animation_test.png"
-
 MENU_BUTNORMAL_IMG_PATH = _MENU_PATH + "/buttonnormal.png" 
 MENU_BUTPRESSED_IMG_PATH = _MENU_PATH + "/buttonpressed.png" 
 MENU_BUTHOVER_IMG_PATH = _MENU_PATH + "/buttonhover.png" 
 MENU_NAME_CHANGE_FREQ = 1500
+
+CUTSCENES_IMG_PATHS = (
+    _CUTSCENE_PATH + "/1.png",
+    _CUTSCENE_PATH + "/2.png",
+    _CUTSCENE_PATH + "/3.png",
+    _CUTSCENE_PATH + "/4.png",
+    _CUTSCENE_PATH + "/5.png",
+    _CUTSCENE_PATH + "/6.png",
+    _CUTSCENE_PATH + "/7.png",
+    _CUTSCENE_PATH + "/8.png",
+    _CUTSCENE_PATH + "/9.png",
+    _CUTSCENE_PATH + "/10.png",
+    _CUTSCENE_PATH + "/11.png",
+    _CUTSCENE_PATH + "/12.png",
+    _CUTSCENE_PATH + "/13.png",
+)
 
 SKY_IMG_PATH = _ENV_PATH + "/sky.jpg"
 GRASS_IMG_PATH = _ENV_PATH + "/grass.png"
@@ -90,5 +104,5 @@ TRASH_SPAWN_FREQ = 270
 TRASH_ROTATED_RANGE = (-15, 15)
 PORTAL_ANIMATION_HEAP_N = round(TRASH_SPAWN_FREQ / 12)
 
-GAME_TIME = 60000
+GAME_TIME = 5000
 MAX_FPS = 60

@@ -1,5 +1,4 @@
 from enum import Enum
-from pathlib import Path
 import dataclasses
 from dataclasses import dataclass
 from typing import Protocol
@@ -8,7 +7,7 @@ import pygame, data, random, math
 pygame.init()
 
 class Font:
-    def __init__(self, path: Path, sm = 24, md = 36, lg = 48, xlg = 64) -> None:
+    def __init__(self, path: str, sm = 24, md = 36, lg = 48, xlg = 64) -> None:
         self.sm = pygame.font.Font(path, sm)
         self.md = pygame.font.Font(path, md)
         self.lg = pygame.font.Font(path, lg)
@@ -34,7 +33,7 @@ class Game:
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
     clock = pygame.time.Clock()
-    font = Font(Path(data.FONT_PATH)) 
+    font = Font(str(data.FONT_PATH)) 
     state = GameState.MENU
     mouse = pygame.mouse.get_pos()
     keys = pygame.key.get_pressed()
@@ -88,7 +87,7 @@ class SpriteControls(Protocol):
 class Sprite(SpriteControls):
     def __init__(
         self,
-        path: Path,
+        path: str,
         pos: tuple[int, int] = (0, 0), scale: tuple[int, int] = (100, 100)
     ) -> None:
         self._image = pygame.transform.scale(pygame.image.load(path), scale).convert_alpha()
@@ -116,7 +115,7 @@ class Sprite(SpriteControls):
 class SpriteAnimations(SpriteControls):
     def __init__(
         self,
-        path: Path,
+        path: str,
         grid_size: int,
         grid_count: int,
         delay: int,
@@ -141,7 +140,7 @@ class SpriteAnimations(SpriteControls):
 
     def _generate_framse(
         self,
-        path: Path, grid_size: int, scale: tuple[int, int] = (100, 100)
+        path: str, grid_size: int, scale: tuple[int, int] = (100, 100)
     ) -> list[pygame.surface.Surface]:
         sheet = pygame.image.load(path).convert_alpha()
 
@@ -321,11 +320,11 @@ class OrganicTrashes(Enum):
     def random(cls):
         return random.choice(list(cls)) # type: ignore[return-value]
 
-    def to_path(self) -> Path:
+    def to_path(self) -> str:
         match self:
-            case OrganicTrashes.APPLE: return Path(data.APPLE_IMG_PATH)
-            case OrganicTrashes.BANANA: return Path(data.FISH_IMG_PATH)
-            case OrganicTrashes.VEGETABLE: return Path(data.VEGETABLE_IMG_PATH)
+            case OrganicTrashes.APPLE: return data.APPLE_IMG_PATH
+            case OrganicTrashes.BANANA: return data.FISH_IMG_PATH
+            case OrganicTrashes.VEGETABLE: return data.VEGETABLE_IMG_PATH
 
 class HazardousTrashes(Enum):
     BATTERY = 0
@@ -336,11 +335,11 @@ class HazardousTrashes(Enum):
     def random(cls):
         return random.choice(list(cls))
 
-    def to_path(self) -> Path:
+    def to_path(self) -> str:
         match self:
-            case HazardousTrashes.BATTERY: return Path(data.BATTERY_IMG_PATH)
-            case HazardousTrashes.ELECTRONIC: return Path(data.ELECTRONIC_IMG_PATH)
-            case HazardousTrashes.BLEACH: return Path(data.BLEACH_IMG_PATH)
+            case HazardousTrashes.BATTERY: return data.BATTERY_IMG_PATH
+            case HazardousTrashes.ELECTRONIC: return data.ELECTRONIC_IMG_PATH
+            case HazardousTrashes.BLEACH: return data.BLEACH_IMG_PATH
 
 class RecyclableTrashes(Enum):
     BOTTLE = 0
@@ -351,11 +350,11 @@ class RecyclableTrashes(Enum):
     def random(cls):
         return random.choice(list(cls))
 
-    def to_path(self) -> Path:
+    def to_path(self) -> str:
         match self:
-            case RecyclableTrashes.BOTTLE: return Path(data.BOTTLE_IMG_PATH)
-            case RecyclableTrashes.COKE: return Path(data.COKE_IMG_PATH)
-            case RecyclableTrashes.PAPER: return Path(data.PAPER_IMG_PATH)
+            case RecyclableTrashes.BOTTLE: return data.BOTTLE_IMG_PATH
+            case RecyclableTrashes.COKE: return data.COKE_IMG_PATH
+            case RecyclableTrashes.PAPER: return data.PAPER_IMG_PATH
 
 class GeneralTrashes(Enum):
     SHOES = 0
@@ -366,8 +365,8 @@ class GeneralTrashes(Enum):
     def random(cls):
         return random.choice(list(cls))
 
-    def to_path(self) -> Path:
-        return Path(data.GENERAL_IMG_PATH)
+    def to_path(self) -> str:
+        return data.GENERAL_IMG_PATH
 
 class TrashCategories(Enum):
     ORGANIC = 0
@@ -409,9 +408,9 @@ class TrashCategories(Enum):
 
         pos = (0, Game.SCREEN_HEIGHT - 60)
         return AnimationCycler((
-            SpriteAnimations(Path(idle_path), 45, 8, 200, loop=True, pos=pos),
-            SpriteAnimations(Path(prerun_path), 45, 4, 100, pos=pos),
-            SpriteAnimations(Path(run_path), 45, 4, 100, loop=True, pos=pos)))
+            SpriteAnimations(idle_path, 45, 8, 200, loop=True, pos=pos),
+            SpriteAnimations(prerun_path, 45, 4, 100, pos=pos),
+            SpriteAnimations(run_path, 45, 4, 100, loop=True, pos=pos)))
 
 class PowerUpCategories(Enum):
     SPEED = 0
@@ -436,7 +435,7 @@ class PowerUp(Sprite):
     pygame.time.set_timer(SPAWN_EVENT, data.POWER_UP_SPAWN_FREQ)
     
     def __init__(self) -> None:
-        super().__init__(Path(data.POWER_UP_IMG_PATH), scale=(50, 50))
+        super().__init__(data.POWER_UP_IMG_PATH, scale=(50, 50))
         self._category: PowerUpCategories | None = None
 
     def movement(self) -> None:
@@ -469,7 +468,7 @@ class Trash(Sprite):
 
     AnimationHeap.malloc(
         "portal",
-        SpriteAnimations(Path(data.PORTAL_IMG_PATH), 32, 6, 100, cloneable=True),
+        SpriteAnimations(data.PORTAL_IMG_PATH, 32, 6, 100, cloneable=True),
         data.PORTAL_ANIMATION_HEAP_N)
 
     def __init__(self) -> None:
@@ -511,17 +510,17 @@ class Direction(Enum):
 class TrashBin():
     AnimationHeap.malloc(
         "scored_animation1",
-        SpriteAnimations(Path(data.SCORE_ANIMATION1_PATH), 32, 7, 50, cloneable=True),
+        SpriteAnimations(data.SCORE_ANIMATION1_PATH, 32, 7, 50, cloneable=True),
         data.SCORE_ANIMATION1_HEAP_N)
 
     AnimationHeap.malloc(
         "scored_animation2",
-        SpriteAnimations(Path(data.SCORE_ANIMATION2_PATH), 32, 7, 50, cloneable=True),
+        SpriteAnimations(data.SCORE_ANIMATION2_PATH, 32, 7, 50, cloneable=True),
         data.SCORE_ANIMATION2_HEAP_N)
 
     AnimationHeap.malloc(
         "wrong_animation1",
-        SpriteAnimations(Path(data.WRONG1_ANIMATION1_PATH), 32, 7, 50, cloneable=True),
+        SpriteAnimations(data.WRONG1_ANIMATION1_PATH, 32, 7, 50, cloneable=True),
         data.WRONG1_ANIMATION1_HEAP_N)
 
     """
@@ -542,7 +541,7 @@ class TrashBin():
 
         self._power_up: PowerUpCategories | None = None
         self._power_up_applied_tick: int | None = None 
-        self._power_up_shield_sprite = Sprite(Path(data.SHIELD_IMG_PATH))
+        self._power_up_shield_sprite = Sprite(data.SHIELD_IMG_PATH)
 
     def get_rect(self) -> pygame.rect.Rect:
         return self._sprites.get_rect()
@@ -662,16 +661,29 @@ class TrashBin():
     def get_score(self) -> int:
         return self._score
 
-class MainLoopControls(Protocol):
-    @classmethod
-    def _event_loop(cls) -> None:
-        ...
+class LinearCutscene:
+    def __init__(self, scene_paths: tuple[str, ...]) -> None:
+        self._scenes = LinearCutscene._generate_scene(scene_paths)
+        self._current_scene = 0
+    
+    @staticmethod
+    def _generate_scene(paths: tuple[str, ...]) -> tuple[pygame.surface.Surface, ...]:
+        return tuple([
+            pygame.transform.scale(
+                pygame.image.load(path), Game.screen.get_size()).convert() 
+            for path in paths
+        ])
 
-    @classmethod
-    def loop(cls) -> None:
-        ...
+    def next(self):
+        self._current_scene = min(len(self._scenes) - 1, self._current_scene + 1)
 
-class FadingEffect:
+    def draw(self):
+        Game.screen.blit(self._scenes[self._current_scene], (0, 0))
+
+    def is_finish(self):
+        return self._current_scene == len(self._scenes) - 1
+
+class FadingOutEffect:
     def __init__(
         self,
         speed: int, color: tuple[int, int, int] = (0, 0, 0), hold: int = 0
@@ -697,23 +709,64 @@ class FadingEffect:
     def is_finish(self) -> bool:
         return self._finish_at != None and Game.current_time - self._finish_at > self._hold
 
-class MenuButtons:
+class Buttons:
     def __init__(
         self,
-        normal_path: Path,
-        hoverd_path: Path, pressed_path: Path, pos: tuple[int, int] = (0, 0)
+        normal_path: str,
+        hoverd_path: str, pressed_path: str, pos: tuple[int, int] = (0, 0)
     ) -> None:
         self.normal = Sprite(normal_path, pos, (200, 100)) 
         self.hover = Sprite(hoverd_path, pos, (200, 100)) 
         self.pressed = Sprite(pressed_path, pos, (200, 100))
         self.is_pressed = False
 
+class Environment:
+    _background_sky = pygame.transform.scale(
+        pygame.image.load(data.SKY_IMG_PATH), Game.screen.get_size()).convert()
+    _background_grass = pygame.transform.scale(
+        pygame.image.load(data.GRASS_IMG_PATH), (Game.screen.get_width(), 100)).convert_alpha()
+
+    _cloudes: list[Sprite] = []
+    CLOUDE_SPAWN_EVENT = MyEvent.new_timer(data.CLOUDE_SPAWN_FREQ) 
+    pygame.time.set_timer(CLOUDE_SPAWN_EVENT, data.CLOUDE_SPAWN_FREQ)
+   
+    @classmethod
+    def draw_background(cls) -> None:
+        Game.screen.blit(cls._background_sky, (0, 0))
+        Game.screen.blit(cls._background_grass, (0, Game.SCREEN_HEIGHT - 100))
+
+    @classmethod
+    def spawn_cloude(cls) -> None:
+        cls._cloudes.append(
+            Sprite(
+                data.CLOUDE1_IMG_PATH,
+                (-100, random.choice(data.CLOUDE_SPAWN_RANGE))))
+
+    @classmethod
+    def draw_cloudes(cls) -> None:
+        # Loop backward to prevent skipping while deleting cloudes.
+        for i in range(len(cls._cloudes) - 1, -1, -1):
+            cls._cloudes[i].get_rect().centerx += 2
+            cls._cloudes[i].draw()
+
+            if cls._cloudes[i].get_rect().centerx > Game.SCREEN_WIDTH:
+                del cls._cloudes[i]
+
+class MainLoopControls(Protocol):
+    @classmethod
+    def _event_loop(cls) -> None:
+        ...
+
+    @classmethod
+    def loop(cls) -> None:
+        ...
+
 class MenuLoop(MainLoopControls):
-    _button = MenuButtons(
-        Path(data.MENU_BUTNORMAL_IMG_PATH),
-        Path(data.MENU_BUTHOVER_IMG_PATH),
-        Path(data.MENU_BUTPRESSED_IMG_PATH), (round(Game.SCREEN_WIDTH / 2), 600))
-    _fade_to_black = FadingEffect(5, hold=1000)
+    _button = Buttons(
+        data.MENU_BUTNORMAL_IMG_PATH,
+        data.MENU_BUTHOVER_IMG_PATH,
+        data.MENU_BUTPRESSED_IMG_PATH, (round(Game.SCREEN_WIDTH / 2), 600))
+    _fade_to_black = FadingOutEffect(5, hold=1000)
     
     _current_credit = 0
     _NAME_CHANGE_EVENT = MyEvent.new_timer(data.MENU_NAME_CHANGE_FREQ)
@@ -731,7 +784,7 @@ class MenuLoop(MainLoopControls):
                     cls._current_credit = (cls._current_credit + 1) % len(data.CREDITS)
         
         if cls._fade_to_black.is_finish():
-            Game.state = GameState.RUNNING
+            Game.state = GameState.STORY
 
     @classmethod
     def _credit_loop(cls) -> None:
@@ -768,39 +821,35 @@ class MenuLoop(MainLoopControls):
         pygame.display.flip()
         Game.clock_tick()
 
-class Environment:
-    _background_sky = pygame.transform.scale(
-        pygame.image.load(data.SKY_IMG_PATH), Game.screen.get_size()).convert()
-    _background_grass = pygame.transform.scale(
-        pygame.image.load(data.GRASS_IMG_PATH), (Game.screen.get_width(), 100)).convert_alpha()
-
-    _cloudes: list[Sprite] = []
-    CLOUDE_SPAWN_EVENT = MyEvent.new_timer(data.CLOUDE_SPAWN_FREQ) 
-    pygame.time.set_timer(CLOUDE_SPAWN_EVENT, data.CLOUDE_SPAWN_FREQ)
-   
-    @classmethod
-    def draw_background(cls) -> None:
-        Game.screen.blit(cls._background_sky, (0, 0))
-        Game.screen.blit(cls._background_grass, (0, Game.SCREEN_HEIGHT - 100))
+class StoryLoop(MainLoopControls):
+    _cutscene = LinearCutscene(data.CUTSCENES_IMG_PATHS)
 
     @classmethod
-    def spawn_cloude(cls) -> None:
-        cls._cloudes.append(
-            Sprite(
-                Path(data.CLOUDE1_IMG_PATH),
-                (-100, random.choice(data.CLOUDE_SPAWN_RANGE))))
-
+    def _event_loop(cls) -> None:
+        for event in pygame.event.get():
+            match event.type:
+                case pygame.QUIT:
+                    Game.running = False
+                case pygame.MOUSEBUTTONDOWN:
+                    if cls._cutscene.is_finish():
+                        Game.state = GameState.RUNNING
+                        GameLoop.game_started = Game.current_time
+                    else:
+                        cls._cutscene.next()
+    
     @classmethod
-    def draw_cloudes(cls) -> None:
-        # Loop backward to prevent skipping while deleting cloudes.
-        for i in range(len(cls._cloudes) - 1, -1, -1):
-            cls._cloudes[i].get_rect().centerx += 2
-            cls._cloudes[i].draw()
+    def loop(cls) -> None:
+        Game.update_input()
+        cls._event_loop()
 
-            if cls._cloudes[i].get_rect().centerx > Game.SCREEN_WIDTH:
-                del cls._cloudes[i]
+        Game.clear_screen()
+        cls._cutscene.draw()
+
+        pygame.display.flip()
+        Game.clock_tick()
 
 class GameLoop(MainLoopControls):
+    game_started: int | None = None
     bins: tuple[TrashBin, ...] = (
         TrashBin((pygame.K_a, pygame.K_s), TrashCategories.GENERAL),
         TrashBin((pygame.K_LEFT, pygame.K_RIGHT), TrashCategories.ORGANIC),
@@ -818,7 +867,10 @@ class GameLoop(MainLoopControls):
 
     @classmethod
     def _event_loop(cls) -> None:
-        if Game.current_time >= data.GAME_TIME:
+        if (
+            cls.game_started != None and
+            Game.current_time - cls.game_started >= data.GAME_TIME
+        ):
             cls._end_game()
 
         for event in pygame.event.get():
@@ -862,11 +914,16 @@ class GameLoop(MainLoopControls):
             cls.power_up.movement()
             cls.power_up.draw()
 
-    @staticmethod
-    def _timer_graphic_loop() -> None:
+    @classmethod
+    def _timer_graphic_loop(cls) -> None:
+        if cls.game_started == None:
+            raise Exception("Game started unexpectedly.")
+
+        game_time_sec = round((Game.current_time - cls.game_started) / 1000)
+
         Game.draw_text(
             Game.font.xlg,
-            str(Game.current_time_sec), (round(Game.SCREEN_WIDTH / 2), 100))
+            str(game_time_sec), (round(Game.SCREEN_WIDTH / 2), 100))
 
     @classmethod
     def loop(cls) -> None:
@@ -932,6 +989,8 @@ while Game.running:
     match Game.state:
         case GameState.MENU:
             MenuLoop.loop()
+        case GameState.STORY:
+            StoryLoop.loop()
         case GameState.RUNNING:
             GameLoop.loop()
         case GameState.ENDED:
