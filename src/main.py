@@ -3,6 +3,7 @@ import dataclasses
 from dataclasses import dataclass
 from typing import Protocol
 import pygame, data, random, math
+from pygame.transform import scale
 
 pygame.init()
 
@@ -716,11 +717,13 @@ class Buttons:
     def __init__(
         self,
         normal_path: str,
-        hoverd_path: str, pressed_path: str, pos: tuple[int, int] = (0, 0)
+        hoverd_path: str,
+        pressed_path: str,
+        pos: tuple[int, int] = (0, 0), scale: tuple[int, int] = (100, 100)
     ) -> None:
-        self.normal = Sprite(normal_path, pos, (200, 100)) 
-        self.hover = Sprite(hoverd_path, pos, (200, 100)) 
-        self.pressed = Sprite(pressed_path, pos, (200, 100))
+        self.normal = Sprite(normal_path, pos, scale) 
+        self.hover = Sprite(hoverd_path, pos, scale) 
+        self.pressed = Sprite(pressed_path, pos, scale)
         self.is_pressed = False
 
 class Environment:
@@ -765,10 +768,12 @@ class MainLoopControls(Protocol):
         ...
 
 class MenuLoop(MainLoopControls):
+    _background = pygame.transform.scale(
+        pygame.image.load(data.MENU_BACKGROUND_IMG_PATH), Game.screen.get_size()).convert()
     _button = Buttons(
         data.MENU_BUTNORMAL_IMG_PATH,
         data.MENU_BUTHOVER_IMG_PATH,
-        data.MENU_BUTPRESSED_IMG_PATH, (round(Game.SCREEN_WIDTH / 2), 600))
+        data.MENU_BUTPRESSED_IMG_PATH, (round(Game.SCREEN_WIDTH / 2), 750), scale=(300, 100))
     _fade_to_black = FadingOutEffect(5, hold=1000)
     
     _current_credit = 0
@@ -794,7 +799,7 @@ class MenuLoop(MainLoopControls):
     def _credit_loop(cls) -> None:
         name = data.CREDITS[cls._current_credit][0]
         color = data.CREDITS[cls._current_credit][1]
-        Game.draw_text(Game.font.xlg, name, (round(Game.SCREEN_WIDTH / 2), 200), color)
+        Game.draw_text(Game.font.xlg, name, (round(Game.SCREEN_WIDTH / 2), 900), color)
 
     @classmethod
     def _button_loop(cls) -> None:
@@ -818,6 +823,7 @@ class MenuLoop(MainLoopControls):
         cls._event_loop()
 
         Game.clear_screen()
+        Game.screen.blit(cls._background, (0, 0))
         cls._credit_loop()
         cls._button_loop()
         cls._graphic_loop()
@@ -872,13 +878,6 @@ class GameLoop(MainLoopControls):
     def _begin(cls) -> None:
         GameLoop.game_started = Game.current_time
         pygame.mixer.music.play(start=68)
-    
-    @staticmethod
-    def _end_game() -> None:
-        Game.state = GameState.ENDED
-        pygame.event.set_blocked(PowerUp.SPAWN_EVENT)
-        pygame.event.set_blocked(Trash.SPAWN_EVENT)
-        pygame.event.set_blocked(Environment.CLOUDE_SPAWN_EVENT)
 
     @classmethod
     def _event_loop(cls) -> None:
@@ -886,7 +885,8 @@ class GameLoop(MainLoopControls):
             cls.game_started != None and
             Game.current_time - cls.game_started >= data.GAME_TIME
         ):
-            cls._end_game()
+            Game.state = GameState.ENDED
+            EndedLoop._begin()
 
         for event in pygame.event.get():
             match event.type:
@@ -959,6 +959,13 @@ class GameLoop(MainLoopControls):
         Game.clock_tick()
 
 class EndedLoop(MainLoopControls):
+    @classmethod
+    def _begin(cls) -> None:
+        pygame.mixer.music.play(start=373)
+        pygame.event.set_blocked(PowerUp.SPAWN_EVENT)
+        pygame.event.set_blocked(Trash.SPAWN_EVENT)
+        pygame.event.set_blocked(Environment.CLOUDE_SPAWN_EVENT)
+    
     @classmethod
     def _event_loop(cls) -> None:
         for event in pygame.event.get():

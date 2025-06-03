@@ -18,6 +18,7 @@ _FONT_PATH = _ASSETS_PATH + "/fonts"
 MENU_BUTNORMAL_IMG_PATH = _MENU_PATH + "/buttonnormal.png" 
 MENU_BUTPRESSED_IMG_PATH = _MENU_PATH + "/buttonpressed.png" 
 MENU_BUTHOVER_IMG_PATH = _MENU_PATH + "/buttonhover.png" 
+MENU_BACKGROUND_IMG_PATH = _MENU_PATH + "/background.png"
 MENU_NAME_CHANGE_FREQ = 1500
 
 CUTSCENES_IMG_PATHS = (
