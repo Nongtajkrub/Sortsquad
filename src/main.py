@@ -419,7 +419,7 @@ class TrashCategories(Enum):
 
         return AnimationCycler((
             SpriteAnimations(idle_path, 45, 8, 200, loop=True, pos=(posx, posy)),
-            SpriteAnimations(prerun_path, 45, 4, 100, pos=(posx, posy)),
+            SpriteAnimations(prerun_path, 45, 4, 70, pos=(posx, posy)),
             SpriteAnimations(run_path, 45, 8, 100, loop=True, pos=(posx, posy))))
 
 class PowerUpCategories(Enum):

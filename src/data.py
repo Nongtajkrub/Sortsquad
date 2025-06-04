@@ -35,6 +35,7 @@ CUTSCENES_IMG_PATHS = (
     _CUTSCENE_PATH + "/11.png",
     _CUTSCENE_PATH + "/12.png",
     _CUTSCENE_PATH + "/13.png",
+    _CUTSCENE_PATH + "/tutorial.png",
 )
 
 MUSIC_PATH = _AUDIO_PATH + "/music.mp3"
