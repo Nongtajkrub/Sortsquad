@@ -478,7 +478,7 @@ class Trash(Sprite):
 
     AnimationHeap.malloc(
         "portal",
-        SpriteAnimations(data.PORTAL_IMG_PATH, 32, 6, 100, cloneable=True),
+        SpriteAnimations(data.PORTAL_IMG_PATH, 32, 6, 70, cloneable=True),
         data.PORTAL_ANIMATION_HEAP_N)
 
     def __init__(self) -> None:
@@ -489,7 +489,7 @@ class Trash(Sprite):
         self.rotate(random.randint(*data.TRASH_ROTATED_RANGE))
         self._alive = True
 
-        AnimationHeap.request("portal", (posx, 10)).raii()
+        AnimationHeap.request("portal", (posx, 50)).raii()
 
     def _movement_loop(self) -> None:
         self.get_rect().centerx += round(math.sin(Game.current_time * 0.005) * 1)
@@ -944,11 +944,13 @@ class GameLoop(MainLoopControls):
         if cls.game_started == None:
             raise Exception("Game started unexpectedly.")
 
-        game_time_sec = round((Game.current_time - cls.game_started) / 1000)
+        time_left_sec = 60 - round((Game.current_time - cls.game_started) / 1000)
+        color_r = 255 - round(time_left_sec * data.TIMER_COLOR_MULTIPLIER)
 
         Game.draw_text(
             Game.font.xlg,
-            str(game_time_sec), (round(Game.SCREEN_WIDTH / 2), 100))
+            str(time_left_sec),
+            (round(Game.SCREEN_WIDTH / 2), 100), (color_r, 0, 0))
 
     @classmethod
     def loop(cls) -> None:
