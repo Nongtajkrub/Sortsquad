@@ -596,7 +596,7 @@ class TrashBin():
 
     def _score_loop(self, trashes: list[Trash]):
         for trash in trashes:
-            if self.get_rect().colliderect(trash.get_rect()):
+            if self.get_rect().colliderect(trash.get_rect()) and trash.is_alive():
                 # Double point increment if DOUBLE_POINT power up is enable.
                 increment = 1 if self._power_up != PowerUpCategories.DOUBLE_POINT else 2
                 # Do not decrement point if SHIELD power up is enable.
