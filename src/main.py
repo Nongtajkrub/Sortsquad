@@ -7,11 +7,12 @@ import pygame, data, random, math
 pygame.init()
 
 class Font:
-    def __init__(self, path: str, sm = 24, md = 36, lg = 48, xlg = 64) -> None:
+    def __init__(self, path: str, sm = 24, md = 36, lg = 48, xlg = 64, xxlg = 96) -> None:
         self.sm = pygame.font.Font(path, sm)
         self.md = pygame.font.Font(path, md)
         self.lg = pygame.font.Font(path, lg)
         self.xlg = pygame.font.Font(path, xlg)
+        self.xxlg = pygame.font.Font(path, xxlg)
 
 class MyEvent:
     _offset = 0
@@ -445,7 +446,7 @@ class PowerUp(Sprite):
     pygame.time.set_timer(SPAWN_EVENT, data.POWER_UP_SPAWN_FREQ)
     
     def __init__(self) -> None:
-        super().__init__(data.POWER_UP_IMG_PATH, scale=(50, 50))
+        super().__init__(data.POWER_UP_IMG_PATH, scale=(70, 70))
         self._category: PowerUpCategories | None = None
 
     def movement(self) -> None:
@@ -948,9 +949,9 @@ class GameLoop(MainLoopControls):
         color_r = 255 - round(time_left_sec * data.TIMER_COLOR_MULTIPLIER)
 
         Game.draw_text(
-            Game.font.xlg,
+            Game.font.xxlg,
             str(time_left_sec),
-            (round(Game.SCREEN_WIDTH / 2), 100), (color_r, 0, 0))
+            (round(Game.SCREEN_WIDTH / 2), 150), (color_r, 0, 0))
 
     @classmethod
     def loop(cls) -> None:
@@ -960,12 +961,12 @@ class GameLoop(MainLoopControls):
         Game.clear_screen()
 
         Environment.draw_background()
-        cls._timer_graphic_loop()
         cls._trash_bins_loop()
         cls._trashes_loop()
         cls._power_up_loops()
         cls._animation_loop()
         Environment.draw_cloudes()
+        cls._timer_graphic_loop()
 
         pygame.display.flip()
         Game.clock_tick()
