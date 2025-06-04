@@ -289,6 +289,7 @@ class AnimationCycler(SpriteControls):
 
         if this_cycle.is_finish():
             self.next()
+            self._cycle[self._current_cycle].draw()
         else:
             this_cycle.draw()
             
@@ -419,7 +420,7 @@ class TrashCategories(Enum):
         return AnimationCycler((
             SpriteAnimations(idle_path, 45, 8, 200, loop=True, pos=(posx, posy)),
             SpriteAnimations(prerun_path, 45, 4, 100, pos=(posx, posy)),
-            SpriteAnimations(run_path, 45, 4, 100, loop=True, pos=(posx, posy))))
+            SpriteAnimations(run_path, 45, 8, 100, loop=True, pos=(posx, posy))))
 
 class PowerUpCategories(Enum):
     SPEED = 0
@@ -1028,4 +1029,3 @@ while Game.running:
             EndedLoop.loop()
 
 pygame.quit()
-# 1000
