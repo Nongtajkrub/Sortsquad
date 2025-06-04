@@ -3,7 +3,6 @@ import dataclasses
 from dataclasses import dataclass
 from typing import Protocol
 import pygame, data, random, math
-from pygame.transform import scale
 
 pygame.init()
 
@@ -46,7 +45,7 @@ class Game:
 
     @classmethod
     def clear_screen(cls):
-        cls.screen.fill((0, 0, 0))
+       cls.screen.fill((0, 0, 0))
 
     @classmethod
     def clock_tick(cls):
