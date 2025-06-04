@@ -391,29 +391,35 @@ class TrashCategories(Enum):
     def to_bin_animation_cycler(self) -> AnimationCycler :
         idle_path, prerun_path, run_path = None, None, None
 
+        posx = round(Game.SCREEN_WIDTH / 2)
+        posy = Game.SCREEN_HEIGHT - 60
+
         match self:
             case TrashCategories.ORGANIC:
                 idle_path = data.ORGANIC_IDLE_PATH
                 prerun_path = data.ORGANIC_PRERUN_PATH
                 run_path = data.ORGANIC_RUN_PATH
+                posx -= 100
             case TrashCategories.GENERAL:
                 idle_path = data.GENERAL_IDLE_PATH
                 prerun_path = data.GENERAL_PRERUN_PATH
                 run_path = data.GENERAL_RUN_PATH
+                posx -= 30
             case TrashCategories.RECYCLABLE:
                 idle_path = data.RECYCLABLE_IDLE_PATH
                 prerun_path = data.RECYCLABLE_PRERUN_PATH
                 run_path = data.RECYCLABLE_RUN_PATH
+                posx += 30
             case TrashCategories.HAZARDOUS:
                 idle_path = data.HAZARDOUS_IDLE_PATH
                 prerun_path = data.HAZARDOUS_PRERUN_PATH
                 run_path = data.HAZARDOUS_RUN_PATH
+                posx += 100
 
-        pos = (0, Game.SCREEN_HEIGHT - 60)
         return AnimationCycler((
-            SpriteAnimations(idle_path, 45, 8, 200, loop=True, pos=pos),
-            SpriteAnimations(prerun_path, 45, 4, 100, pos=pos),
-            SpriteAnimations(run_path, 45, 4, 100, loop=True, pos=pos)))
+            SpriteAnimations(idle_path, 45, 8, 200, loop=True, pos=(posx, posy)),
+            SpriteAnimations(prerun_path, 45, 4, 100, pos=(posx, posy)),
+            SpriteAnimations(run_path, 45, 4, 100, loop=True, pos=(posx, posy))))
 
 class PowerUpCategories(Enum):
     SPEED = 0
