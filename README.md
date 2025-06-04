@@ -12,20 +12,21 @@ Think fast. Sort smart. Rule the bins.
 
 ## 📋 Todo
 
-- [ ] Sound Demo
-- [ ] Poster Design Fully Done
-- [x] Story Implemented In Game
-- [x] Basic End Game Summary
-- [ ] SOR-OR-WOR-NOR A-2 atleast 10
+Coming Soon!
 
 ### Late
 
 - [ ] New Sky Background
-- [x] Main Menu Working
-- [x] Poster Atleast Half Done
+- [ ] Poster Design Fully Done
+- [ ] SOR-OR-WOR-NOR A-2 atleast 10
       
 ### Finished
 
+- [x] Sound Demo
+- [x] Story Implemented In Game
+- [x] Poster Atleast Half Done
+- [x] Basic End Game Summary
+- [x] Main Menu Working
 - [x] Animation Manager
 - [x] Portal Opening When Trashes Drop
 - [x] Animation Cycler
