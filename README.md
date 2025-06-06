@@ -8,10 +8,6 @@
 
 A local multiplayer game built with Pygame in just 7 days that encourages correctly sorting trash to celebrate Environmental Day. Developed as a showcase for an event hosted by the Phuket Provincial Administrative Organization (องค์การบริหารส่วนจังหวัดภูเก็ต).
 
----
-
-## 📸 Screenshots
-
 ![Screenshots of the game as a Gif file.](/assets/others/screenshots.gif)
 
 ---
