@@ -10,6 +10,12 @@ A local multiplayer game built with Pygame in just 7 days that encourages correc
 
 ---
 
+## 📸 Screenshots
+
+![Screenshots of the game as a Gif file.](/assets/others/screenshots.gif)
+
+---
+
 ## 🏫 School
 
 ![Kajonkietsuksa School Logo](/assets/others/kajonkietsuksa.png)
