@@ -14,10 +14,10 @@ A local multiplayer game built with Pygame in just 7 days that encourages correc
 
 ## 📄 License
 
-![Kajonkietsuksa School Logo](/assets/others/kajonkietsuksa.png)
-
 * I developed this project as a student of [Kajonkietsuksa School](https://kg.kajonkietsuksa.ac.th/).
-* You may not copy, modify, publish, distribute, or use any portion of this code without explicit written permission from the author.
+* You may not copy, modify, publish, distribute, or use any portion of this code without explicit written permission from me.
+
+![Kajonkietsuksa School Logo](/assets/others/kajonkietsuksa.png)
 
 ---
 
