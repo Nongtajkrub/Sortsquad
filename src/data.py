@@ -1,10 +1,14 @@
+from os import getcwd
+
 CREDITS = [
     ("Taj Mikky Borthwick", (255, 0, 0)),
     ("Kritapas Maswongssa", (0, 255, 0)),
     ("Isaac Pachara Zogg", (0, 0, 255))
 ]
 
-_ASSETS_PATH = "/home/nongtajkrub/Coding/Python/trash-game/assets"
+_ASSETS_PATH = f"{getcwd()}/assets"
+
+TEST_ASSET_PATH = _ASSETS_PATH + "/asset_path_test.png"
 
 _MENU_PATH = _ASSETS_PATH + "/menu"
 _CUTSCENE_PATH = _ASSETS_PATH + "/cutscene"

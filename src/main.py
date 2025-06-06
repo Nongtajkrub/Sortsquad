@@ -3,8 +3,18 @@ import dataclasses
 from dataclasses import dataclass
 from typing import Protocol
 import pygame, data, random, math
+from sys import exit
 
 pygame.init()
+
+try:
+    pygame.image.load(data.TEST_ASSET_PATH)
+except (pygame.error, FileNotFoundError) as e:
+    print("\033[1;31m")
+    print("Please make sure you are starting this game from the project root directory.")
+    print("If you're unsure, refer to the 'Setup' section in the README for setup instructions.")
+    print("\033[0m")
+    exit(1)
 
 class Font:
     def __init__(self, path: str, sm = 24, md = 36, lg = 48, xlg = 64, xxlg = 96) -> None:
@@ -534,13 +544,6 @@ class TrashBin():
         SpriteAnimations(data.WRONG1_ANIMATION1_PATH, 32, 7, 50, cloneable=True),
         data.WRONG1_ANIMATION1_HEAP_N)
 
-    """
-    AnimationHeap.malloc(
-        "wrong_animation2",
-        SpriteAnimations(Path(data.WRONG2_ANIMATION1_PATH), 32, 7, 50, cloneable=True),
-        data.WRONG2_ANIMATION1_HEAP_N)
-    """
-
     def __init__(self, control: tuple[int, int], category: TrashCategories) -> None:
         self._sprites = category.to_bin_animation_cycler()
 
@@ -628,10 +631,6 @@ class TrashBin():
             AnimationHeap.request("scored_animation2", self.get_rect().center).raii()
         elif not scored and self._power_up != PowerUpCategories.SHIELD:
             AnimationHeap.request("wrong_animation1", self.get_rect().center).raii()
-        """
-        else:
-            AnimationHeap.request("wrong_animation2", self.get_rect().center).raii()
-        """
 
     def _power_up_loop(self, power_up: PowerUp) -> None:
         if (
@@ -916,9 +915,6 @@ class GameLoop(MainLoopControls):
         AnimationHeap.update_raii("scored_animation1")
         AnimationHeap.update_raii("scored_animation2")
         AnimationHeap.update_raii("wrong_animation1")
-        """
-        AnimationHeap.update_raii("wrong_animation2")
-        """
 
     @classmethod
     def _trash_bins_loop(cls) -> None:
