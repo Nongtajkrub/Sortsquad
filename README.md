@@ -14,7 +14,7 @@ A local multiplayer game built with Pygame in just 7 days that encourages correc
 
 ## 📄 License
 
-* I developed this project as a student of [Kajonkietsuksa School](https://kg.kajonkietsuksa.ac.th/).
+* We developed this project as a student of [Kajonkietsuksa School](https://kg.kajonkietsuksa.ac.th/).
 * [Click here to view the license information.](https://github.com/Nongtajkrub/Sortsquad?tab=License-1-ov-file)
 
 ![Kajonkietsuksa School Logo](/assets/others/kajonkietsuksa.png)
