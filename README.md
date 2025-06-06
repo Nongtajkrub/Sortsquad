@@ -13,3 +13,31 @@ A local multiplayer game built with Pygame in just 7 days that encourages correc
 ![Kajonkietsuksa School Logo](/assets/logo/kajonkietsuksa.png)
 
 I developed this project as a student of [Kajonkietsuksa School](https://kg.kajonkietsuksa.ac.th/).
+
+## ⚙️ Setup
+
+To run this game, make sure you have the following dependencies installed:
+
+* `Python` 3.11 or later
+* `Pygame` (Python library for game development)
+
+### 🛠️ Install Dependencies
+
+If you haven't installed `Python` yet, follow this guide:
+
+https://wiki.python.org/moin/BeginnersGuide/Download
+
+If you haven't installed `Pygame` yet, you can do so using pip:
+
+```bash
+pip install pygame
+```
+
+### ▶️ Running the Game
+
+To start the game, run the following command from the project root directory:
+```bash
+python src/main.py
+```
+
+> ⚠️ Important: Running the game from the project root ensures that all assets load correctly. If you see errors related to missing assets, double-check that you're in the root directory (where README.md and the src/ folder are located).
