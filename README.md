@@ -14,6 +14,12 @@ A local multiplayer game built with Pygame in just 7 days that encourages correc
 
 I developed this project as a student of [Kajonkietsuksa School](https://kg.kajonkietsuksa.ac.th/).
 
+## 📄 License
+
+You may not copy, modify, publish, distribute, or use any portion of this code without explicit written permission from the author.
+
+## 
+
 ## ⚙️ Setup
 
 To run this game, make sure you have the following dependencies installed:
