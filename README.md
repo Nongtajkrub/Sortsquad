@@ -8,17 +8,21 @@
 
 A local multiplayer game built with Pygame in just 7 days that encourages correctly sorting trash to celebrate Environmental Day. Developed as a showcase for an event hosted by the Phuket Provincial Administrative Organization (องค์การบริหารส่วนจังหวัดภูเก็ต).
 
+---
+
 ## 🏫 School
 
 ![Kajonkietsuksa School Logo](/assets/logo/kajonkietsuksa.png)
 
 I developed this project as a student of [Kajonkietsuksa School](https://kg.kajonkietsuksa.ac.th/).
 
+---
+
 ## 📄 License
 
 You may not copy, modify, publish, distribute, or use any portion of this code without explicit written permission from the author.
 
-## 
+---
 
 ## ⚙️ Setup
 
@@ -47,3 +51,5 @@ python src/main.py
 ```
 
 > ⚠️ Important: Running the game from the project root ensures that all assets load correctly. If you see errors related to missing assets, double-check that you're in the root directory (where README.md and the src/ folder are located).
+
+---
