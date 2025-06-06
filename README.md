@@ -1,4 +1,4 @@
-# 🗑️ Trash Game
+# 🗑️ Sortsquad
 
 ![Language](https://img.shields.io/badge/language-Python-blue?logo=python)
 ![Status](https://img.shields.io/badge/status-WIP-yellow)
@@ -7,36 +7,3 @@
 
 In this fast-paced 2D pixel multiplayer game, YOU become a living, rolling trash bin! Choose your bin type — General, Recycle, Battery, or Dangerous Waste — and race to catch the falling trash from the sky. But watch out! You can only collect the items that match your bin. Grab the wrong junk, and you're in trouble! With colorful pixel graphics, chaotic trash storms, and educational fun, Trash Game turns saving the planet into a wild, competitive adventure.
 Think fast. Sort smart. Rule the bins.
-
----
-
-## 📋 Todo
-
-Coming Soon!
-
-### Late
-
-- [ ] New Sky Background
-- [ ] Poster Design Fully Done
-- [ ] SOR-OR-WOR-NOR A-2 atleast 10
-      
-### Finished
-
-- [x] Sound Demo
-- [x] Story Implemented In Game
-- [x] Poster Atleast Half Done
-- [x] Basic End Game Summary
-- [x] Main Menu Working
-- [x] Animation Manager
-- [x] Portal Opening When Trashes Drop
-- [x] Animation Cycler
-- [x] All Trash Bin Sprite
-- [x] Trash Bin Animations
-- [x] Atleast 10 SO-OR-WOR-NOR A-1
-- [x] Scoring Animations
-- [x] Moving Cloudes
-- [x] All Trash Sprites
-- [x] Opening Scene
-- [x] Atleast 6 Trash Sprites
-
----
