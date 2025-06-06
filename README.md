@@ -12,7 +12,7 @@ A local multiplayer game built with Pygame in just 7 days that encourages correc
 
 ## 🏫 School
 
-![Kajonkietsuksa School Logo](/assets/logo/kajonkietsuksa.png)
+![Kajonkietsuksa School Logo](/assets/others/logo/kajonkietsuksa.png)
 
 I developed this project as a student of [Kajonkietsuksa School](https://kg.kajonkietsuksa.ac.th/).
 
