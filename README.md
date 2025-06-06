@@ -1,8 +1,8 @@
 # 🎮 Sortsquad
 
 ![Language](https://img.shields.io/badge/language-Python-blue?logo=python)
-![License](https://img.shields.io/badge/license-All--Right--Reserved-red)
 ![Status](https://img.shields.io/badge/status-Finish-green)
+![Loc](https://img.shields.io/badge/loc-1020-purple)
 
 > A game developed as a showcase for an event hosted by the Phuket Provincial Administrative Organization. 
 
