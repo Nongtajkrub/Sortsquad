@@ -697,6 +697,9 @@ class LinearCutscene:
     def is_finish(self):
         return self._current_scene == len(self._scenes) - 1
 
+    def get_scene(self) -> int:
+        return self._current_scene
+
 class FadingOutEffect:
     def __init__(
         self,
@@ -864,12 +867,23 @@ class StoryLoop(MainLoopControls):
         pygame.mixer.music.play()
 
     @classmethod
+    def _cutscene_loop(cls) -> None:
+        cls._cutscene.draw()
+
+        if cls._cutscene.get_scene() == 0:
+            Game.draw_text(
+                Game.font.xlg,
+                "Click Mouse To Continue",
+                (round(Game.SCREEN_WIDTH / 2), Game.SCREEN_HEIGHT - 100),
+                color=(255, 255, 255))
+
+    @classmethod
     def loop(cls) -> None:
         Game.update_input()
         cls._event_loop()
 
         Game.clear_screen()
-        cls._cutscene.draw()
+        cls._cutscene_loop()
 
         pygame.display.flip()
         Game.clock_tick()
