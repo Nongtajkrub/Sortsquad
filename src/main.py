@@ -786,7 +786,8 @@ class MenuLoop(MainLoopControls):
     _button = Buttons(
         data.MENU_BUTNORMAL_IMG_PATH,
         data.MENU_BUTHOVER_IMG_PATH,
-        data.MENU_BUTPRESSED_IMG_PATH, (round(Game.SCREEN_WIDTH / 2), 750), scale=(300, 100))
+        data.MENU_BUTPRESSED_IMG_PATH,
+        (round(Game.SCREEN_WIDTH / 2), Game.SCREEN_HEIGHT - 330), scale=(300, 100))
     _fade_to_black = FadingOutEffect(5, hold=1000)
     
     _current_credit = 0
@@ -812,7 +813,9 @@ class MenuLoop(MainLoopControls):
     def _credit_loop(cls) -> None:
         name = data.CREDITS[cls._current_credit][0]
         color = data.CREDITS[cls._current_credit][1]
-        Game.draw_text(Game.font.xlg, name, (round(Game.SCREEN_WIDTH / 2), 900), color)
+        Game.draw_text(
+            Game.font.xlg,
+            name, (round(Game.SCREEN_WIDTH / 2), Game.SCREEN_HEIGHT - 180), color)
 
     @classmethod
     def _button_loop(cls) -> None:
