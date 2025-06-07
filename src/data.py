@@ -6,9 +6,10 @@ CREDITS = [
     ("Isaac Pachara Zogg", (0, 0, 255))
 ]
 
+print(getcwd())
 _ASSETS_PATH = f"{getcwd()}/assets"
 
-TEST_ASSET_PATH = _ASSETS_PATH + "/asset_path_test.png"
+TEST_ASSET_PATH = _ASSETS_PATH + "/others/asset_path_test.png"
 
 _MENU_PATH = _ASSETS_PATH + "/menu"
 _CUTSCENE_PATH = _ASSETS_PATH + "/cutscene"
