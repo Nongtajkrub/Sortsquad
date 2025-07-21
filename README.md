@@ -21,7 +21,9 @@ A local multiplayer game built with Pygame in just 7 days that encourages correc
 
 ---
 
-### 👏 Contributor
+### 👏 Contributors
+
+> Listed in no particular order — every contribution is valued equally.
 
 * Taj Borthwick
 * Kritapas Maswongssa
