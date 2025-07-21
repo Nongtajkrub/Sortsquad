@@ -21,6 +21,14 @@ A local multiplayer game built with Pygame in just 7 days that encourages correc
 
 ---
 
+### 👏 Contributor
+
+* Taj Borthwick
+* Kritapas Maswongssa
+* Isaac Zogg
+
+---
+
 ## ⚙️ Setup
 
 To run this game, make sure you have the following dependencies installed:
