@@ -10,6 +10,9 @@ A local multiplayer game built with Pygame in just 7 days that encourages correc
 
 ![Screenshots of the game as a Gif file.](/assets/others/screenshots.gif)
 
+> [!CAUTION]
+> This branch will no longer receive game updates. The theme of this branch is a **7-day game jam build**. Ongoing development continues in the [`dev`](https://github.com/Nongtajkrub/Sortsquad/tree/dev) branch.
+
 ---
 
 ## 📄 License
@@ -60,3 +63,4 @@ python src/main.py
 > ⚠️ Important: Running the game from the project root ensures that all assets load correctly. If you see errors related to missing assets, double-check that you're in the root directory (where README.md and the src/ folder are located).
 
 ---
+
