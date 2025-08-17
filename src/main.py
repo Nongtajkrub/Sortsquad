@@ -538,13 +538,6 @@ class Trash(Sprite):
     SPAWN_EVENT = MyEvent.new_timer(data.TRASH_SPAWN_FREQ) 
     pygame.time.set_timer(SPAWN_EVENT, data.TRASH_SPAWN_FREQ)
 
-    sorted: dict[TrashCategories, int] = {
-        TrashCategories.ORGANIC: 0,
-        TrashCategories.HAZARDOUS: 0,
-        TrashCategories.RECYCLABLE: 0,
-        TrashCategories.GENERAL: 0
-    }
-
     AnimationHeap.malloc(
         "portal",
         SpriteAnimations(data.PORTAL_IMG_PATH, 32, 6, 70, cloneable=True),
@@ -601,6 +594,13 @@ class TrashBin():
         "wrong_animation1",
         SpriteAnimations(data.WRONG1_ANIMATION1_PATH, 32, 7, 50, cloneable=True),
         data.WRONG1_ANIMATION1_HEAP_N)
+
+    scores: dict[TrashCategories, int] = {
+        TrashCategories.ORGANIC: 0,
+        TrashCategories.HAZARDOUS: 0,
+        TrashCategories.RECYCLABLE: 0,
+        TrashCategories.GENERAL: 0
+    }
 
     def __init__(self, control: tuple[int, int], category: TrashCategories) -> None:
         self._sprites = category.to_bin_animation_cycler()
@@ -668,9 +668,13 @@ class TrashBin():
 
                 self._score += increment if scored else decrement
                 self._score = max(0, self._score)
+
+                score_bin_category = self.scores[self._bin_category]
+                score_bin_category += increment if scored else decrement
+                score_bin_category = max(0, score_bin_category)
+                self.scores[self._bin_category] = score_bin_category
                 
                 if scored:
-                    Trash.sorted[self._bin_category] += 1
                     self._scored_sound.play()
 
                 # Only despawn trash if shield power up is disable
@@ -1087,7 +1091,7 @@ class EndedLoop(MainLoopControls):
 
             Game.draw_text_outline(
                 Game.font.xlg,
-                str(Trash.sorted[category]),
+                str(TrashBin.scores[category]),
                 (x_pos, 420), color=category.to_color())
 
     @classmethod
