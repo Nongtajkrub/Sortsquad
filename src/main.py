@@ -2,9 +2,9 @@ from enum import Enum
 import dataclasses
 from dataclasses import dataclass
 from typing import Protocol
-import pygame, data, random, math
 from functools import lru_cache
 from sys import exit
+import pygame, data, random, math
 
 pygame.init()
 pygame.mixer.music.load(data.MUSIC_PATH)
@@ -53,6 +53,9 @@ class GameState(Enum):
 class Game:
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
+    SCREEN_CENX = round(SCREEN_WIDTH / 2)
+    SCREEN_CENY = round(SCREEN_HEIGHT / 2)
+    SCREEN_CEN = (SCREEN_CENX, SCREEN_CENY)
     clock = pygame.time.Clock()
     font = Font(str(data.FONT_PATH)) 
     state = GameState.MENU
@@ -153,6 +156,13 @@ class Sprite(SpriteControls):
     def set_rect(self, rect) -> None:
         self._rect = rect
 
+class Background:
+    def __init__(self, path: str) -> None:
+        self._image = pygame.transform.scale(
+            pygame.image.load(path), Game.screen.get_size()).convert()
+
+    def draw(self):
+        Game.screen.blit(self._image, (0, 0))
 
 # A horrible error prone animation system
 class SpriteAnimations(SpriteControls):
@@ -430,6 +440,13 @@ class TrashCategories(Enum):
             case TrashCategories.HAZARDOUS: return HazardousTrashes
             case TrashCategories.RECYCLABLE: return RecyclableTrashes
             case TrashCategories.GENERAL: return GeneralTrashes
+
+    def to_color(self) -> tuple[int, int, int]:
+        match self:
+            case TrashCategories.ORGANIC: return Color.Hex.to_rgb("#5aba27")
+            case TrashCategories.HAZARDOUS: return Color.Hex.to_rgb("#dd0000")
+            case TrashCategories.RECYCLABLE: return Color.Hex.to_rgb("#ffe700")
+            case TrashCategories.GENERAL: return Color.Hex.to_rgb("#0091de")
 
     def to_bin_animation_cycler(self) -> AnimationCycler :
         idle_path, prerun_path, run_path = None, None, None
@@ -782,8 +799,7 @@ class Buttons:
         self.is_pressed = False
 
 class Environment:
-    _background_sky = pygame.transform.scale(
-        pygame.image.load(data.SKY_IMG_PATH), Game.screen.get_size()).convert()
+    _background_sky = Background(data.SKY_IMG_PATH)
     _background_grass = pygame.transform.scale(
         pygame.image.load(data.GRASS_IMG_PATH), (Game.screen.get_width(), 100)).convert_alpha()
 
@@ -793,7 +809,7 @@ class Environment:
    
     @classmethod
     def draw_background(cls) -> None:
-        Game.screen.blit(cls._background_sky, (0, 0))
+        cls._background_sky.draw()
         Game.screen.blit(cls._background_grass, (0, Game.SCREEN_HEIGHT - 100))
 
     @classmethod
@@ -823,8 +839,7 @@ class MainLoopControls(Protocol):
         ...
 
 class MenuLoop(MainLoopControls):
-    _background = pygame.transform.scale(
-        pygame.image.load(data.MENU_BACKGROUND_IMG_PATH), Game.screen.get_size()).convert()
+    _background = Background(data.MENU_BACKGROUND_IMG_PATH)
     _button = Buttons(
         data.MENU_BUTNORMAL_IMG_PATH,
         data.MENU_BUTHOVER_IMG_PATH,
@@ -881,7 +896,7 @@ class MenuLoop(MainLoopControls):
         cls._event_loop()
 
         Game.clear_screen()
-        Game.screen.blit(cls._background, (0, 0))
+        cls._background.draw()
         cls._credit_loop()
         cls._button_loop()
         cls._graphic_loop()
@@ -997,12 +1012,12 @@ class GameLoop(MainLoopControls):
         if cls.game_started == None:
             raise Exception("Game started unexpectedly.")
 
-        time_left_sec = 60 - round((Game.current_time - cls.game_started) / 1000)
-        color_r = 255 - round(time_left_sec * data.TIMER_COLOR_MULTIPLIER)
+        time_left = round((data.GAME_TIME - (Game.current_time - cls.game_started)) / 1000)
+        color_r = 255 - round(time_left * data.TIMER_COLOR_MULTIPLIER)
 
         Game.draw_text_outline(
             Game.font.xxlg,
-            str(time_left_sec),
+            str(time_left),
             (round(Game.SCREEN_WIDTH / 2), 150), (255, 255 - color_r, 255 - color_r))
 
     @classmethod
@@ -1024,6 +1039,9 @@ class GameLoop(MainLoopControls):
         Game.clock_tick()
 
 class EndedLoop(MainLoopControls):
+    _shown_total_score = False
+    _scores_menu = Background(data.MENU_SCORES_IMG_PATH)
+
     @classmethod
     def begin(cls) -> None:
         pygame.mixer.music.play(start=373)
@@ -1037,37 +1055,50 @@ class EndedLoop(MainLoopControls):
             match event.type:
                 case pygame.QUIT:
                     Game.running = False
+                case pygame.MOUSEBUTTONDOWN:
+                    cls._shown_total_score = True
+
+    @classmethod
+    def _total_score_loop(cls) -> None:
+        Game.draw_text_outline(
+            Game.font.xxlg,
+            "Total Score".capitalize(),
+            (Game.SCREEN_CENX, Game.SCREEN_CENY - 50),
+            color=Color.Hex.to_rgb("#ffe700"), outline_width=5)
+
+        Game.draw_text_outline(
+            Game.font.xxlg,
+            str(sum([bin.get_score() for bin in GameLoop.bins])),
+            (Game.SCREEN_CENX, Game.SCREEN_CENY + 50),
+            color=(255, 255, 255), outline_width=5)
 
     @classmethod
     def _score_loop(cls) -> None:
-        total_score = sum([bin.get_score() for bin in GameLoop.bins])
+        cls._scores_menu.draw()
 
-        Game.draw_text_outline(
-            Game.font.xlg,
-            f"Game Ended! Total Score {total_score}",
-            (round(Game.SCREEN_WIDTH / 2), 300),
-            (255, 255, 255))
+        trash_categories = [
+            TrashCategories.RECYCLABLE,
+            TrashCategories.HAZARDOUS,
+            TrashCategories.ORGANIC, TrashCategories.GENERAL]
 
-        summaries: tuple[str, ...] = (
-            f"You sorted {Trash.sorted[TrashCategories.GENERAL]} general trashes!",
-            f"You sorted {Trash.sorted[TrashCategories.ORGANIC]} organic trashes!",
-            f"You sorted {Trash.sorted[TrashCategories.RECYCLABLE]} recyclable trashes!",
-            f"You sorted {Trash.sorted[TrashCategories.HAZARDOUS]} hazardous trashes!"
-        )
+        for (i, category) in enumerate(trash_categories):
+            x_pos = 275 + (i * 455)
 
-        for i, summary in enumerate(summaries):
             Game.draw_text_outline(
                 Game.font.xlg,
-                summary,
-                (round(Game.SCREEN_WIDTH / 2), 400 + (i * 70)),
-                (255, 255, 255))
+                str(Trash.sorted[category]),
+                (x_pos, 420), color=category.to_color())
 
     @classmethod
     def loop(cls) -> None:
         cls._event_loop()
     
-        Game.screen.fill((0, 0, 0))
-        cls._score_loop()
+        Game.screen.fill(Color.Hex.to_rgb("#242424"))
+
+        if not cls._shown_total_score:
+            cls._total_score_loop()
+        else:
+            cls._score_loop()
 
         pygame.display.flip()
         Game.clock_tick()
