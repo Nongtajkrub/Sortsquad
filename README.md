@@ -2,7 +2,7 @@
 
 ![Language](https://img.shields.io/badge/language-Python-blue?logo=python)
 ![Status](https://img.shields.io/badge/status-Finish-green)
-![Loc](https://img.shields.io/badge/loc-1020-purple)
+![Loc](https://img.shields.io/badge/loc-1127-purple)
 
 > A game developed as a showcase for an event hosted by the Phuket Provincial Administrative Organization. 
 
@@ -65,5 +65,3 @@ python src/main.py
 > Running the game from the project root ensures that all assets load correctly. If you see errors related to missing assets, double-check that you're in the root directory (where README.md and the src/ folder are located).
 
 ---
-
-
