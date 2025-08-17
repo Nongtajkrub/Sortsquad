@@ -7,7 +7,6 @@ from sys import exit
 import pygame, data, random, math
 
 pygame.init()
-pygame.mixer.music.load(data.MUSIC_PATH)
 
 try:
     pygame.image.load(data.TEST_ASSET_PATH)
@@ -17,6 +16,8 @@ except (pygame.error, FileNotFoundError) as e:
     print("If you're unsure, refer to the 'Setup' section in the README for setup instructions.")
     print("\033[0m")
     exit(1)
+
+pygame.mixer.music.load(data.MUSIC_PATH)
 
 class Color:
     class Hex:
