@@ -7,6 +7,7 @@ from functools import lru_cache
 from sys import exit
 
 pygame.init()
+pygame.mixer.music.load(data.MUSIC_PATH)
 
 try:
     pygame.image.load(data.TEST_ASSET_PATH)
@@ -891,7 +892,9 @@ class MenuLoop(MainLoopControls):
 class StoryLoop(MainLoopControls):
     _cutscene = LinearCutscene(data.CUTSCENES_IMG_PATHS)
 
-    pygame.mixer.music.load(data.MUSIC_PATH)
+    @classmethod
+    def begin(cls) -> None:
+        pygame.mixer.music.play()
 
     @classmethod
     def _event_loop(cls) -> None:
@@ -902,14 +905,9 @@ class StoryLoop(MainLoopControls):
                 case pygame.MOUSEBUTTONDOWN:
                     if cls._cutscene.is_finish():
                         Game.state = GameState.RUNNING
-                        GameLoop._begin()
+                        GameLoop.begin()
                     else:
                         cls._cutscene.next()
-    
-    @classmethod
-    def begin(cls) -> None:
-        pygame.mixer.music.play()
-
     @classmethod
     def _cutscene_loop(cls) -> None:
         cls._cutscene.draw()
@@ -943,7 +941,7 @@ class GameLoop(MainLoopControls):
     power_up = PowerUp()
 
     @classmethod
-    def _begin(cls) -> None:
+    def begin(cls) -> None:
         GameLoop.game_started = Game.current_time
         pygame.mixer.music.play(start=68)
 
@@ -954,7 +952,7 @@ class GameLoop(MainLoopControls):
             Game.current_time - cls.game_started >= data.GAME_TIME
         ):
             Game.state = GameState.ENDED
-            EndedLoop._begin()
+            EndedLoop.begin()
 
         for event in pygame.event.get():
             match event.type:
@@ -1027,7 +1025,7 @@ class GameLoop(MainLoopControls):
 
 class EndedLoop(MainLoopControls):
     @classmethod
-    def _begin(cls) -> None:
+    def begin(cls) -> None:
         pygame.mixer.music.play(start=373)
         pygame.event.set_blocked(PowerUp.SPAWN_EVENT)
         pygame.event.set_blocked(Trash.SPAWN_EVENT)
@@ -1074,15 +1072,20 @@ class EndedLoop(MainLoopControls):
         pygame.display.flip()
         Game.clock_tick()
 
-while Game.running:
-    match Game.state:
-        case GameState.MENU:
-            MenuLoop.loop()
-        case GameState.STORY:
-            StoryLoop.loop()
-        case GameState.RUNNING:
-            GameLoop.loop()
-        case GameState.ENDED:
-            EndedLoop.loop()
+if __name__ == "__main__":
+    if data.IMMEDIATE_START:
+        Game.state = GameState.RUNNING
+        GameLoop.begin()
+
+    while Game.running:
+        match Game.state:
+            case GameState.MENU:
+                MenuLoop.loop()
+            case GameState.STORY:
+                StoryLoop.loop()
+            case GameState.RUNNING:
+                GameLoop.loop()
+            case GameState.ENDED:
+                EndedLoop.loop()
 
 pygame.quit()
