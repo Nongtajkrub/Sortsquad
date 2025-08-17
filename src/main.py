@@ -76,6 +76,27 @@ class Game:
         surf = font.render(text, True, color)
         cls.screen.blit(surf, surf.get_rect(center=pos))
 
+    @classmethod
+    def draw_text_outline(
+        cls,
+        font: pygame.font.Font,
+        text: str,
+        pos: tuple[int, int],
+        color=(0, 0, 0), outline_color=(0, 0, 0), outline_width=3
+    ) -> None:
+        base = font.render(text, True, color)
+        outline = font.render(text, True, outline_color)
+        x, y = pos
+
+        # Draw outline
+        for dx in range(-outline_width, outline_width + 1):
+            for dy in range(-outline_width, outline_width + 1):
+                if dx**2 + dy**2 <= outline_width**2:  # circular outline
+                    cls.screen.blit(outline, outline.get_rect(center=(x + dx, y + dy)))
+
+        # Draw main text on top
+        cls.screen.blit(base, base.get_rect(center=pos))
+
 class SpriteControls(Protocol):
     def draw(self) -> None:
         ...
@@ -650,20 +671,22 @@ class TrashBin():
     def _graphic_loop(self) -> None:
         # Show power up on player head.
         if self._power_up != None:
-            Game.draw_text(
-                Game.font.md,
+            Game.draw_text_outline(
+                Game.font.sm,
                 self._power_up.to_string(),
-                (self.get_rect().centerx, Game.SCREEN_HEIGHT - 160))
+                (self.get_rect().centerx, Game.SCREEN_HEIGHT - 160),
+                color=(255, 255, 255))
 
             # Show shield effect on player if the shield power up is enable.
             if self._power_up == PowerUpCategories.SHIELD:
                 self._power_up_shield_sprite.get_rect().center = (self.get_rect().center)
                 self._power_up_shield_sprite.draw()
 
-        Game.draw_text(
-            Game.font.md,
+        Game.draw_text_outline(
+            Game.font.sm,
             f"Score: {self._score}",
-            (self.get_rect().centerx, Game.SCREEN_HEIGHT - 140))
+            (self.get_rect().centerx, Game.SCREEN_HEIGHT - 140),
+            color=(255, 255, 255))
 
     def loop(self, trashes: list[Trash], power_up: PowerUp) -> None:
         self._movement_loop()
@@ -813,7 +836,7 @@ class MenuLoop(MainLoopControls):
     def _credit_loop(cls) -> None:
         name = data.CREDITS[cls._current_credit][0]
         color = data.CREDITS[cls._current_credit][1]
-        Game.draw_text(
+        Game.draw_text_outline(
             Game.font.xlg,
             name, (round(Game.SCREEN_WIDTH / 2), Game.SCREEN_HEIGHT - 180), color)
 
@@ -874,8 +897,8 @@ class StoryLoop(MainLoopControls):
         cls._cutscene.draw()
 
         if cls._cutscene.get_scene() == 0:
-            Game.draw_text(
-                Game.font.xlg,
+            Game.draw_text_outline(
+                Game.font.lg,
                 "Click Mouse To Continue",
                 (round(Game.SCREEN_WIDTH / 2), Game.SCREEN_HEIGHT - 100),
                 color=(255, 255, 255))
@@ -961,7 +984,7 @@ class GameLoop(MainLoopControls):
         time_left_sec = 60 - round((Game.current_time - cls.game_started) / 1000)
         color_r = 255 - round(time_left_sec * data.TIMER_COLOR_MULTIPLIER)
 
-        Game.draw_text(
+        Game.draw_text_outline(
             Game.font.xxlg,
             str(time_left_sec),
             (round(Game.SCREEN_WIDTH / 2), 150), (color_r, 0, 0))
@@ -1003,7 +1026,7 @@ class EndedLoop(MainLoopControls):
     def _score_loop(cls) -> None:
         total_score = sum([bin.get_score() for bin in GameLoop.bins])
 
-        Game.draw_text(
+        Game.draw_text_outline(
             Game.font.xlg,
             f"Game Ended! Total Score {total_score}",
             (round(Game.SCREEN_WIDTH / 2), 300),
@@ -1017,7 +1040,7 @@ class EndedLoop(MainLoopControls):
         )
 
         for i, summary in enumerate(summaries):
-            Game.draw_text(
+            Game.draw_text_outline(
                 Game.font.xlg,
                 summary,
                 (round(Game.SCREEN_WIDTH / 2), 400 + (i * 70)),
