@@ -3,6 +3,7 @@ import dataclasses
 from dataclasses import dataclass
 from typing import Protocol
 import pygame, data, random, math
+from functools import lru_cache
 from sys import exit
 
 pygame.init()
@@ -15,6 +16,14 @@ except (pygame.error, FileNotFoundError) as e:
     print("If you're unsure, refer to the 'Setup' section in the README for setup instructions.")
     print("\033[0m")
     exit(1)
+
+class Color:
+    class Hex:
+        @staticmethod
+        @lru_cache(maxsize=32)
+        def to_rgb(hex: str) -> tuple[int, int, int]:
+            hex = hex.lstrip("#")
+            return (int(hex[0:2], 16), int(hex[2:4], 16), int(hex[4:6], 16))
 
 class Font:
     def __init__(self, path: str, sm = 24, md = 36, lg = 48, xlg = 64, xxlg = 96) -> None:
@@ -142,6 +151,7 @@ class Sprite(SpriteControls):
 
     def set_rect(self, rect) -> None:
         self._rect = rect
+
 
 # A horrible error prone animation system
 class SpriteAnimations(SpriteControls):
@@ -293,7 +303,6 @@ class AnimationHeap:
                     sprite.free()
                 else:
                     sprite.sprite.draw()
-
 
 class AnimationCycler(SpriteControls):
     def __init__(self, cycle: tuple[SpriteAnimations, ...]) -> None:
@@ -463,14 +472,23 @@ class PowerUpCategories(Enum):
     def random(cls):
         return random.choice(list(cls))
     
-    def to_string(self):
+    def to_string(self) -> str:
         match self:
             case PowerUpCategories.SPEED:
-                return "Speed"
+                return "Speed".capitalize()
             case PowerUpCategories.DOUBLE_POINT:
-                return "Double Point"
+                return "Double Point".capitalize()
             case PowerUpCategories.SHIELD:
-                return "Shield"
+                return "Shield".capitalize()
+
+    def to_color(self) -> tuple[int, int, int]:
+        match self:
+            case PowerUpCategories.SPEED:
+                return Color.Hex.to_rgb("#22d3ee")
+            case PowerUpCategories.DOUBLE_POINT:
+                return Color.Hex.to_rgb("#fde047")
+            case PowerUpCategories.SHIELD:
+                return Color.Hex.to_rgb("#dc2626")
 
 class PowerUp(Sprite):
     SPAWN_EVENT = MyEvent.new_timer(data.POWER_UP_SPAWN_FREQ) 
@@ -675,7 +693,7 @@ class TrashBin():
                 Game.font.sm,
                 self._power_up.to_string(),
                 (self.get_rect().centerx, Game.SCREEN_HEIGHT - 160),
-                color=(255, 255, 255))
+                color=self._power_up.to_color())
 
             # Show shield effect on player if the shield power up is enable.
             if self._power_up == PowerUpCategories.SHIELD:
@@ -987,7 +1005,7 @@ class GameLoop(MainLoopControls):
         Game.draw_text_outline(
             Game.font.xxlg,
             str(time_left_sec),
-            (round(Game.SCREEN_WIDTH / 2), 150), (color_r, 0, 0))
+            (round(Game.SCREEN_WIDTH / 2), 150), (255, 255 - color_r, 255 - color_r))
 
     @classmethod
     def loop(cls) -> None:
