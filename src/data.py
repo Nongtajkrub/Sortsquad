@@ -1,9 +1,9 @@
 from os import getcwd
 
 CREDITS = [
-    ("Taj Mikky Borthwick", (255, 0, 0)),
-    ("Kritapas Maswongssa", (0, 255, 0)),
-    ("Isaac Pachara Zogg", (0, 0, 255))
+    ("Taj Mikky Borthwick".capitalize(), (255, 0, 0)),
+    ("Kritapas Maswongssa".capitalize(), (0, 255, 0)),
+    ("Isaac Pachara Zogg".capitalize(), (0, 0, 255))
 ]
 
 print(getcwd())
@@ -95,7 +95,7 @@ SHOE_IMG_PATH = _TRASHES_PATH + "/general/shoe.png"
 POWER_UP_IMG_PATH = _POWERUP_PATH + "/powerup.png"
 SHIELD_IMG_PATH = _POWERUP_PATH + "/shield.png"
 
-FONT_PATH = _FONT_PATH + "/font.tff"
+FONT_PATH = _FONT_PATH + "/font.otf"
 SCORE_ANIMATION1_PATH = _FONT_PATH + "/scored_animation1.png"
 SCORE_ANIMATION1_HEAP_N = 15
 SCORE_ANIMATION2_PATH = _FONT_PATH + "/scored_animation2.png"
