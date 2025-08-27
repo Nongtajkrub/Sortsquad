@@ -13,6 +13,7 @@ export interface PlayerConfig {
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
 	private currentState: PlayerState = "Idle";
+	private oldVelocityX: number = 0;
 
 	constructor(scene: Phaser.Scene, config: PlayerConfig) {
 		super(scene, config.x ?? 0, config.y ?? 0, config.idleKey);
@@ -36,7 +37,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		this.anims.create({
 			key: "prerun",
 			frames: this.anims.generateFrameNumbers(config.prerunKey, { start: 0, end: 4 }),
-			frameRate: 5,
+			frameRate: 10,
 			repeat: 0,
 		});
 
@@ -48,13 +49,39 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		});
 	}
 
-	update(cursor: Phaser.Types.Input.Keyboard.CursorKeys): void {
+	private updateMovement(cursor: Phaser.Types.Input.Keyboard.CursorKeys): void {
+		this.oldVelocityX = this.body!.velocity.x;
+
 		if (cursor.left.isDown) {
-			this.setVelocityX(-100);
+			this.setVelocityX(-500);
+			this.setFlipX(true);
 		} else if (cursor.right.isDown) {
-			this.setVelocityX(100);
+			this.setVelocityX(500);
+			this.setFlipX(false);
 		} else {
 			this.setVelocityX(0);
 		}
+	}
+
+	private updateAnimation(): void {
+		const recentlyMove: boolean = this.body!.velocity.x != this.oldVelocityX;
+
+		if (recentlyMove) {
+			this.anims.play("prerun");
+			this.currentState = "Prerun";
+
+			this.once("animationcomplete", () => {
+				this.anims.play("running");
+				this.currentState = "Running";
+			});
+		} else if (this.body!.velocity.x === 0 && this.currentState !== "Idle") {
+			this.anims.play("idle");
+			this.currentState = "Idle";
+		}
+	}
+
+	update(cursor: Phaser.Types.Input.Keyboard.CursorKeys): void {
+		this.updateMovement(cursor);
+		this.updateAnimation();
 	}
 }
