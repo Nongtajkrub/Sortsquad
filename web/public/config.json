@@ -1,0 +1,21 @@
+{
+	"credit": [
+		{
+			"name": "Taj Mikky Borthwick",
+			"color": [255, 0, 0]
+		},
+		{
+			"name": "Kritapas Maswongssa",
+			"color": [0, 255, 0]
+		},
+		{
+			"name": "Isaac Pachara Zogg",
+			"color": [0, 0, 255]
+		}
+	],
+	"assets": {
+		"environment": {
+			"sky": "assets/environment/sky.jpg"
+		}
+	}
+}
