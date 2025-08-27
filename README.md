@@ -8,7 +8,7 @@
 
 A local multiplayer game built with Pygame in just 7 days that encourages correctly sorting trash to celebrate Environmental Day. Developed as a showcase for an event hosted by the Phuket Provincial Administrative Organization (องค์การบริหารส่วนจังหวัดภูเก็ต).
 
-![Screenshots of the game as a Gif file.](/docs/others/screenshots.gif)
+![Screenshots of the game as a Gif file.](/docs/screenshots.gif)
 
 ---
 
@@ -17,7 +17,7 @@ A local multiplayer game built with Pygame in just 7 days that encourages correc
 * We developed this project as a student of [Kajonkietsuksa School](https://kg.kajonkietsuksa.ac.th/).
 * [Click here to view the license information.](https://github.com/Nongtajkrub/Sortsquad?tab=License-1-ov-file)
 
-![Kajonkietsuksa School Logo](/docs/others/kajonkietsuksa.png)
+![Kajonkietsuksa School Logo](/docs/kajonkietsuksa.png)
 
 ---
 
