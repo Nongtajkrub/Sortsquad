@@ -14,6 +14,7 @@ except (pygame.error, FileNotFoundError) as e:
     print("\033[1;31m")
     print("Please make sure you are starting this game from the project root directory.")
     print("If you're unsure, refer to the 'Setup' section in the README for setup instructions.")
+    print(f"Current assets path: {data.ASSETS_PATH}")
     print("\033[0m")
     exit(1)
 

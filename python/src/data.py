@@ -7,18 +7,18 @@ CREDITS = [
 ]
 
 print(getcwd())
-_ASSETS_PATH = f"{getcwd()}/assets"
+ASSETS_PATH = f"{getcwd()}/core/assets"
 
-TEST_ASSET_PATH = _ASSETS_PATH + "/others/asset_path_test.png"
+TEST_ASSET_PATH = ASSETS_PATH + "/others/asset_path_test.png"
 
-_MENU_PATH = _ASSETS_PATH + "/menu"
-_CUTSCENE_PATH = _ASSETS_PATH + "/cutscene"
-_AUDIO_PATH = _ASSETS_PATH + "/audio"
-_ENV_PATH = _ASSETS_PATH + "/environment"
-_BINS_PATH = _ASSETS_PATH + "/bins"
-_TRASHES_PATH = _ASSETS_PATH + "/trahse"
-_POWERUP_PATH = _ASSETS_PATH + "/powerup"
-_FONT_PATH = _ASSETS_PATH + "/fonts"
+_MENU_PATH = ASSETS_PATH + "/menu"
+_CUTSCENE_PATH = ASSETS_PATH + "/cutscene"
+_AUDIO_PATH = ASSETS_PATH + "/audio"
+_ENV_PATH = ASSETS_PATH + "/environment"
+_BINS_PATH = ASSETS_PATH + "/bins"
+_TRASHES_PATH = ASSETS_PATH + "/trahse"
+_POWERUP_PATH = ASSETS_PATH + "/powerup"
+_FONT_PATH = ASSETS_PATH + "/fonts"
 
 MENU_BUTNORMAL_IMG_PATH = _MENU_PATH + "/buttonnormal.png" 
 MENU_BUTPRESSED_IMG_PATH = _MENU_PATH + "/buttonpressed.png" 
