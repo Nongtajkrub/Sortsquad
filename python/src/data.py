@@ -7,7 +7,7 @@ CREDITS = [
 ]
 
 print(getcwd())
-ASSETS_PATH = f"{getcwd()}/core/assets"
+ASSETS_PATH = f"{getcwd()}/python/assets"
 
 TEST_ASSET_PATH = ASSETS_PATH + "/others/asset_path_test.png"
 
