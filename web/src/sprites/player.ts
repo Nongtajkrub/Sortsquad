@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import type {Trash} from "./trash";
 import type TrashesManager from "../core/trashes-manager";
+import {trashCategoryRandom, type TrashCategory} from "../core/trash-categories";
 
 type PlayerState = "Idle" | "Prerun" | "Running";
 
@@ -16,6 +17,8 @@ export interface PlayerConfig {
 export class Player extends Phaser.Physics.Arcade.Sprite {
 	private currentState: PlayerState = "Idle";
 	private oldVelocityX: number = 0;
+	private binCategory: TrashCategory = "Organic";
+	private score: number = 0;
 
 	constructor(scene: Phaser.Scene, config: PlayerConfig) {
 		super(scene, config.x ?? 0, config.y ?? 0, config.idleKey);
@@ -86,6 +89,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 	private checkCollision(trashes: Array<Trash>): void {
 		trashes.forEach((trash: Trash) => {
 			if (this.scene.physics.overlap(trash, this)) {
+				if (trash.getCategory() == this.binCategory) {
+					this.score++;
+					console.log(this.score)
+				} else {
+					this.score--;
+					console.log(this.score)
+				}
+				this.score = Math.max(this.score, 0);
+
 				trash.setAlive(false);
 			}
 		});
