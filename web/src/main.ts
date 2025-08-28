@@ -1,9 +1,11 @@
 import Phaser from "phaser";
 
 import { Player } from "./sprites/player";
+import TrashesManager from "./core/trashes-manager";
 
 class MainScene extends Phaser.Scene {
 	private player!: Player;
+	private trashManager!: TrashesManager;
 	private cursor!: Phaser.Types.Input.Keyboard.CursorKeys;
 
 	constructor() {
@@ -16,15 +18,19 @@ class MainScene extends Phaser.Scene {
 		this.load.spritesheet("organicBinIdle", "assets/bins/organic/idle.png", {
 			frameWidth: 45,
 			frameHeight: 45
-		})
+		});
 		this.load.spritesheet("organicBinPrerun", "assets/bins/organic/prerunning.png", {
 			frameWidth: 45,
 			frameHeight: 45
-		})
+		});
 		this.load.spritesheet("organicBinRunning", "assets/bins/organic/running.png", {
 			frameWidth: 45,
 			frameHeight: 45
-		})
+		});
+
+		this.load.image("apple", "assets/trahse/organic/apple.png");
+		this.load.image("vegatable", "assets/trahse/organic/vegatable.png");
+		this.load.image("shoe", "assets/trahse/general/shoe.png");
 	}
 
 	create(): void {
@@ -32,16 +38,23 @@ class MainScene extends Phaser.Scene {
 
 		this.player = new Player(this, {
 			x: 200,
-			y: 200,
-			scale: 2,
+			y: window.innerHeight - 70,
+			scale: 3,
 			idleKey: "organicBinIdle",
 			prerunKey: "organicBinPrerun",
 			runningKey: "organicBinRunning"
 		}); 
+
+		this.trashManager = new TrashesManager(this);
+
+		setInterval(() => {
+			this.trashManager.spawn();
+		}, 500);
 	}
 
 	update(): void {
-		this.player.update(this.cursor);
+		this.player.update(this.cursor, this.trashManager);
+		this.trashManager.update();
 	}
 }
 

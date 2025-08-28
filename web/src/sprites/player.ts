@@ -1,4 +1,6 @@
 import Phaser from "phaser";
+import type {Trash} from "./trash";
+import type TrashesManager from "../core/trashes-manager";
 
 type PlayerState = "Idle" | "Prerun" | "Running";
 
@@ -21,6 +23,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		scene.physics.add.existing(this);
 
 		this.setScale(config.scale ?? 1);
+		this.setSize(10, 10);
 
 		this.createAnimations(config);
 		this.anims.play("idle");
@@ -80,8 +83,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		}
 	}
 
-	update(cursor: Phaser.Types.Input.Keyboard.CursorKeys): void {
+	private checkCollision(trashes: Array<Trash>): void {
+		trashes.forEach((trash: Trash) => {
+			if (this.scene.physics.overlap(trash, this)) {
+				trash.setAlive(false);
+			}
+		});
+	}
+
+	update(cursor: Phaser.Types.Input.Keyboard.CursorKeys, trashManager: TrashesManager): void {
 		this.updateMovement(cursor);
 		this.updateAnimation();
+		this.checkCollision(trashManager.getTrashes());
 	}
 }
