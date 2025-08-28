@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import type {Trash} from "./trash";
 import type TrashesManager from "../core/trashes-manager";
-import {trashCategoryRandom, type TrashCategory} from "../core/trash-categories";
+import { type TrashCategory } from "../core/trash-categories";
 
 type PlayerState = "Idle" | "Prerun" | "Running";
 
@@ -19,11 +19,18 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 	private oldVelocityX: number = 0;
 	private binCategory: TrashCategory = "Organic";
 	private score: number = 0;
+	private scoreText!: Phaser.GameObjects.Text;
 
 	constructor(scene: Phaser.Scene, config: PlayerConfig) {
 		super(scene, config.x ?? 0, config.y ?? 0, config.idleKey);
 		scene.add.existing(this);
 		scene.physics.add.existing(this);
+
+		this.scoreText = scene.add.text(
+			config.x ?? 0,
+			(config.y ?? 0) - 100,
+			`Score: ${this.score}`
+		);
 
 		this.setScale(config.scale ?? 1);
 		this.setSize(10, 10);
@@ -86,15 +93,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		}
 	}
 
-	private checkCollision(trashes: Array<Trash>): void {
+	private updateCollision(trashes: Array<Trash>): void {
 		trashes.forEach((trash: Trash) => {
 			if (this.scene.physics.overlap(trash, this)) {
 				if (trash.getCategory() == this.binCategory) {
 					this.score++;
-					console.log(this.score)
 				} else {
 					this.score--;
-					console.log(this.score)
 				}
 				this.score = Math.max(this.score, 0);
 
@@ -103,9 +108,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		});
 	}
 
+	private updateGraphic() {
+		this.scoreText.setText(`Score: ${this.score}`);
+		this.scoreText.setX(this.body?.position.x);
+	}
+
 	update(cursor: Phaser.Types.Input.Keyboard.CursorKeys, trashManager: TrashesManager): void {
 		this.updateMovement(cursor);
 		this.updateAnimation();
-		this.checkCollision(trashManager.getTrashes());
+		this.updateCollision(trashManager.getTrashes());
+		this.updateGraphic();
 	}
 }
