@@ -1,4 +1,4 @@
-const TRASH_CATEGORIES = ["Organic", "General"] as const;
+const TRASH_CATEGORIES = ["Organic", "General", "Recyclable", "Hazardous"] as const;
 export type TrashCategory = typeof TRASH_CATEGORIES[number];
 
 export function trashCategoryRandom(): TrashCategory {

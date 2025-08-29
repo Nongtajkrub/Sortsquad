@@ -2,6 +2,7 @@ import Phaser from "phaser";
 
 import { Player } from "./sprites/player";
 import TrashesManager from "./core/trashes-manager";
+import config from "../public/config.json"
 
 class MainScene extends Phaser.Scene {
 	private player!: Player;
@@ -15,24 +16,36 @@ class MainScene extends Phaser.Scene {
 	preload(): void {
 		this.load.image("sky", "assets/environment/sky.jpg");
 
-		this.load.spritesheet("organicBinIdle", "assets/bins/organic/idle.png", {
+		this.load.spritesheet("organicBinIdle", config.path.bins.organic.idle, {
 			frameWidth: 45,
 			frameHeight: 45
 		});
-		this.load.spritesheet("organicBinPrerun", "assets/bins/organic/prerunning.png", {
+		this.load.spritesheet("organicBinPrerun", config.path.bins.organic.prerun, {
 			frameWidth: 45,
 			frameHeight: 45
 		});
-		this.load.spritesheet("organicBinRunning", "assets/bins/organic/running.png", {
+		this.load.spritesheet("organicBinRunning", config.path.bins.organic.running, {
 			frameWidth: 45,
 			frameHeight: 45
 		});
 
-		this.load.image("apple", "assets/trahse/organic/apple.png");
-		this.load.image("vegatable", "assets/trahse/organic/vegatable.png");
-		this.load.image("shoe", "assets/trahse/general/shoe.png");
+		this.load.image("apple", config.path.trash.organic.apple);
+		this.load.image("vegatable", config.path.trash.organic.vegatable);
+		this.load.image("fishbone", config.path.trash.organic.fishbone);
 
-		this.load.font("PixelArt", "assets/fonts/font.otf");
+		this.load.image("shoe", config.path.trash.general.shoe);
+		this.load.image("tissue", config.path.trash.general.tissue);
+		this.load.image("ciggarette", config.path.trash.general.ciggarette);
+
+		this.load.image("waterbottle", config.path.trash.recyclable.waterBottle);
+		this.load.image("coke", config.path.trash.recyclable.coke);
+		this.load.image("newspaper", config.path.trash.recyclable.newspaper);
+		
+		this.load.image("electronic", config.path.trash.hazardous.electronic);
+		this.load.image("battery", config.path.trash.hazardous.battery);
+		this.load.image("bleach", config.path.trash.hazardous.bleach);
+
+		this.load.font("PixelArt", config.path.font.pixelArt);
 	}
 
 	create(): void {
@@ -51,7 +64,7 @@ class MainScene extends Phaser.Scene {
 
 		setInterval(() => {
 			this.trashManager.spawn();
-		}, 500);
+		}, 300);
 	}
 
 	update(): void {
@@ -60,7 +73,7 @@ class MainScene extends Phaser.Scene {
 	}
 }
 
-const config: Phaser.Types.Core.GameConfig = {
+const phaserConfig: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
 	pixelArt: true,
 	fps: {
@@ -82,4 +95,4 @@ const config: Phaser.Types.Core.GameConfig = {
 	}
 };
 
-new Phaser.Game(config);
+new Phaser.Game(phaserConfig);

@@ -1,12 +1,19 @@
 import type { TrashCategory } from "./trash-categories";
 
-const ORGANIC_TRASH_TYPES = ["Apple", "Vegatable"] as const;
+const ORGANIC_TRASH_TYPES = ["Apple", "Vegatable", "Fishbone"] as const;
 type OrganicTrashType = typeof ORGANIC_TRASH_TYPES[number];
 
-const GENERAL_TRASH_TYPES = ["Shoe"] as const;
+const GENERAL_TRASH_TYPES = ["Shoe", "Tissue", "Ciggarette"] as const;
 type GeneralTrashType = typeof GENERAL_TRASH_TYPES[number];
 
-export type AnyTrashTypes = OrganicTrashType | GeneralTrashType;
+const RECYCLABLE_TRASH_TYPE = ["WaterBottle", "Coke", "Newspaper"] as const;
+type RecyclableTrashType = typeof RECYCLABLE_TRASH_TYPE[number];
+
+const HAZARDOUS_TRASH_TYPE = ["Electronic", "Battery", "Bleach"] as const;
+type HazardousTrashType = typeof HAZARDOUS_TRASH_TYPE[number];
+
+export type AnyTrashTypes =
+	OrganicTrashType | GeneralTrashType | RecyclableTrashType | HazardousTrashType;
 
 export function trashTypeRandom(trashCategory: TrashCategory): AnyTrashTypes {
 	switch (trashCategory) {
@@ -14,6 +21,10 @@ export function trashTypeRandom(trashCategory: TrashCategory): AnyTrashTypes {
 			return ORGANIC_TRASH_TYPES[Math.floor(Math.random() * ORGANIC_TRASH_TYPES.length)];
 		case "General":
 			return GENERAL_TRASH_TYPES[Math.floor(Math.random() * GENERAL_TRASH_TYPES.length)]; 
+		case "Recyclable":
+			return RECYCLABLE_TRASH_TYPE[Math.floor(Math.random() * RECYCLABLE_TRASH_TYPE.length)];
+		case "Hazardous":
+			return HAZARDOUS_TRASH_TYPE[Math.floor(Math.random() * HAZARDOUS_TRASH_TYPE.length)];
 	}
 }
 
