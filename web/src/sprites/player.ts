@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import type {Trash} from "./trash";
 import type TrashesManager from "../core/trashes-manager";
 import { type TrashCategory } from "../core/trash-categories";
+import {defaultFontConfig} from "../core/common";
 
 type PlayerState = "Idle" | "Prerun" | "Running";
 
@@ -28,8 +29,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
 		this.scoreText = scene.add.text(
 			config.x ?? 0,
-			(config.y ?? 0) - 100,
-			`Score: ${this.score}`
+			(config.y ?? 0) - 150,
+			`Score: ${this.score}`,
+			defaultFontConfig("32px"),
 		);
 
 		this.setScale(config.scale ?? 1);

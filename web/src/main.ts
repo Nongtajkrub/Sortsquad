@@ -31,6 +31,8 @@ class MainScene extends Phaser.Scene {
 		this.load.image("apple", "assets/trahse/organic/apple.png");
 		this.load.image("vegatable", "assets/trahse/organic/vegatable.png");
 		this.load.image("shoe", "assets/trahse/general/shoe.png");
+
+		this.load.font("PixelArt", "assets/fonts/font.otf");
 	}
 
 	create(): void {
@@ -38,8 +40,8 @@ class MainScene extends Phaser.Scene {
 
 		this.player = new Player(this, {
 			x: 200,
-			y: window.innerHeight - 70,
-			scale: 3,
+			y: window.innerHeight - 100,
+			scale: 4,
 			idleKey: "organicBinIdle",
 			prerunKey: "organicBinPrerun",
 			runningKey: "organicBinRunning"
