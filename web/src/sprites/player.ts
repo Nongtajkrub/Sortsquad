@@ -52,7 +52,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		this.anims.create({
 			key: "prerun",
 			frames: this.anims.generateFrameNumbers(config.prerunKey, { start: 0, end: 4 }),
-			frameRate: 10,
+			frameRate: 13,
 			repeat: 0,
 		});
 
