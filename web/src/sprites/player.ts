@@ -1,9 +1,9 @@
 import Phaser from "phaser";
-import type {Trash} from "./trash";
+import type { Trash } from "./trash";
 import type TrashesManager from "../core/trashes-manager";
-import {Button} from "../core/button";
+import { Button } from "../core/button";
 import { type TrashCategory } from "../core/trash-categories";
-import {defaultFontConfig} from "../core/common";
+import { defaultFontConfig } from "../core/common";
 
 type PlayerState = "Idle" | "Prerun" | "Running";
 
@@ -33,6 +33,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		scene.add.existing(this);
 		scene.physics.add.existing(this);
 		this.setScale(config.scale ?? 1);
+		this.body!.setSize(this.scale * 6.25 , this.scale * 2);
 		this.setOrigin(0.5, 0.5);
 
 		this.createGui(config);
@@ -101,6 +102,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		}
 	}
 
+	private updateHitbox(): void {
+		if (!this.flipX) {
+			this.body!.setOffset(this.scale * 4.5, 20);
+		} else {
+			this.body!.setOffset(this.scale * 0.25, 20);
+		}
+	}
+
 	private updateAnimation(): void {
 		const recentlyMove: boolean = this.body!.velocity.x != this.oldVelocityX;
 
@@ -135,11 +144,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
 	private updateGraphic() {
 		this.scoreText.setText(`Score: ${this.score}`);
-		this.scoreText.setX(this.body?.position.x);
+		this.scoreText.setX(this.body?.center.x);
 	}
 
 	update(trashManager: TrashesManager, cursor?: Phaser.Types.Input.Keyboard.CursorKeys): void {
 		this.updateMovement(cursor);
+		this.updateHitbox();
 		this.updateAnimation();
 		this.updateCollision(trashManager.getTrashes());
 		this.updateGraphic();
