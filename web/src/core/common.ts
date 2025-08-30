@@ -13,6 +13,7 @@ export function defaultFontConfig(
 		fontSize: size ?? "24px",
 		stroke: "#000000",
 		color: color ?? "#FFFFFF",
+		align: "center",
 		strokeThickness: 6,
 	};
 }

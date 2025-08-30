@@ -29,10 +29,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
 		this.scoreText = scene.add.text(
 			config.x ?? 0,
-			(config.y ?? 0) - 150,
+			(config.y ?? 0) - 100,
 			`Score: ${this.score}`,
 			defaultFontConfig("32px"),
-		);
+		).setOrigin(0.5, 0.5);
 
 		this.setScale(config.scale ?? 1);
 		this.setSize(10, 10);
