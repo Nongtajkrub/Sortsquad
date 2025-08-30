@@ -32,6 +32,10 @@
 				"bleach": "assets/trahse/hazardous/bleach.png"
 			}
 		},
+		"gui": {
+			"rightArrowButton": "assets/gui/rightarrowbutton.png",
+			"leftArrowButton": "assets/gui/leftarrowbutton.png"
+		},
 		"font": {
 			"pixelArt": "assets/fonts/font.otf"
 		}
