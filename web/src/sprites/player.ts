@@ -33,7 +33,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		scene.add.existing(this);
 		scene.physics.add.existing(this);
 		this.setScale(config.scale ?? 1);
-		this.setSize(10, 10);
+		this.setOrigin(0.5, 0.5);
 
 		this.createGui(config);
 
@@ -87,13 +87,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		});
 	}
 
-	private updateMovement(): void {
+	private updateMovement(cursor?: Phaser.Types.Input.Keyboard.CursorKeys): void {
 		this.oldVelocityX = this.body!.velocity.x;
 
-		if (this.leftArrowButton.isDown()) {
+		if (this.leftArrowButton.isDown() || cursor?.left.isDown) {
 			this.setVelocityX(-500);
 			this.setFlipX(true);
-		} else if (this.rightArrowButton.isDown()) {
+		} else if (this.rightArrowButton.isDown() || cursor?.right.isDown) {
 			this.setVelocityX(500);
 			this.setFlipX(false);
 		} else {
@@ -138,8 +138,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		this.scoreText.setX(this.body?.position.x);
 	}
 
-	update(trashManager: TrashesManager): void {
-		this.updateMovement();
+	update(trashManager: TrashesManager, cursor?: Phaser.Types.Input.Keyboard.CursorKeys): void {
+		this.updateMovement(cursor);
 		this.updateAnimation();
 		this.updateCollision(trashManager.getTrashes());
 		this.updateGraphic();

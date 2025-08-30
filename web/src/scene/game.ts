@@ -8,6 +8,7 @@ import {defaultFontConfig} from "../core/common";
 export default class GameScene extends Phaser.Scene {
 	private player!: Player;
 	private trashManager!: TrashesManager;
+	private cursor?: Phaser.Types.Input.Keyboard.CursorKeys;
 
 	constructor() {
 		super({ key: "game" });
@@ -52,6 +53,8 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	create(): void {
+		this.cursor = this.input.keyboard?.createCursorKeys();
+
 		this.player = new Player(this, {
 			x: 200,
 			y: window.innerHeight - 100,
@@ -82,7 +85,7 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	update(): void {
-		this.player.update(this.trashManager);
+		this.player.update(this.trashManager, this.cursor);
 		this.trashManager.update();
 	}
 }
