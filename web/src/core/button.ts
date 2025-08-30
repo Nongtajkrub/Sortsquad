@@ -4,7 +4,8 @@ interface ButtonConfig {
 	x?: number,
 	y?: number,
 	texture: string,
-	scale?: number
+	scale?: number,
+	ontop?: boolean,
 };
 
 export class Button extends Phaser.GameObjects.Image {
@@ -18,6 +19,10 @@ export class Button extends Phaser.GameObjects.Image {
 		this.setOrigin(0.5, 0.5);
 		this.setInteractive({ useHandCursor: true });
 		this.setScale(config.scale ?? 1);
+
+		if (config.ontop ?? true) {
+			this.setDepth(999);
+		}
 
 		this.on("pointerdown", () => this.down = true);
 		this.on("pointerup", () => this.down = false);
