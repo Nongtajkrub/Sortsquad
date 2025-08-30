@@ -8,7 +8,6 @@ import {defaultFontConfig} from "../core/common";
 export default class GameScene extends Phaser.Scene {
 	private player!: Player;
 	private trashManager!: TrashesManager;
-	private cursor!: Phaser.Types.Input.Keyboard.CursorKeys;
 
 	constructor() {
 		super({ key: "game" });
@@ -46,12 +45,13 @@ export default class GameScene extends Phaser.Scene {
 		this.load.image("battery", config.path.trash.hazardous.battery);
 		this.load.image("bleach", config.path.trash.hazardous.bleach);
 
+		this.load.image("leftArrowButton", config.path.gui.leftArrowButton);
+		this.load.image("rightArrowButton", config.path.gui.rightArrowButton);
+		
 		this.load.font("PixelArt", config.path.font.pixelArt);
 	}
 
 	create(): void {
-		this.cursor = this.input.keyboard!.createCursorKeys();
-
 		this.player = new Player(this, {
 			x: 200,
 			y: window.innerHeight - 100,
@@ -82,7 +82,7 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	update(): void {
-		this.player.update(this.cursor, this.trashManager);
+		this.player.update(this.trashManager);
 		this.trashManager.update();
 	}
 }

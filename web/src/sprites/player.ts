@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import type {Trash} from "./trash";
 import type TrashesManager from "../core/trashes-manager";
+import {Button} from "../core/button";
 import { type TrashCategory } from "../core/trash-categories";
 import {defaultFontConfig} from "../core/common";
 
@@ -18,27 +19,49 @@ export interface PlayerConfig {
 export class Player extends Phaser.Physics.Arcade.Sprite {
 	private currentState: PlayerState = "Idle";
 	private oldVelocityX: number = 0;
+
 	private binCategory: TrashCategory = "Organic";
+
 	private score: number = 0;
 	private scoreText!: Phaser.GameObjects.Text;
+
+	private leftArrowButton!: Button;
+	private rightArrowButton!: Button;
 
 	constructor(scene: Phaser.Scene, config: PlayerConfig) {
 		super(scene, config.x ?? 0, config.y ?? 0, config.idleKey);
 		scene.add.existing(this);
 		scene.physics.add.existing(this);
+		this.setScale(config.scale ?? 1);
+		this.setSize(10, 10);
 
-		this.scoreText = scene.add.text(
+		this.createGui(config);
+
+		this.createAnimations(config);
+		this.anims.play("idle");
+	}
+
+	private createGui(config: PlayerConfig): void {
+		this.scoreText = this.scene.add.text(
 			config.x ?? 0,
 			(config.y ?? 0) - 100,
 			`Score: ${this.score}`,
 			defaultFontConfig("32px"),
 		).setOrigin(0.5, 0.5);
 
-		this.setScale(config.scale ?? 1);
-		this.setSize(10, 10);
+		this.leftArrowButton = new Button(this.scene, {
+			x: 100,
+			y: window.innerHeight - 100,
+			texture: "leftArrowButton",
+			scale: 3
+		});
 
-		this.createAnimations(config);
-		this.anims.play("idle");
+		this.rightArrowButton = new Button(this.scene, {
+			x: innerWidth - 100,
+			y: window.innerHeight - 100,
+			texture: "rightArrowButton",
+			scale: 3
+		});
 	}
 
 	private createAnimations(config: PlayerConfig): void {
@@ -64,13 +87,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		});
 	}
 
-	private updateMovement(cursor: Phaser.Types.Input.Keyboard.CursorKeys): void {
+	private updateMovement(): void {
 		this.oldVelocityX = this.body!.velocity.x;
 
-		if (cursor.left.isDown) {
+		if (this.leftArrowButton.isDown()) {
 			this.setVelocityX(-500);
 			this.setFlipX(true);
-		} else if (cursor.right.isDown) {
+		} else if (this.rightArrowButton.isDown()) {
 			this.setVelocityX(500);
 			this.setFlipX(false);
 		} else {
@@ -115,8 +138,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		this.scoreText.setX(this.body?.position.x);
 	}
 
-	update(cursor: Phaser.Types.Input.Keyboard.CursorKeys, trashManager: TrashesManager): void {
-		this.updateMovement(cursor);
+	update(trashManager: TrashesManager): void {
+		this.updateMovement();
 		this.updateAnimation();
 		this.updateCollision(trashManager.getTrashes());
 		this.updateGraphic();
