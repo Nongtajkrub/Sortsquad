@@ -11,16 +11,14 @@ export interface PlayerConfig {
 	x?: number,
 	y?: number,
 	scale?: number,
-	idleKey: string,
-	prerunKey: string,
-	runningKey: string,
+	binCategory: TrashCategory
 };
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
 	private currentState: PlayerState = "Idle";
 	private oldVelocityX: number = 0;
 
-	private binCategory: TrashCategory = "Organic";
+	private binCategory!: TrashCategory;
 
 	private score: number = 0;
 	private scoreText!: Phaser.GameObjects.Text;
@@ -29,7 +27,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 	private rightArrowButton!: Button;
 
 	constructor(scene: Phaser.Scene, config: PlayerConfig) {
-		super(scene, config.x ?? 0, config.y ?? 0, config.idleKey);
+		super(scene, config.x ?? 0, config.y ?? 0, "");
 		scene.add.existing(this);
 		scene.physics.add.existing(this);
 		this.setScale(config.scale ?? 1);
@@ -38,7 +36,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
 		this.createGui(config);
 
-		this.createAnimations(config);
+		this.binCategory = config.binCategory;
+		this.createAnimations();
 		this.anims.play("idle");
 	}
 
@@ -65,24 +64,24 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		});
 	}
 
-	private createAnimations(config: PlayerConfig): void {
+	private createAnimations(): void {
 		this.anims.create({
 			key: "idle",
-			frames: this.anims.generateFrameNumbers(config.idleKey, { start: 0, end: 8 }),
+			frames: this.anims.generateFrameNumbers("binIdle", { start: 0, end: 8 }),
 			frameRate: 5,
 			repeat: -1,
 		});
 
 		this.anims.create({
 			key: "prerun",
-			frames: this.anims.generateFrameNumbers(config.prerunKey, { start: 0, end: 4 }),
+			frames: this.anims.generateFrameNumbers("binPrerun", { start: 0, end: 4 }),
 			frameRate: 13,
 			repeat: 0,
 		});
 
 		this.anims.create({
 			key: "running",
-			frames: this.anims.generateFrameNumbers(config.runningKey, { start: 0, end: 8 }),
+			frames: this.anims.generateFrameNumbers("binRunning", { start: 0, end: 8 }),
 			frameRate: 5,
 			repeat: -1,
 		});

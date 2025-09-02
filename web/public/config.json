@@ -8,6 +8,21 @@
 				"idle": "assets/bins/organic/idle.png",
 				"prerun": "assets/bins/organic/prerunning.png",
 				"running": "assets/bins/organic/running.png"
+			},
+			"hazardous": {
+				"idle": "assets/bins/hazardous/idle.png",
+				"prerun": "assets/bins/hazardous/prerunning.png",
+				"running": "assets/bins/hazardous/running.png"
+			},
+			"recyclable": {
+				"idle": "assets/bins/recyclable/idle.png",
+				"prerun": "assets/bins/recyclable/prerunning.png",
+				"running": "assets/bins/recyclable/running.png"
+			},
+			"general": {
+				"idle": "assets/bins/general/idle.png",
+				"prerun": "assets/bins/general/prerunning.png",
+				"running": "assets/bins/general/running.png"
 			}
 		},
 		"trash": {
@@ -31,6 +46,12 @@
 				"battery": "assets/trahse/hazardous/battery.png",
 				"bleach": "assets/trahse/hazardous/bleach.png"
 			}
+		},
+		"menu": {
+			"startGeneral": "assets/menu/startgeneral.png",
+			"startRecycle": "assets/menu/startrecycle.png",
+			"startHazardous": "assets/menu/starthazardous.png",
+			"startOrganic": "assets/menu/startorganic.png"
 		},
 		"gui": {
 			"rightArrowButton": "assets/gui/rightarrowbutton.png",

@@ -14,8 +14,6 @@ export class Button extends Phaser.GameObjects.Image {
 	constructor(scene: Phaser.Scene, config: ButtonConfig) {
 		super(scene, config.x ?? 0, config.y ?? 0, config.texture);
 
-		scene.add.existing(this);
-
 		this.setOrigin(0.5, 0.5);
 		this.setInteractive({ useHandCursor: true });
 		this.setScale(config.scale ?? 1);
@@ -23,6 +21,8 @@ export class Button extends Phaser.GameObjects.Image {
 		if (config.ontop ?? true) {
 			this.setDepth(999);
 		}
+
+		scene.add.existing(this);
 
 		this.on("pointerdown", () => this.down = true);
 		this.on("pointerup", () => this.down = false);

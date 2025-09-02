@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import GameScene from "./scene/game"; 
+import MenuScene from "./scene/menu";
 
 const phaserConfig: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
@@ -14,7 +15,7 @@ const phaserConfig: Phaser.Types.Core.GameConfig = {
 		height: window.innerHeight,
 	},
 	backgroundColor: "#242424",
-	scene: [GameScene],
+	scene: [MenuScene, GameScene],
 	physics: {
 		default: "arcade",
 		arcade: {

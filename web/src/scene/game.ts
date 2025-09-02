@@ -4,28 +4,69 @@ import { Player } from "../sprites/player";
 import TrashesManager from "../core/trashes-manager";
 import config from "../../public/config.json"
 import {defaultFontConfig} from "../core/common";
+import type {TrashCategory} from "../core/trash-categories";
 
 export default class GameScene extends Phaser.Scene {
 	private player!: Player;
 	private trashManager!: TrashesManager;
 	private cursor?: Phaser.Types.Input.Keyboard.CursorKeys;
+	private playerBinCategory!: TrashCategory;
 
 	constructor() {
 		super({ key: "game" });
 	}
 
+	init(data: { binCategory: TrashCategory }): void {
+		this.playerBinCategory = data.binCategory;
+	}
+
+	private trashCategoryToAnimationPath(): {
+		idle: string,
+		prerun: string,
+		running: string
+	} {
+		switch (this.playerBinCategory) {
+			case "Organic":
+				return {
+					idle: config.path.bins.organic.idle,
+					prerun: config.path.bins.organic.prerun,
+					running: config.path.bins.organic.running,
+				};
+			case "General":
+				return {
+					idle: config.path.bins.general.idle,
+					prerun: config.path.bins.general.prerun,
+					running: config.path.bins.general.running,
+				};
+			case "Recyclable":
+				return {
+					idle: config.path.bins.recyclable.idle,
+					prerun: config.path.bins.recyclable.prerun,
+					running: config.path.bins.recyclable.running,
+				};
+			case "Hazardous":
+				return {
+					idle: config.path.bins.hazardous.idle,
+					prerun: config.path.bins.hazardous.prerun,
+					running: config.path.bins.hazardous.running,
+				};
+		}
+	}
+
 	preload(): void {
 		this.load.image("sky", "assets/environment/sky.jpg");
 
-		this.load.spritesheet("organicBinIdle", config.path.bins.organic.idle, {
+		const animationPath = this.trashCategoryToAnimationPath();
+
+		this.load.spritesheet("binIdle", animationPath.idle, {
 			frameWidth: 45,
 			frameHeight: 45
 		});
-		this.load.spritesheet("organicBinPrerun", config.path.bins.organic.prerun, {
+		this.load.spritesheet("binPrerun", animationPath.prerun, {
 			frameWidth: 45,
 			frameHeight: 45
 		});
-		this.load.spritesheet("organicBinRunning", config.path.bins.organic.running, {
+		this.load.spritesheet("binRunning", animationPath.running, {
 			frameWidth: 45,
 			frameHeight: 45
 		});
@@ -59,9 +100,7 @@ export default class GameScene extends Phaser.Scene {
 			x: 200,
 			y: window.innerHeight - 100,
 			scale: 4,
-			idleKey: "organicBinIdle",
-			prerunKey: "organicBinPrerun",
-			runningKey: "organicBinRunning"
+			binCategory: this.playerBinCategory
 		}); 
 
 		this.trashManager = new TrashesManager(this);
