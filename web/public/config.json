@@ -1,7 +1,8 @@
 {
 	"path": {
 		"environment": {
-			"sky": "assets/environment/sky.jpg"
+			"sky": "assets/environment/sky.jpg",
+			"grass": "assets/environment/grass.png"
 		},
 		"bins": {
 			"organic": {

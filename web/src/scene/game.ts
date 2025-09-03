@@ -5,6 +5,8 @@ import TrashesManager from "../core/trashes-manager";
 import config from "../../public/config.json"
 import {defaultFontConfig} from "../core/common";
 import type {TrashCategory} from "../core/trash-categories";
+import Background from "../core/background";
+import Grass from "../sprites/grass";
 
 export default class GameScene extends Phaser.Scene {
 	private player!: Player;
@@ -54,7 +56,8 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	preload(): void {
-		this.load.image("sky", "assets/environment/sky.jpg");
+		this.load.image("sky", config.path.environment.sky);
+		this.load.image("grass", config.path.environment.grass);
 
 		const animationPath = this.trashCategoryToAnimationPath();
 
@@ -95,6 +98,9 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	create(): void {
+		new Background(this, "sky", true);
+		new Grass(this);
+
 		this.cursor = this.input.keyboard?.createCursorKeys();
 
 		this.player = new Player(this, {
