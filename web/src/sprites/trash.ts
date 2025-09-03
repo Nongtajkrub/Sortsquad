@@ -15,18 +15,19 @@ export class Trash extends Phaser.Physics.Arcade.Sprite {
 		const scale = 3;
 		super(scene, x, y, trashTypeToId(trashTypeRandom(category)));
 
+		scene.add.existing(this);
+		scene.physics.add.existing(this);
+
 		if (category == playerBinCategory) {
 			this.greenCircle = scene.add.image(x, y, "correctCategoryCircle")
 				.setOrigin(0.5, 0.5);
 
 			this.greenCircle.setScale(scale + 0.5);
+		} else {
+			this.body!.setSize(scale);
 		}
 
-		scene.add.existing(this);
-		scene.physics.add.existing(this);
-
 		this.category = category;
-
 		this.setVelocityY(200);
 		this.setScale(scale);
 	}
