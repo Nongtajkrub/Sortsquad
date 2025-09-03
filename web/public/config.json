@@ -55,7 +55,8 @@
 		},
 		"gui": {
 			"rightArrowButton": "assets/gui/rightarrowbutton.png",
-			"leftArrowButton": "assets/gui/leftarrowbutton.png"
+			"leftArrowButton": "assets/gui/leftarrowbutton.png",
+			"correctCategoryCircle": "assets/gui/correctcategorycircle.png"
 		},
 		"font": {
 			"pixelArt": "assets/fonts/font.otf"

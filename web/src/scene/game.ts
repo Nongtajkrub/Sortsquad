@@ -89,6 +89,7 @@ export default class GameScene extends Phaser.Scene {
 
 		this.load.image("leftArrowButton", config.path.gui.leftArrowButton);
 		this.load.image("rightArrowButton", config.path.gui.rightArrowButton);
+		this.load.image("correctCategoryCircle", config.path.gui.correctCategoryCircle);
 		
 		this.load.font("PixelArt", config.path.font.pixelArt);
 	}
@@ -103,7 +104,7 @@ export default class GameScene extends Phaser.Scene {
 			binCategory: this.playerBinCategory
 		}); 
 
-		this.trashManager = new TrashesManager(this);
+		this.trashManager = new TrashesManager(this, this.playerBinCategory);
 
 		setInterval(() => {
 			this.trashManager.spawn();

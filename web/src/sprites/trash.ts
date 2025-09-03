@@ -7,11 +7,20 @@ import { randomPosX } from "../core/common";
 export class Trash extends Phaser.Physics.Arcade.Sprite {
 	private category!: TrashCategory;
 	private alive: boolean = true;
-		
-	constructor(scene: Phaser.Scene) {
+	private greenCircle?: Phaser.GameObjects.Image;	
+
+	constructor(scene: Phaser.Scene, playerBinCategory: TrashCategory) {
 		const [x, y] = randomPosX(-50);
 		const category = trashCategoryRandom();
+		const scale = 3;
 		super(scene, x, y, trashTypeToId(trashTypeRandom(category)));
+
+		if (category == playerBinCategory) {
+			this.greenCircle = scene.add.image(x, y, "correctCategoryCircle")
+				.setOrigin(0.5, 0.5);
+
+			this.greenCircle.setScale(scale + 0.5);
+		}
 
 		scene.add.existing(this);
 		scene.physics.add.existing(this);
@@ -19,7 +28,7 @@ export class Trash extends Phaser.Physics.Arcade.Sprite {
 		this.category = category;
 
 		this.setVelocityY(200);
-		this.setScale(3);
+		this.setScale(scale);
 	}
 
 	getCategory(): TrashCategory {
@@ -30,15 +39,24 @@ export class Trash extends Phaser.Physics.Arcade.Sprite {
 		this.alive = value;
 	}
 
-	isOutOfBound(): boolean {
-		return this.body!.position.y >= window.innerHeight;
-	}
-
 	isAlive(): boolean {
 		return this.alive;
 	}
 
 	pos(): [number, number] {
 		return [this.body!.position.x, this.body!.position.y];
+	}
+
+	update(): void {
+		this.greenCircle?.setY(this.body!.center.y);
+
+		if (this.body!.position.y >= window.innerHeight) {
+			this.alive = false;
+		} 
+	}
+
+	remove(): void {
+		this.destroy();
+		this.greenCircle?.destroy();
 	}
 }
