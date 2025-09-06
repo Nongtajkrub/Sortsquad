@@ -101,15 +101,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		}
 	}
 
-	private updateHitbox(): void {
-		if (!this.flipX) {
-			this.body!.setOffset(this.scale * 4.5, 20);
-		} else {
-			this.body!.setOffset(this.scale * 0.25, 20);
-		}
-	}
-
-	private updateAnimation(): void {
+	private updateMovementAnimation(): void {
 		const recentlyMove: boolean = this.body!.velocity.x != this.oldVelocityX;
 
 		if (recentlyMove) {
@@ -126,15 +118,52 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		}
 	}
 
+	private updateHitbox(): void {
+		if (!this.flipX) {
+			this.body!.setOffset(this.scale * 4.5, 20);
+		} else {
+			this.body!.setOffset(this.scale * 0.25, 20);
+		}
+	}
+
+	private spawnScoredAnimation(isScored: boolean): void {
+		const x = this.body!.x;
+		const y = this.body!.y;
+
+		const scoredText = this.scene.add.text(
+			x,
+			y,
+			(isScored) ? "+1" : "X",
+			defaultFontConfig("32px", (isScored) ? "#a3e635" : "#ef4444")
+		).setOrigin(0.5, 0.5);
+
+		this.scene.tweens.add({
+			targets: scoredText,
+			y: y - 50,
+			scale: { from: 1, to: 1.5 },
+			ease: "Cubic.easeOut",
+			duration: 800,
+		})
+
+		this.scene.tweens.add({
+			targets: scoredText,
+			alpha: 0,
+			ease: "Linear",
+			duration: 1200,
+			onComplete: () => {
+				scoredText.destroy();
+			}
+		})
+	}
+
 	private updateCollision(trashes: Array<Trash>): void {
 		trashes.forEach((trash: Trash) => {
 			if (this.scene.physics.overlap(trash, this)) {
-				if (trash.getCategory() == this.binCategory) {
-					this.score++;
-				} else {
-					this.score--;
-				}
+				const isScored = trash.getCategory() == this.binCategory;
+
+				this.score += (isScored) ? 1 : -1;
 				this.score = Math.max(this.score, 0);
+				this.spawnScoredAnimation(isScored);
 
 				trash.setAlive(false);
 			}
@@ -149,7 +178,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 	update(trashManager: TrashesManager, cursor?: Phaser.Types.Input.Keyboard.CursorKeys): void {
 		this.updateMovement(cursor);
 		this.updateHitbox();
-		this.updateAnimation();
+		this.updateMovementAnimation();
 		this.updateCollision(trashManager.getTrashes());
 		this.updateGraphic();
 	}

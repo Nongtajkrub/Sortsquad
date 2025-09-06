@@ -73,6 +73,19 @@ export default class GameScene extends Phaser.Scene {
 			frameWidth: 45,
 			frameHeight: 45
 		});
+		
+		this.load.spritesheet("scoredAnimation1", config.path.gui.scoredAnimation1, {
+			frameWidth: 32,
+			frameHeight: 32
+		});
+		this.load.spritesheet("scoredAnimation2", config.path.gui.scoredAnimation2, {
+			frameWidth: 32,
+			frameHeight: 32
+		});
+		this.load.spritesheet("wrongedAnimation", config.path.gui.wrongedAnimation, {
+			frameWidth: 32,
+			frameHeight: 32
+		});
 
 		this.load.image("apple", config.path.trash.organic.apple);
 		this.load.image("vegatable", config.path.trash.organic.vegatable);
