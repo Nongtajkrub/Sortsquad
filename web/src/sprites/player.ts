@@ -4,6 +4,7 @@ import type TrashesManager from "../core/trashes-manager";
 import { Button } from "../core/button";
 import { type TrashCategory } from "../core/trash-categories";
 import { defaultFontConfig } from "../core/common";
+import config from "../../public/config.json"
 
 type PlayerState = "Idle" | "Prerun" | "Running";
 
@@ -28,43 +29,43 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
 	private scoredAudio!: Phaser.Sound.BaseSound; 
 
-	constructor(scene: Phaser.Scene, config: PlayerConfig) {
-		super(scene, config.x ?? 0, config.y ?? 0, "");
+	constructor(scene: Phaser.Scene, playerConfig: PlayerConfig) {
+		super(scene, playerConfig.x ?? 0, playerConfig.y ?? 0, "");
 		scene.add.existing(this);
 		scene.physics.add.existing(this);
-		this.setScale(config.scale ?? 1);
+		this.setScale(playerConfig.scale ?? 1);
 		this.body!.setSize(this.scale * 6.25 , this.scale * 2);
 		this.setOrigin(0.5, 0.5);
 
-		this.createGui(config);
+		this.createGui(playerConfig);
 
-		this.binCategory = config.binCategory;
+		this.binCategory = playerConfig.binCategory;
 		this.createAnimations();
 		this.anims.play("idle");
 
 		this.scoredAudio = scene.sound.add("scoredAudio");
 	}
 
-	private createGui(config: PlayerConfig): void {
+	private createGui(playerConfig: PlayerConfig): void {
 		this.scoreText = this.scene.add.text(
-			config.x ?? 0,
-			(config.y ?? 0) - 100,
+			playerConfig.x ?? 0,
+			(playerConfig.y ?? 0) - 100,
 			`Score: ${this.score}`,
 			defaultFontConfig({ size: "32px" }),
 		).setOrigin(0.5, 0.5);
 
 		this.leftArrowButton = new Button(this.scene, {
 			x: 100,
-			y: window.innerHeight - 100,
+			y: this.scene.scale.height - 100,
 			texture: "leftArrowButton",
-			scale: 3
+			scale: config.game.moveButtonGuiScale
 		});
 
 		this.rightArrowButton = new Button(this.scene, {
 			x: innerWidth - 100,
-			y: window.innerHeight - 100,
+			y: this.scene.scale.height - 100,
 			texture: "rightArrowButton",
-			scale: 3
+			scale: config.game.moveButtonGuiScale
 		});
 	}
 
