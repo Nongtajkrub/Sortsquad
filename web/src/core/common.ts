@@ -6,7 +6,8 @@ export function randomPosX(y?: number): [number, number] {
 
 export function defaultFontConfig(
 	size?: string,
-	color?: string
+	color?: string,
+	stroke?: number,
 ): Phaser.Types.GameObjects.Text.TextStyle {
 	return {
 		fontFamily: "pixelArt",
@@ -14,6 +15,6 @@ export function defaultFontConfig(
 		stroke: "#000000",
 		color: color ?? "#FFFFFF",
 		align: "center",
-		strokeThickness: 6,
+		strokeThickness: stroke ?? 6,
 	};
 }

@@ -5,6 +5,7 @@ export default class TrashesManager {
 	private trahse: Array<Trash> = [];
 	private scene!: Phaser.Scene;
 	private playerBinCategory!: TrashCategory;
+	private spawnable: boolean = true;
 
 	constructor(scene: Phaser.Scene, playerBinCategory: TrashCategory) {
 		this.scene = scene;
@@ -12,7 +13,9 @@ export default class TrashesManager {
 	}	
 
 	spawn(): void {
-		this.trahse.push(new Trash(this.scene, this.playerBinCategory));
+		if (this.spawnable) {
+			this.trahse.push(new Trash(this.scene, this.playerBinCategory));
+		}
 	}
 
 	getTrashes(): Array<Trash> {
@@ -28,6 +31,16 @@ export default class TrashesManager {
 				return false;
 			}
 			return true;
+		});
+	}
+
+	setSpawnable(value: boolean): void {
+		this.spawnable = value;
+	}
+
+	clear(): void {
+		this.trahse.forEach((trash: Trash) => {
+			trash.remove();
 		});
 	}
 }

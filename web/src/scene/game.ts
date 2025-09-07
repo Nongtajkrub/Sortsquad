@@ -10,10 +10,10 @@ import CountdownTimer from "../core/timer";
 
 export default class GameScene extends Phaser.Scene {
 	private player!: Player;
-
 	private playerBinCategory!: TrashCategory;
 	private trashManager!: TrashesManager;
 	private countdownTimer!: CountdownTimer;
+	private music!: Phaser.Sound.BaseSound;
 
 	private cursor?: Phaser.Types.Input.Keyboard.CursorKeys;
 
@@ -114,6 +114,15 @@ export default class GameScene extends Phaser.Scene {
 		new Grass(this);
 	}
 
+	private createMusic(): void {
+		this.music = this.sound.add("music");
+
+		this.music.play({
+			loop: true,
+			seek: 68,
+		});
+	}
+
 	private createTrashManager(): void {
 		this.trashManager = new TrashesManager(this, this.playerBinCategory);
 
@@ -124,11 +133,7 @@ export default class GameScene extends Phaser.Scene {
 
 	create(): void {
 		this.createEnvironment();
-
-		this.sound.add("music").play({
-			loop: true,
-			seek: 68,
-		});
+		this.createMusic();
 
 		this.cursor = this.input.keyboard?.createCursorKeys();
 
@@ -153,6 +158,12 @@ export default class GameScene extends Phaser.Scene {
 
 	private timerUpdate(): void {
 		if (this.countdownTimer.isFinish()) {
+			this.music.destroy();
+			this.player.destroy();
+
+			this.trashManager.setSpawnable(false);
+			this.trashManager.clear();
+
 			this.scene.start("end", { playerScore: this.player.getScore() });
 		}
 	}

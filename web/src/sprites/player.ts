@@ -170,7 +170,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 				this.spawnScoredAnimation(isScored);
 
 				if (isScored) {
-					this.scoredAudio.play({ volume: 0.5 });
+					this.scoredAudio.play({ volume: 0.2 });
 				}
 
 				trash.setAlive(false);
