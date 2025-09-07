@@ -1,4 +1,5 @@
 import { randomWeighted } from "./common";
+import config from "../../public/config.json";
 
 const TRASH_CATEGORIES = ["Organic", "General", "Recyclable", "Hazardous"] as const;
 export type TrashCategory = typeof TRASH_CATEGORIES[number];
@@ -21,9 +22,17 @@ function categoryToIndex(category: TrashCategory) {
 	}
 }
 
+export function trashCategoryRandom(): TrashCategory {
+	return TRASH_CATEGORIES[Math.floor(Math.random() * TRASH_CATEGORIES.length)];
+}
+
 // Trash category that are the same as the playerBinCategory are more likely to get pick.
-export function trashCategoryRandom(playerBinCategory: TrashCategory): TrashCategory {
+export function trashCategoryRandomBias(playerBinCategory: TrashCategory): TrashCategory {
 	return TRASH_CATEGORIES[
-		randomWeighted(TRASH_CATEGORIES.length, categoryToIndex(playerBinCategory))
+		randomWeighted(
+			TRASH_CATEGORIES.length,
+			categoryToIndex(playerBinCategory),
+			config.game.playerTrashCategoryBias
+		)
 	];
 }

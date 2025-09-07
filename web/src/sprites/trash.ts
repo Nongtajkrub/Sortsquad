@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 
 import { trashTypeRandom, trashTypeToId } from "../core/trash-types";
-import { trashCategoryRandom, type TrashCategory } from "../core/trash-categories";
+import { trashCategoryRandom, trashCategoryRandomBias, type TrashCategory } from "../core/trash-categories";
 import { randomPosX } from "../core/common";
 
 export class Trash extends Phaser.Physics.Arcade.Sprite {
@@ -11,7 +11,7 @@ export class Trash extends Phaser.Physics.Arcade.Sprite {
 
 	constructor(scene: Phaser.Scene, playerBinCategory: TrashCategory) {
 		const [x, y] = randomPosX(-50);
-		const category = trashCategoryRandom();
+		const category = trashCategoryRandomBias(playerBinCategory);
 		const scale = 3;
 		super(scene, x, y, trashTypeToId(trashTypeRandom(category)));
 

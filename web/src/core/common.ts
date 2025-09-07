@@ -21,7 +21,7 @@ export function defaultFontConfig(modifyConfig: {
 
 export function randomWeighted(max: number, prefer: number, bias?: number): number {
 	bias = bias ?? 3;
-	const totalWeight = (max - 1) + (bias);
+	const totalWeight = (max - 1) * 1 + bias;
 	const random = Math.random() * totalWeight;
 
 	let cumulative = 0;

@@ -71,21 +71,21 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 	private createAnimations(): void {
 		this.anims.create({
 			key: "idle",
-			frames: this.anims.generateFrameNumbers("binIdle", { start: 0, end: 8 }),
+			frames: this.anims.generateFrameNumbers("binIdle", { start: 0, end: 7 }),
 			frameRate: 5,
 			repeat: -1,
 		});
 
 		this.anims.create({
 			key: "prerun",
-			frames: this.anims.generateFrameNumbers("binPrerun", { start: 0, end: 4 }),
+			frames: this.anims.generateFrameNumbers("binPrerun", { start: 0, end: 3 }),
 			frameRate: 13,
 			repeat: 0,
 		});
 
 		this.anims.create({
 			key: "running",
-			frames: this.anims.generateFrameNumbers("binRunning", { start: 0, end: 8 }),
+			frames: this.anims.generateFrameNumbers("binRunning", { start: 0, end: 7 }),
 			frameRate: 5,
 			repeat: -1,
 		});
