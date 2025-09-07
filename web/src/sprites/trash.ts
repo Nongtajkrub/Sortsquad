@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 
 import { trashTypeRandom, trashTypeToId } from "../core/trash-types";
-import { trashCategoryRandom, trashCategoryRandomBias, type TrashCategory } from "../core/trash-categories";
+import { trashCategoryRandomBias, type TrashCategory } from "../core/trash-categories";
 import { randomPosX } from "../core/common";
 
 export class Trash extends Phaser.Physics.Arcade.Sprite {
