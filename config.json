@@ -49,6 +49,7 @@
 			}
 		},
 		"menu": {
+			"loadingScreen": "assets/menu/loadingscreen.png",
 			"startGeneral": "assets/menu/startgeneral.png",
 			"startRecycle": "assets/menu/startrecycle.png",
 			"startHazardous": "assets/menu/starthazardous.png",
@@ -59,8 +60,15 @@
 			"leftArrowButton": "assets/gui/leftarrowbutton.png",
 			"correctCategoryCircle": "assets/gui/correctcategorycircle.png"
 		},
+		"audio": {
+			"music": "assets/audio/music.mp3",
+			"scored": "assets/audio/scored.wav"
+		},
 		"font": {
 			"pixelArt": "assets/fonts/font.otf"
 		}
+	},
+	"game": {
+		"time": 60
 	}
 }
