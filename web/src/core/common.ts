@@ -18,3 +18,19 @@ export function defaultFontConfig(modifyConfig: {
 		strokeThickness: modifyConfig.stroke ?? 6,
 	};
 }
+
+export function randomWeighted(max: number, prefer: number, bias?: number): number {
+	bias = bias ?? 3;
+	const totalWeight = (max - 1) + (bias);
+	const random = Math.random() * totalWeight;
+
+	let cumulative = 0;
+	for (let i = 0; i < max; i++) {
+		cumulative += ((i === prefer) ? bias : 1);
+		if (random < cumulative) {
+			return i;
+		}
+	}
+
+	return max - 1;
+}
