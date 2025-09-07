@@ -56,6 +56,12 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	preload(): void {
+		const loadingScreen = new Background(this, "loadingScreen");
+
+		this.load.on('complete', () => {
+			loadingScreen.destroy();
+		});
+
 		this.load.image("sky", config.path.environment.sky);
 		this.load.image("grass", config.path.environment.grass);
 
@@ -74,19 +80,6 @@ export default class GameScene extends Phaser.Scene {
 			frameHeight: 45
 		});
 		
-		this.load.spritesheet("scoredAnimation1", config.path.gui.scoredAnimation1, {
-			frameWidth: 32,
-			frameHeight: 32
-		});
-		this.load.spritesheet("scoredAnimation2", config.path.gui.scoredAnimation2, {
-			frameWidth: 32,
-			frameHeight: 32
-		});
-		this.load.spritesheet("wrongedAnimation", config.path.gui.wrongedAnimation, {
-			frameWidth: 32,
-			frameHeight: 32
-		});
-
 		this.load.image("apple", config.path.trash.organic.apple);
 		this.load.image("vegatable", config.path.trash.organic.vegatable);
 		this.load.image("fishbone", config.path.trash.organic.fishbone);
@@ -107,12 +100,20 @@ export default class GameScene extends Phaser.Scene {
 		this.load.image("rightArrowButton", config.path.gui.rightArrowButton);
 		this.load.image("correctCategoryCircle", config.path.gui.correctCategoryCircle);
 		
+		this.load.audio("music", config.path.audio.music);
+		this.load.audio("scoredAudio", config.path.audio.scored);
+
 		this.load.font("PixelArt", config.path.font.pixelArt);
 	}
 
 	create(): void {
 		new Background(this, "sky", true);
 		new Grass(this);
+
+		this.sound.add("music").play({
+			loop: true,
+			seek: 68,
+		});
 
 		this.cursor = this.input.keyboard?.createCursorKeys();
 

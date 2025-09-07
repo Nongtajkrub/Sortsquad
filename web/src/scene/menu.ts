@@ -25,6 +25,7 @@ export default class MenuScene extends Phaser.Scene {
 
 	preload(): void {
 		this.load.image("background", this.categoryToBackgroundPath());
+		this.load.image("loadingScreen", config.path.menu.loadingScreen);
 	}
 
 	create(): void {

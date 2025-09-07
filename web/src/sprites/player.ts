@@ -26,6 +26,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 	private leftArrowButton!: Button;
 	private rightArrowButton!: Button;
 
+	private scoredAudio!: Phaser.Sound.BaseSound; 
+
 	constructor(scene: Phaser.Scene, config: PlayerConfig) {
 		super(scene, config.x ?? 0, config.y ?? 0, "");
 		scene.add.existing(this);
@@ -39,6 +41,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		this.binCategory = config.binCategory;
 		this.createAnimations();
 		this.anims.play("idle");
+
+		this.scoredAudio = scene.sound.add("scoredAudio");
 	}
 
 	private createGui(config: PlayerConfig): void {
@@ -164,6 +168,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 				this.score += (isScored) ? 1 : -1;
 				this.score = Math.max(this.score, 0);
 				this.spawnScoredAnimation(isScored);
+
+				if (isScored) {
+					this.scoredAudio.play({ volume: 0.5 });
+				}
 
 				trash.setAlive(false);
 			}
