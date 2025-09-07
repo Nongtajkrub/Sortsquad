@@ -67,5 +67,8 @@
 		"font": {
 			"pixelArt": "assets/fonts/font.otf"
 		}
+	},
+	"game": {
+		"time": 9
 	}
 }

@@ -9,7 +9,7 @@ export function defaultFontConfig(
 	color?: string
 ): Phaser.Types.GameObjects.Text.TextStyle {
 	return {
-		fontFamily: "PixelArt",
+		fontFamily: "pixelArt",
 		fontSize: size ?? "24px",
 		stroke: "#000000",
 		color: color ?? "#FFFFFF",

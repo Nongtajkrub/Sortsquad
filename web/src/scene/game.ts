@@ -3,16 +3,19 @@ import Phaser from "phaser";
 import { Player } from "../sprites/player";
 import TrashesManager from "../core/trashes-manager";
 import config from "../../public/config.json"
-import {defaultFontConfig} from "../core/common";
 import type {TrashCategory} from "../core/trash-categories";
 import Background from "../core/background";
 import Grass from "../sprites/grass";
+import CountdownTimer from "../core/timer";
 
 export default class GameScene extends Phaser.Scene {
 	private player!: Player;
-	private trashManager!: TrashesManager;
-	private cursor?: Phaser.Types.Input.Keyboard.CursorKeys;
+
 	private playerBinCategory!: TrashCategory;
+	private trashManager!: TrashesManager;
+	private countdownTimer!: CountdownTimer;
+
+	private cursor?: Phaser.Types.Input.Keyboard.CursorKeys;
 
 	constructor() {
 		super({ key: "game" });
@@ -103,12 +106,24 @@ export default class GameScene extends Phaser.Scene {
 		this.load.audio("music", config.path.audio.music);
 		this.load.audio("scoredAudio", config.path.audio.scored);
 
-		this.load.font("PixelArt", config.path.font.pixelArt);
+		this.load.font("pixelArt", config.path.font.pixelArt);
+	}
+
+	private createEnvironment(): void {
+		new Background(this, "sky", true);
+		new Grass(this);
+	}
+
+	private createTrashManager(): void {
+		this.trashManager = new TrashesManager(this, this.playerBinCategory);
+
+		setInterval(() => {
+			this.trashManager.spawn();
+		}, 300);
 	}
 
 	create(): void {
-		new Background(this, "sky", true);
-		new Grass(this);
+		this.createEnvironment();
 
 		this.sound.add("music").play({
 			loop: true,
@@ -118,35 +133,33 @@ export default class GameScene extends Phaser.Scene {
 		this.cursor = this.input.keyboard?.createCursorKeys();
 
 		this.player = new Player(this, {
-			x: 200,
+			x: this.scale.width / 2,
 			y: window.innerHeight - 100,
 			scale: 4,
 			binCategory: this.playerBinCategory
 		}); 
 
-		this.trashManager = new TrashesManager(this, this.playerBinCategory);
+		this.createTrashManager();
+		
+		this.countdownTimer = new CountdownTimer(this, {
+			seconds: config.game.time,
+			display: {
+				x: this.scale.width / 2,
+				y: 80,
+				size: "96px"
+			},
+		});
+	}
 
-		setInterval(() => {
-			this.trashManager.spawn();
-		}, 300);
-
-		const timerDisplay = this.add.text(
-			window.innerWidth / 2,
-			80,
-			"0",
-			defaultFontConfig("96px")
-		).setOrigin(0.5, 0.5);
-
-		timerDisplay.setDepth(999);
-
-		setInterval(() => {
-			timerDisplay.setText(Math.floor(this.time.now / 1000).toString());
-		}, 1000);
+	private timerUpdate(): void {
+		if (this.countdownTimer.isFinish()) {
+			this.scene.start("end", { playerScore: this.player.getScore() });
+		}
 	}
 
 	update(): void {
 		this.player.update(this.trashManager, this.cursor);
 		this.trashManager.update();
+		this.timerUpdate();
 	}
 }
-

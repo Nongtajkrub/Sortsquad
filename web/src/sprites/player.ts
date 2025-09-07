@@ -190,4 +190,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		this.updateCollision(trashManager.getTrashes());
 		this.updateGraphic();
 	}
+
+	getScore(): number {
+		return this.score;
+	}
 }

@@ -32,7 +32,7 @@ export default class MenuScene extends Phaser.Scene {
 		new Background(this, "background");
 
 		this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
-			this.scene.start("game", {binCategory: this.binCategory });
+			this.scene.start("game", { binCategory: this.binCategory });
 		});
 	}
 } 
