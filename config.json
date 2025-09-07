@@ -71,6 +71,6 @@
 	"game": {
 		"time": 60,
 		"playerTrashCategoryBias": 4,
-		"moveButtonGuiScale": 5
+		"moveButtonGuiScale": 3
 	}
 }
