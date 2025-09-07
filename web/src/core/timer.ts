@@ -23,7 +23,7 @@ export default class CountdownTimer {
 				config.display.x,
 				config.display.y,
 				(config.seconds).toString(),
-				defaultFontConfig(config.display.size ?? "32px")
+				defaultFontConfig({ size: config.display.size ?? "32px" })
 			).setOrigin(0.5, 0.5); 
 
 			timerDisplay.setDepth(999);

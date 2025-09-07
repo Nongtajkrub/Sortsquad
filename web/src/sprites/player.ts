@@ -50,7 +50,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 			config.x ?? 0,
 			(config.y ?? 0) - 100,
 			`Score: ${this.score}`,
-			defaultFontConfig("32px"),
+			defaultFontConfig({ size: "32px" }),
 		).setOrigin(0.5, 0.5);
 
 		this.leftArrowButton = new Button(this.scene, {
@@ -138,7 +138,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 			x,
 			y,
 			(isScored) ? "+1" : "X",
-			defaultFontConfig("32px", (isScored) ? "#a3e635" : "#ef4444")
+			defaultFontConfig({
+				size: "32px",
+				color: (isScored) ? "#a3e635" : "#ef4444" 
+			})
 		).setOrigin(0.5, 0.5);
 
 		this.scene.tweens.add({

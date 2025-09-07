@@ -19,9 +19,16 @@ export default class EndScene extends Phaser.Scene {
 	create(): void {
 		this.add.text(
 			this.scale.width / 2,
-			this.scale.height / 2,
-			`Total Score: ${this.playerScore}`,
-			defaultFontConfig("108px", "#ffe700", 12)
+			(this.scale.height / 2) - 60,
+			`Total Score`,
+			defaultFontConfig({ size: "104px", color: "#ffe700", stroke: 10 })
+		).setOrigin(0.5, 0.5);
+
+		this.add.text(
+			this.scale.width / 2,
+			(this.scale.height / 2) + 60,
+			this.playerScore.toString(),
+			defaultFontConfig({ size: "104px", stroke: 10 })
 		).setOrigin(0.5, 0.5);
 	}
 
