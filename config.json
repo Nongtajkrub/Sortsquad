@@ -69,7 +69,7 @@
 		}
 	},
 	"game": {
-		"time": 60,
+		"time": 120,
 		"playerTrashCategoryBias": 4,
 		"moveButtonGuiScale": 4
 	}
