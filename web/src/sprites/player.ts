@@ -92,13 +92,27 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 		});
 	}
 
+	private isInBoundsLeft(): boolean {
+		return this.body!.position.x > 0;
+	}
+
+	private isInBoundsRight(): boolean {
+		return this.body!.position.x < (this.scene.scale.width - (this.width * 2));
+	}
+
 	private updateMovement(cursor?: Phaser.Types.Input.Keyboard.CursorKeys): void {
 		this.oldVelocityX = this.body!.velocity.x;
 
-		if (this.leftArrowButton.isDown() || cursor?.left.isDown) {
+		if (
+			this.isInBoundsLeft() &&
+			(this.leftArrowButton.isDown() || cursor?.left.isDown)
+		) {
 			this.setVelocityX(-500);
 			this.setFlipX(true);
-		} else if (this.rightArrowButton.isDown() || cursor?.right.isDown) {
+		} else if (
+			this.isInBoundsRight() &&
+			(this.rightArrowButton.isDown() || cursor?.right.isDown)
+		) {
 			this.setVelocityX(500);
 			this.setFlipX(false);
 		} else {
