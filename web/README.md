@@ -15,3 +15,5 @@ Compared to the original `Python` version, the gameplay has been simplified to m
 # ⚙️ Setup
 
 [Click here for setup instructions](https://github.com/Nongtajkrub/Sortsquad#%EF%B8%8F-setup-web)
+
+---
