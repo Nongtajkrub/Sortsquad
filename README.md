@@ -32,7 +32,7 @@ A local multiplayer game that promotes correctly sorting trash in celebration of
 
 ---
 
-## ⚙️ Setup
+## ⚙️ Setup (Python)
 
 To run this game, make sure you have the following dependencies installed:
 
@@ -55,13 +55,10 @@ pip install pygame
 
 To start the game, run the following command from the project root directory:
 ```bash
-python src/main.py
+python python/src/main.py
 ```
 
 > [!CAUTION]
-> Running the game from the project root ensures that all assets load correctly. If you see errors related to missing assets, double-check that you're in the root directory (where README.md and the src/ folder are located).
+> Running the game from the project root ensures that all assets load correctly. If you see errors related to missing assets, double-check that you're in the root directory (where main `README.md` and the `docs/` folder are located).
 
 ---
-
-
-
