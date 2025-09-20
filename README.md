@@ -1,8 +1,8 @@
 # 🎮 Sortsquad
 
 ![Language](https://img.shields.io/badge/language-Python-blue?logo=python)
-![Status](https://img.shields.io/badge/status-Developing-yellow)
-![Loc](https://img.shields.io/badge/loc-1127-purple)
+![Language](https://img.shields.io/badge/language-TypeScript-3178C6?logo=typescript&logoColor=blue)
+![Status](https://img.shields.io/badge/status-Finished-green)
 
 > A game that promotes correctly sorting trash in celebration of Environmental Day.
 
@@ -70,4 +70,5 @@ You can play the web version of **Sortsquad** (simplified) directly in your brow
 https://nongtajkrub.github.io/Sortsquad/
 
 ---
+
 
