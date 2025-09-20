@@ -62,3 +62,11 @@ python python/src/main.py
 > Running the game from the project root ensures that all assets load correctly. If you see errors related to missing assets, double-check that you're in the root directory (where main `README.md` and the `docs/` folder are located).
 
 ---
+
+## ⚙️ Setup (Web)
+
+You can play the web version of **Sortsquad** (simplified) directly in your browser—no installation required. The game is hosted on GitHub Pages at the link below:
+
+https://nongtajkrub.github.io/Sortsquad/
+
+---
