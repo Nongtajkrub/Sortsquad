@@ -1,4 +1,4 @@
-# 🎮 Sortsquad — Web Version
+# 🎮 Sortsquad Web Version
 
 > A simplified, browser based version of *Sortsquad*.
 
