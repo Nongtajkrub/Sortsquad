@@ -65,8 +65,9 @@ python python/src/main.py
 
 ## ⚙️ Setup (Web)
 
-You can play the web version of **Sortsquad** (simplified) directly in your browser—no installation required. The game is hosted on GitHub Pages at the link below:
+You can play the web version of **Sortsquad** (simplified) directly in your browser, no installation required. The game is hosted on GitHub Pages at the link below:
 
 https://nongtajkrub.github.io/Sortsquad/
 
 ---
+
