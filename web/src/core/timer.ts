@@ -10,6 +10,7 @@ export default class CountdownTimer {
 	private startTime!: number;
 	private config!: CountdownTimerConfig;
 	private scene!: Phaser.Scene;
+	private timerIntervalId?: ReturnType<typeof setInterval>;
 	
 	private calculateTimeLeft(scene: Phaser.Scene, config: CountdownTimerConfig) {
 		return Math.max(
@@ -28,7 +29,7 @@ export default class CountdownTimer {
 
 			timerDisplay.setDepth(999);
 
-			setInterval(() => {
+			this.timerIntervalId = setInterval(() => {
 				const timeLeft = this.calculateTimeLeft(scene, config);
 				const redValue = 255 - (timeLeft * (255 / config.seconds));
 
@@ -47,5 +48,11 @@ export default class CountdownTimer {
 
 	isFinish(): boolean {
 		return (this.calculateTimeLeft(this.scene, this.config) == 0);
+	}
+
+	destroy(): void {
+		if (this.timerIntervalId) {
+			clearInterval(this.timerIntervalId);
+		}
 	}
 }
