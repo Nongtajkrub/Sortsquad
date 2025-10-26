@@ -30,6 +30,10 @@ export default class EndScene extends Phaser.Scene {
 			this.playerScore.toString(),
 			defaultFontConfig({ size: "104px", stroke: 10 })
 		).setOrigin(0.5, 0.5);
+
+		this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
+			this.scene.start("menu");
+		})
 	}
 
 	update(): void {

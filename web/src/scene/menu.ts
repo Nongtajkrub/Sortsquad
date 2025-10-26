@@ -1,13 +1,26 @@
 import Phaser from "phaser";
 import Background from "../core/background";
-import {trashCategoryRandom, type TrashCategory} from "../core/trash-categories";
+import {type TrashCategory, TrashCategoryOrderManager} from "../core/trash-categories";
 import config from "../../public/config.json"
 
+const trashCategoryOrderManager = new TrashCategoryOrderManager([
+	"Organic",
+	"General",
+	"Recyclable",
+	"Hazardous",
+]);
+
 export default class MenuScene extends Phaser.Scene {
-	private binCategory: TrashCategory = trashCategoryRandom();
+	private binCategory!: TrashCategory;
 
 	constructor() {
 		super({ key: "menu" });
+	}
+
+	init() {
+		this.binCategory = trashCategoryOrderManager.getNewCategory();
+		// reload background for new category
+		if (this.textures.exists("background")) this.textures.remove("background");
 	}
 
 	private categoryToBackgroundPath(): string {
@@ -26,7 +39,6 @@ export default class MenuScene extends Phaser.Scene {
 	preload(): void {
 		this.load.image("background", this.categoryToBackgroundPath());
 		this.load.image("loadingScreen", config.path.menu.loadingScreen);
-
 	}
 
 	create(): void {

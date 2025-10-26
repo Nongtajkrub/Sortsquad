@@ -23,6 +23,10 @@ export default class GameScene extends Phaser.Scene {
 
 	init(data: { binCategory: TrashCategory }): void {
 		this.playerBinCategory = data.binCategory;
+
+		["binIdle", "binPrerun", "binRunning"].forEach(key => {
+			if (this.textures.exists(key)) this.textures.remove(key); 
+		});
 	}
 
 	private trashCategoryToAnimationPath(): {
@@ -82,7 +86,7 @@ export default class GameScene extends Phaser.Scene {
 			frameWidth: 45,
 			frameHeight: 45
 		});
-		
+
 		this.load.image("apple", config.path.trash.organic.apple);
 		this.load.image("vegatable", config.path.trash.organic.vegatable);
 		this.load.image("fishbone", config.path.trash.organic.fishbone);
@@ -123,14 +127,6 @@ export default class GameScene extends Phaser.Scene {
 		});
 	}
 
-	private createTrashManager(): void {
-		this.trashManager = new TrashesManager(this, this.playerBinCategory);
-
-		setInterval(() => {
-			this.trashManager.spawn();
-		}, 300);
-	}
-
 	create(): void {
 		this.createEnvironment();
 		this.createMusic();
@@ -144,7 +140,11 @@ export default class GameScene extends Phaser.Scene {
 			binCategory: this.playerBinCategory
 		}); 
 
-		this.createTrashManager();
+		this.trashManager = new TrashesManager(
+			this,
+			this.playerBinCategory,
+			config.game.trashSpawnInterval
+		);
 		
 		this.countdownTimer = new CountdownTimer(this, {
 			seconds: config.game.time,
@@ -160,9 +160,8 @@ export default class GameScene extends Phaser.Scene {
 		if (this.countdownTimer.isFinish()) {
 			this.music.destroy();
 			this.player.destroy();
-
-			this.trashManager.setSpawnable(false);
-			this.trashManager.clear();
+			this.trashManager.destroy();
+			this.countdownTimer.destroy();
 
 			this.scene.start("end", { playerScore: this.player.getScore() });
 		}
