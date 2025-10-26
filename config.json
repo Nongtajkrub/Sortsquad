@@ -33,9 +33,9 @@
                 "fishbone": "assets/trahse/organic/fishbone.png"
 			},
 			"general": {
-                "shoe": "assets/trahse/general/shoe.png",
+                "plasticbag": "assets/trahse/general/plasticbag.png",
                 "tissue": "assets/trahse/general/tissue.png",
-                "ciggarette": "assets/trahse/general/ciggarette.png"
+                "snack": "assets/trahse/general/snack.png"
 			},
 			"recyclable": {
                 "waterBottle": "assets/trahse/recyclable/waterbottle.png",
