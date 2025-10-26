@@ -12,8 +12,10 @@ export class Trash extends Phaser.Physics.Arcade.Sprite {
 	constructor(scene: Phaser.Scene, playerBinCategory: TrashCategory) {
 		const [x, y] = randomPosX(-50);
 		const category = trashCategoryRandomBias(playerBinCategory);
-		const scale = 3;
-		super(scene, x, y, trashTypeToId(trashTypeRandom(category)));
+		const trashTextureId = trashTypeToId(trashTypeRandom(category));
+		// NOTE: Temp fix for Snack being to big
+		const scale = (trashTextureId !== "snack") ? 3 : 1;
+		super(scene, x, y, trashTextureId);
 
 		scene.add.existing(this);
 		scene.physics.add.existing(this);
@@ -22,7 +24,8 @@ export class Trash extends Phaser.Physics.Arcade.Sprite {
 			this.greenCircle = scene.add.image(x, y, "correctCategoryCircle")
 				.setOrigin(0.5, 0.5);
 
-			this.greenCircle.setScale(scale + 0.5);
+			// NOTE: Temp fix for Snack being to big
+			this.greenCircle.setScale((trashTextureId !== "snack") ? scale + 0.5 : 3);
 		} else {
 			this.body!.setSize(scale);
 		}

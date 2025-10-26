@@ -91,9 +91,9 @@ export default class GameScene extends Phaser.Scene {
 		this.load.image("vegatable", config.path.trash.organic.vegatable);
 		this.load.image("fishbone", config.path.trash.organic.fishbone);
 
-		this.load.image("shoe", config.path.trash.general.shoe);
+		this.load.image("plasticbag", config.path.trash.general.plasticbag);
 		this.load.image("tissue", config.path.trash.general.tissue);
-		this.load.image("ciggarette", config.path.trash.general.ciggarette);
+		this.load.image("snack", config.path.trash.general.snack);
 
 		this.load.image("waterbottle", config.path.trash.recyclable.waterBottle);
 		this.load.image("coke", config.path.trash.recyclable.coke);

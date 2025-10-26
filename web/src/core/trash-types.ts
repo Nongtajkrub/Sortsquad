@@ -3,7 +3,7 @@ import type { TrashCategory } from "./trash-categories";
 const ORGANIC_TRASH_TYPES = ["Apple", "Vegatable", "Fishbone"] as const;
 type OrganicTrashType = typeof ORGANIC_TRASH_TYPES[number];
 
-const GENERAL_TRASH_TYPES = ["Shoe", "Tissue", "Ciggarette"] as const;
+const GENERAL_TRASH_TYPES = ["PlasticBag", "Tissue", "Snack"] as const;
 type GeneralTrashType = typeof GENERAL_TRASH_TYPES[number];
 
 const RECYCLABLE_TRASH_TYPE = ["WaterBottle", "Coke", "Newspaper"] as const;
