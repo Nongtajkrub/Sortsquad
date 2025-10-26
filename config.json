@@ -28,25 +28,25 @@
 		},
 		"trash": {
 			"organic": {
-				"apple": "assets/trahse/organic/apple.png",
-				"vegatable": "assets/trahse/organic/vegatable.png",
-				"fishbone": "assets/trahse/organic/fishbone.png"
+                "apple": "assets/trahse/organic/apple.png",
+                "vegatable": "assets/trahse/organic/vegatable.png",
+                "fishbone": "assets/trahse/organic/fishbone.png"
 			},
 			"general": {
-				"shoe": "assets/trahse/general/shoe.png",
-				"tissue": "assets/trahse/general/tissue.png",
-				"ciggarette": "assets/trahse/general/ciggarette.png"
+                "shoe": "assets/trahse/general/shoe.png",
+                "tissue": "assets/trahse/general/tissue.png",
+                "ciggarette": "assets/trahse/general/ciggarette.png"
 			},
 			"recyclable": {
-				"waterBottle": "assets/trahse/recyclable/waterbottle.png",
-				"coke": "assets/trahse/recyclable/coke.png",
-				"newspaper": "assets/trahse/recyclable/newspaper.png"
+                "waterBottle": "assets/trahse/recyclable/waterbottle.png",
+                "coke": "assets/trahse/recyclable/coke.png",
+                "newspaper": "assets/trahse/recyclable/newspaper.png"
 			},
-			"hazardous": {
-				"electronic": "assets/trahse/hazardous/electronic.png",
-				"battery": "assets/trahse/hazardous/battery.png",
-				"bleach": "assets/trahse/hazardous/bleach.png"
-			}
+            "hazardous": {
+                "electronic": "assets/trahse/hazardous/electronic.png",
+                "battery": "assets/trahse/hazardous/battery.png",
+                "bleach": "assets/trahse/hazardous/bleach.png"
+            }
 		},
 		"menu": {
 			"loadingScreen": "assets/menu/loadingscreen.png",
@@ -69,8 +69,9 @@
 		}
 	},
 	"game": {
-		"time": 120,
+		"time": 60,
+		"trashSpawnInterval": 300,
 		"playerTrashCategoryBias": 4,
-		"moveButtonGuiScale": 4
+		"moveButtonGuiScale": 3
 	}
 }
