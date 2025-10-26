@@ -5,22 +5,24 @@ export default class TrashesManager {
 	private trahse: Array<Trash> = [];
 	private scene!: Phaser.Scene;
 	private playerBinCategory!: TrashCategory;
-	private spawnable: boolean = true;
+	private spawmIntervalId!: ReturnType<typeof setInterval>;
 
-	constructor(scene: Phaser.Scene, playerBinCategory: TrashCategory) {
+	private spawn(): void {
+		this.trahse.push(new Trash(this.scene, this.playerBinCategory));
+	}
+
+	constructor(
+		scene: Phaser.Scene,
+		playerBinCategory: TrashCategory,
+		interval: number
+	) {
 		this.scene = scene;
 		this.playerBinCategory = playerBinCategory;
+
+		this.spawmIntervalId = setInterval(() => {
+			this.spawn();
+		}, interval);
 	}	
-
-	spawn(): void {
-		if (this.spawnable) {
-			this.trahse.push(new Trash(this.scene, this.playerBinCategory));
-		}
-	}
-
-	getTrashes(): Array<Trash> {
-		return this.trahse;
-	}
 
 	update(): void {
 		this.trahse = this.trahse.filter((trash: Trash) => {
@@ -34,13 +36,18 @@ export default class TrashesManager {
 		});
 	}
 
-	setSpawnable(value: boolean): void {
-		this.spawnable = value;
+	getTrashes(): Array<Trash> {
+		return this.trahse;
 	}
 
 	clear(): void {
 		this.trahse.forEach((trash: Trash) => {
 			trash.remove();
 		});
+	}
+
+	destroy(): void {
+		this.clear();
+		clearInterval(this.spawmIntervalId);
 	}
 }
