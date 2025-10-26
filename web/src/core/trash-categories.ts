@@ -9,6 +9,26 @@ const GENERAL_TRASH_CATEGORY_INDEX = TRASH_CATEGORIES.findIndex((category) => ca
 const RECYCLABLE_TRASH_CATEGORY_INDEX = TRASH_CATEGORIES.findIndex((category) => category == "Recyclable");
 const HAZARDOUS_TRASH_CATEGORY_INDEX = TRASH_CATEGORIES.findIndex((category) => category == "Hazardous");
 
+export class TrashCategoryOrderManager {
+	private order: Array<TrashCategory>;
+	private currentCategoryIndex: number = -1;
+
+	constructor(order: Array<TrashCategory>) {
+		this.order = order;
+	}
+
+	getNewCategory(): TrashCategory {
+		this.currentCategoryIndex =
+			(this.currentCategoryIndex + 1) % this.order.length;
+
+		return this.order[this.currentCategoryIndex];
+	}
+
+	getCurrentCategory(): TrashCategory {
+		return this.order[this.currentCategoryIndex];
+	}
+}
+
 function categoryToIndex(category: TrashCategory) {
 	switch (category) {
 		case "Organic":
