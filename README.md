@@ -17,7 +17,9 @@ A local multiplayer game that promotes correctly sorting trash in celebration of
 * We developed this project as a student of [Kajonkietsuksa School](https://kg.kajonkietsuksa.ac.th/).
 * [Click here to view the license information.](https://github.com/Nongtajkrub/Sortsquad?tab=License-1-ov-file)
 
-![Kajonkietsuksa School Logo](/docs/kajonkietsuksa.png)
+<p align="center">
+  <img src="/docs/kajonkietsuksa.png" width="50%">
+</p>
 
 ---
 
