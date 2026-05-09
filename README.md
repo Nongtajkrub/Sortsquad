@@ -1,5 +1,8 @@
 # 🎮 Sortsquad
 
+> [!WARNING]
+> This branch will no longer receive game updates. The theme of this branch is a **7-day game jam build**. Ongoing development continues in the [`main`](https://github.com/Nongtajkrub/Sortsquad) branch.
+
 ![Language](https://img.shields.io/badge/language-Python-blue?logo=python)
 ![Status](https://img.shields.io/badge/status-Finish-green)
 ![Loc](https://img.shields.io/badge/loc-1020-purple)
@@ -9,9 +12,6 @@
 A local multiplayer game built with Pygame in just 7 days that encourages correctly sorting trash to celebrate Environmental Day. Developed as a showcase for an event hosted by the Phuket Provincial Administrative Organization (องค์การบริหารส่วนจังหวัดภูเก็ต).
 
 ![Screenshots of the game as a Gif file.](/assets/others/screenshots.gif)
-
-> [!WARNING]
-> This branch will no longer receive game updates. The theme of this branch is a **7-day game jam build**. Ongoing development continues in the [`main`](https://github.com/Nongtajkrub/Sortsquad) branch.
 
 ---
 
