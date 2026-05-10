@@ -13,7 +13,7 @@ pub fn setup(mut commands: Commands, assets: Res<AssetServer>) {
     commands.spawn((
         GeneralPlayer,
         PlayerBundle {
-            slot: PlayerSlot::new(1),
+            slot: PlayerSlot::new(0),
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite::from_image(assets.load("bins/general/static.png")),
         }
@@ -22,27 +22,27 @@ pub fn setup(mut commands: Commands, assets: Res<AssetServer>) {
     commands.spawn((
         RecyclePlayer,
         PlayerBundle {
-            slot: PlayerSlot::new(2),
+            slot: PlayerSlot::new(1),
             transform: Transform::from_xyz(0., 0., 0.),
-            sprite: Sprite::from_image(assets.load("bins/general/static.png")),
+            sprite: Sprite::from_image(assets.load("bins/recyclable/static.png")),
         }
     ));
 
     commands.spawn((
         OrganicPlayer,
         PlayerBundle {
-            slot: PlayerSlot::new(3),
+            slot: PlayerSlot::new(2),
             transform: Transform::from_xyz(0., 0., 0.),
-            sprite: Sprite::from_image(assets.load("bins/general/static.png")),
+            sprite: Sprite::from_image(assets.load("bins/organic/static.png")),
         }
     ));
 
     commands.spawn((
         HazardousPlayer,
         PlayerBundle {
-            slot: PlayerSlot::new(4),
+            slot: PlayerSlot::new(3),
             transform: Transform::from_xyz(0., 0., 0.),
-            sprite: Sprite::from_image(assets.load("bins/general/static.png")),
+            sprite: Sprite::from_image(assets.load("bins/hazardous/static.png")),
         }
     ));
 }
