@@ -1,58 +1,72 @@
 use bevy::prelude::*;
 
-use crate::player::Player;
+use crate::player::PlayerControl;
 use crate::player::PlayerBundle;
-use crate::player::GeneralPlayer;
-use crate::player::OrganicPlayer;
-use crate::player::RecyclePlayer;
-use crate::player::HazardousPlayer;
+use crate::player::Player;
 
 use crate::trash::SpawnTrashEvent;
 use crate::trash::TrashImages;
+use crate::trash::TrashKind;
 use crate::util::column::Column;
 
 pub fn setup(mut commands: Commands, assets: Res<AssetServer>) {
     commands.spawn(Camera2d);
 
-    commands.spawn((
-        Player,
-        GeneralPlayer,
+    commands.spawn(
         PlayerBundle {
+            player: Player,
+            kind: TrashKind::General,
             col: Column::new(0),
+            control: PlayerControl {
+                left: KeyCode::KeyA,
+                right: KeyCode::KeyD,
+            },
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite::from_image(assets.load("bins/general/static.png")),
         }
-    ));
+    );
 
-    commands.spawn((
-        Player,
-        RecyclePlayer,
+    commands.spawn(
         PlayerBundle {
+            player: Player,
+            kind: TrashKind::Recycle,
             col: Column::new(1),
+            control: PlayerControl {
+                left: KeyCode::KeyG,
+                right: KeyCode::KeyH
+            },
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite::from_image(assets.load("bins/recyclable/static.png")),
         }
-    ));
+    );
 
-    commands.spawn((
-        Player,
-        OrganicPlayer,
+    commands.spawn(
         PlayerBundle {
+            player: Player,
+            kind: TrashKind::Organic,
             col: Column::new(2),
+            control: PlayerControl {
+                left: KeyCode::ArrowLeft,
+                right: KeyCode::ArrowRight
+            },
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite::from_image(assets.load("bins/organic/static.png")),
         }
-    ));
+    );
 
-    commands.spawn((
-        Player,
-        HazardousPlayer,
+    commands.spawn(
         PlayerBundle {
+            player: Player,
+            kind: TrashKind::Hazardous,
             col: Column::new(3),
+            control: PlayerControl {
+                left: KeyCode::BracketLeft,
+                right: KeyCode::BracketRight
+            },
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite::from_image(assets.load("bins/hazardous/static.png")),
         }
-    ));
+    );
 
     commands.insert_resource(TrashImages {
         general: vec![

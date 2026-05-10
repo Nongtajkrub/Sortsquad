@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+
 use rand::seq::IndexedRandom;
 
 use crate::util::random_bag::RandomBag;
@@ -60,12 +61,17 @@ impl TrashKind {
     }
 }
 
+/// Trash marker
+#[derive(Component)]
+pub struct Trash;
+
 #[derive(Event)]
 pub struct SpawnTrashEvent;
 
 #[derive(Bundle)]
 pub struct TrashBundle {
-    slot: Column,
+    trash: Trash,
+    col: Column,
     kind: TrashKind,
     transform: Transform,
     sprite: Sprite,
@@ -76,8 +82,6 @@ pub fn spawn_trashes(
     mut commands: Commands,
     assets: Res<TrashImages>
 ) {
-    println!("Trash spawned");
-
     let mut bag = 
         RandomBag::new(vec![
             TrashKind::General,
@@ -89,12 +93,15 @@ pub fn spawn_trashes(
     for i in 0..bag.size() {
         let kind = bag.next().expect("Random bag ran out of trash kind.");
 
-        commands.spawn(TrashBundle {
-            slot: Column::new(i as u32),
-            sprite: kind.to_sprite(&assets),
-            kind: kind,
-            transform: Transform::from_xyz(0., 0., 0.),
-        });
+        commands.spawn(
+            TrashBundle {
+                trash: Trash,
+                col: Column::with_size_factor(i as u32, 0.5),
+                sprite: kind.to_sprite(&assets),
+                kind: kind,
+                transform: Transform::from_xyz(0., 0., 0.),
+            }
+        );
     }
 
     commands.trigger(ColumnResyncEvent);
@@ -102,7 +109,7 @@ pub fn spawn_trashes(
 
 pub fn trash_gravity(
     time: Res<Time>,
-    mut trashes: Query<&mut Transform, With<TrashKind>>
+    mut trashes: Query<&mut Transform, With<Trash>>
 ) {
     const GRAVITY: f32 = 24.;
 
