@@ -114,8 +114,8 @@ pub fn move_recycle_player(
 pub fn move_organic_player(
     mut commands: Commands,
     keyboard: Res<ButtonInput<KeyCode>>, 
-    mut player: Query<&mut PlayerSlot, With<RecyclePlayer>>,
-    mut others: Query<&mut PlayerSlot, Without<RecyclePlayer>>
+    mut player: Query<&mut PlayerSlot, With<OrganicPlayer>>,
+    mut others: Query<&mut PlayerSlot, Without<OrganicPlayer>>
 ) {
     move_player(
         &mut commands,
