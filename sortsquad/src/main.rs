@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 pub mod util; 
 pub mod player;
+pub mod trash;
 
 mod setup;
 
@@ -11,7 +12,11 @@ use player::move_general_player;
 use player::move_recycle_player;
 use player::move_hazardous_player;
 use player::move_organic_player;
-use player::sync_player_slot;
+
+use util::column::column_sync;
+
+use trash::spawn_trashes;
+use trash::trash_gravity;
 
 fn main() {
     App::new()
@@ -23,6 +28,8 @@ fn main() {
             move_organic_player,
             move_hazardous_player
         ))
-        .add_observer(sync_player_slot)
+        .add_systems(Update, trash_gravity)
+        .add_observer(column_sync)
+        .add_observer(spawn_trashes)
         .run();
 }
