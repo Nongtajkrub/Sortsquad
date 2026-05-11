@@ -1,3 +1,3 @@
 pub mod sprite;
 pub mod random_bag;
-pub mod column;
+pub mod align;

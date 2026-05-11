@@ -1,12 +1,14 @@
 use bevy::prelude::*;
 
+const COLUMN_N: u32 = 4;
+
 #[derive(Event)]
 pub struct ColumnResyncEvent;
 
 #[derive(Component)]
 #[require(Transform, Sprite)]
 pub struct Column {
-    pub n: u32,
+    n: u32,
 
     /// Allow for custom size for sprite rather than the best fit size.
     pub size_factor: f32,
@@ -14,6 +16,8 @@ pub struct Column {
 
 impl Column {
     pub fn new(n: u32) -> Self {
+        assert!(n < COLUMN_N);
+
         Self {
             n: n,
             size_factor: 1.,
@@ -22,10 +26,21 @@ impl Column {
 
     /// Allow for custom size for sprite rather than the best fit size.
     pub fn with_size_factor(n: u32, size_factor: f32) -> Self {
+        assert!(n < COLUMN_N);
+
         Self {
             n,
             size_factor,
         } 
+    }
+
+    pub fn get(&self) -> u32 {
+        self.n
+    }
+
+    pub fn set(&mut self, c: u32) {
+        assert!(c < COLUMN_N);
+        self.n = c;
     }
 }
 
@@ -36,9 +51,9 @@ pub fn column_sync(
     window: Query<&Window>,
     mut entities: Query<(&Column, &mut Transform, &mut Sprite)>
 ) {
-    let window = window.single().expect("No window entity.");
+    let window = window.single().expect("Game have no window");
 
-    let sprite_w = window.width() / 4.;
+    let sprite_w = window.width() / COLUMN_N as f32;
     let left_edge = -(window.width() / 2.);
 
     for (col, mut transform, sprite) in &mut entities {

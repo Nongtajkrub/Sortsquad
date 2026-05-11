@@ -1,15 +1,28 @@
 use bevy::prelude::*;
 
+use crate::assets::GameState;
+use crate::util::align::Align;
+
+use crate::assets::ImageAssets;
+
 use crate::player::PlayerControl;
 use crate::player::PlayerBundle;
 use crate::player::Player;
 
-use crate::trash::SpawnTrashEvent;
 use crate::trash::TrashImages;
 use crate::trash::TrashKind;
-use crate::util::column::Column;
+use crate::trash::TrashYPos;
 
-pub fn setup(mut commands: Commands, assets: Res<AssetServer>) {
+use crate::column::Column;
+use crate::column::ColumnResyncEvent;
+
+use crate::score::Score;
+
+pub fn setup(
+    mut commands: Commands,
+    assets: Res<ImageAssets>,
+    mut state: ResMut<NextState<GameState>>
+) {
     commands.spawn(Camera2d);
 
     commands.spawn(
@@ -22,10 +35,10 @@ pub fn setup(mut commands: Commands, assets: Res<AssetServer>) {
                 right: KeyCode::KeyD,
             },
             transform: Transform::from_xyz(0., 0., 0.),
-            sprite: Sprite::from_image(assets.load("bins/general/static.png")),
+            sprite: Sprite::from_image(assets.bin_general.clone()),
+            align: Align::Bottom,
         }
     );
-
     commands.spawn(
         PlayerBundle {
             player: Player,
@@ -36,10 +49,10 @@ pub fn setup(mut commands: Commands, assets: Res<AssetServer>) {
                 right: KeyCode::KeyH
             },
             transform: Transform::from_xyz(0., 0., 0.),
-            sprite: Sprite::from_image(assets.load("bins/recyclable/static.png")),
+            sprite: Sprite::from_image(assets.bin_recycle.clone()),
+            align: Align::Bottom,
         }
     );
-
     commands.spawn(
         PlayerBundle {
             player: Player,
@@ -50,10 +63,10 @@ pub fn setup(mut commands: Commands, assets: Res<AssetServer>) {
                 right: KeyCode::ArrowRight
             },
             transform: Transform::from_xyz(0., 0., 0.),
-            sprite: Sprite::from_image(assets.load("bins/organic/static.png")),
+            sprite: Sprite::from_image(assets.bin_organic.clone()),
+            align: Align::Bottom,
         }
     );
-
     commands.spawn(
         PlayerBundle {
             player: Player,
@@ -64,32 +77,42 @@ pub fn setup(mut commands: Commands, assets: Res<AssetServer>) {
                 right: KeyCode::BracketRight
             },
             transform: Transform::from_xyz(0., 0., 0.),
-            sprite: Sprite::from_image(assets.load("bins/hazardous/static.png")),
+            sprite: Sprite::from_image(assets.bin_hazardous.clone()),
+            align: Align::Bottom,
         }
     );
 
+    println!("General: A, D");
+    println!("Recycle: G, H");
+    println!("Organic: <-, ->");
+    println!("Hazardous: [, ]");
+
     commands.insert_resource(TrashImages {
         general: vec![
-            assets.load("trashes/general/ciggarette.png"),
-            assets.load("trashes/general/shoe.png"),
-            assets.load("trashes/general/tissue.png")
+            assets.trash_ciggarette.clone(),
+            assets.trash_shoe.clone(),
+            assets.trash_tissue.clone(),
         ],
         recycle: vec![
-            assets.load("trashes/recyclable/coke.png"),
-            assets.load("trashes/recyclable/newspaper.png"),
-            assets.load("trashes/recyclable/waterbottle.png"),
+            assets.trash_coke.clone(),
+            assets.trash_newspaper.clone(),
+            assets.trash_tissue.clone(),
         ],
         organic: vec![
-            assets.load("trashes/organic/apple.png"),
-            assets.load("trashes/organic/fishbone.png"),
-            assets.load("trashes/organic/vegatable.png"),
+            assets.trash_apple.clone(),
+            assets.trash_fishbone.clone(),
+            assets.trash_vegatable.clone(),
         ],
         hazardous: vec![
-            assets.load("trashes/hazardous/battery.png"),
-            assets.load("trashes/hazardous/bleach.png"),
-            assets.load("trashes/hazardous/electronic.png"),
+            assets.trash_battery.clone(),
+            assets.trash_bleach.clone(),
+            assets.trash_electronic.clone(),
         ],
     });
+    commands.insert_resource(TrashYPos(0.));
+    commands.insert_resource(Score(0));
 
-    commands.trigger(SpawnTrashEvent);
+    commands.trigger(ColumnResyncEvent);
+
+    state.set(GameState::Playing);
 }

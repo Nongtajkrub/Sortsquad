@@ -3,8 +3,9 @@ use bevy::prelude::*;
 use rand::seq::IndexedRandom;
 
 use crate::util::random_bag::RandomBag;
-use crate::util::column::Column;
-use crate::util::column::ColumnResyncEvent;
+
+use crate::column::Column;
+use crate::column::ColumnResyncEvent;
 
 #[derive(Resource)]
 pub struct TrashImages {
@@ -14,8 +15,11 @@ pub struct TrashImages {
     pub hazardous: Vec<Handle<Image>>,
 }
 
+#[derive(Resource)]
+pub struct TrashYPos(pub f32);
+
 #[repr(u8)]
-#[derive(Component)]
+#[derive(Component, PartialEq, Eq)]
 pub enum TrashKind {
     General,
     Recycle,
@@ -68,6 +72,9 @@ pub struct Trash;
 #[derive(Event)]
 pub struct SpawnTrashEvent;
 
+#[derive(Event)]
+pub struct ResetTrashEvent;
+
 #[derive(Bundle)]
 pub struct TrashBundle {
     trash: Trash,
@@ -80,8 +87,15 @@ pub struct TrashBundle {
 pub fn spawn_trashes(
     _trigger: On<SpawnTrashEvent>,
     mut commands: Commands,
-    assets: Res<TrashImages>
+    mut ypos: ResMut<TrashYPos>,
+    assets: Res<TrashImages>,
+    window: Query<&Window>,
 ) {
+    let window = window.single().expect("Game dose not have a window");
+    let top_edge = window.height() / 2.;
+
+    ypos.0 = top_edge;
+
     let mut bag = 
         RandomBag::new(vec![
             TrashKind::General,
@@ -91,7 +105,7 @@ pub fn spawn_trashes(
         );
     
     for i in 0..bag.size() {
-        let kind = bag.next().expect("Random bag ran out of trash kind.");
+        let kind = bag.next().expect("Random bag ran out of trash kind");
 
         commands.spawn(
             TrashBundle {
@@ -99,7 +113,7 @@ pub fn spawn_trashes(
                 col: Column::with_size_factor(i as u32, 0.5),
                 sprite: kind.to_sprite(&assets),
                 kind: kind,
-                transform: Transform::from_xyz(0., 0., 0.),
+                transform: Transform::from_xyz(0., top_edge, 0.),
             }
         );
     }
@@ -107,13 +121,27 @@ pub fn spawn_trashes(
     commands.trigger(ColumnResyncEvent);
 }
 
+pub fn reset_trashes(
+    _trigger: On<ResetTrashEvent>,
+    mut commands: Commands,
+    trashes: Query<Entity, With<Trash>>
+) {
+    for entity in trashes {
+        commands.entity(entity).despawn();
+    }
+
+    commands.trigger(SpawnTrashEvent);
+}
+
 pub fn trash_gravity(
     time: Res<Time>,
+    mut ypos: ResMut<TrashYPos>,
     mut trashes: Query<&mut Transform, With<Trash>>
 ) {
-    const GRAVITY: f32 = 24.;
+    const GRAVITY: f32 = 98.;
 
+    ypos.0 -= GRAVITY * time.delta_secs();
     for mut transform in &mut trashes {
-        transform.translation -= Vec3::new(0., GRAVITY * time.delta_secs(), 0.);
+        transform.translation = Vec3::new(transform.translation.x, ypos.0, 0.);
     }
 }
