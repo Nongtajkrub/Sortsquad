@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::window::WindowResized;
 
 const COLUMN_N: u32 = 4;
 
@@ -44,14 +45,25 @@ impl Column {
     }
 }
 
-/// Synce any entity(sprite) that have a Column component to the correct X position and scale.
 pub fn column_sync(
+    mut commands: Commands,
+    mut resized: MessageReader<WindowResized>
+) {
+    if resized.read().last().is_some() {
+        commands.trigger(ColumnResyncEvent);
+    }
+}
+
+/// Synce any entity(sprite) that have a Column component to the correct X position and scale.
+pub fn column_sync_observer(
     _trigger: On<ColumnResyncEvent>,
     assets: Res<Assets<Image>>,
     window: Query<&Window>,
     mut entities: Query<(&Column, &mut Transform, &mut Sprite)>
 ) {
-    let window = window.single().expect("Game have no window");
+    let Ok(window) = window.single() else {
+        return;
+    };
 
     let sprite_w = window.width() / COLUMN_N as f32;
     let left_edge = -(window.width() / 2.);

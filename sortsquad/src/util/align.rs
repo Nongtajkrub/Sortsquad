@@ -19,7 +19,10 @@ pub fn align_sync(
     window: Query<&Window>,
     mut entities: Query<(&Sprite, &mut Transform, Ref<Align>)>,
 ) {
-    let window = window.single().expect("Game have no window");
+    let Ok(window) = window.single() else {
+        return;
+    };
+
     let resized = resized.read().last().is_some();
 
     for (sprite, mut transform, align) in &mut entities {

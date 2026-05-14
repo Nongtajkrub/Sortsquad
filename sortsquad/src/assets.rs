@@ -66,4 +66,24 @@ pub struct ImageAssets {
 
     #[asset(path = "trashes/hazardous/electronic.png")]
     pub trash_electronic: Handle<Image>,
+
+    // Controls labels
+    
+    #[asset(path = "ui/controls/a_d.png")]
+    pub control_a_d: Handle<Image>,
+
+    #[asset(path = "ui/controls/g_h.png")]
+    pub control_g_h: Handle<Image>,
+
+    #[asset(path = "ui/controls/bl_br.png")]
+    pub control_bl_br: Handle<Image>,
+
+    #[asset(path = "ui/controls/al_ar.png")]
+    pub control_al_ar: Handle<Image>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct FontAssets {
+    #[asset(path = "ui/fonts/font.otf")]
+    pub font: Handle<Font>,
 }

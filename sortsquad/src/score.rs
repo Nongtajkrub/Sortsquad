@@ -12,6 +12,16 @@ use crate::player::Player;
 #[derive(Resource)]
 pub struct Score(pub u32);
 
+impl Default for Score {
+    fn default() -> Self {
+        Self (0)
+    }
+}
+
+// Score text marker.
+#[derive(Component)]
+pub struct ScoreText;
+
 pub fn scoring(
     mut commands: Commands,
     mut score: ResMut<Score>,
@@ -20,7 +30,9 @@ pub fn scoring(
     trashes: Query<(&TrashKind, &Column), With<Trash>>,
     players: Query<(&TrashKind, &Column), With<Player>>
 ) {
-    let window = window.single().expect("Game does not have a window");
+    let Ok(window) = window.single() else {
+        return;
+    };
 
     if ypos.0 > -(window.height() / 2.) + 100. {
         return;
@@ -34,9 +46,15 @@ pub fn scoring(
 
         if pkind == tkind {
             score.0 += 1;
-            println!("Score: {}", score.0);
         }
     }
 
     commands.trigger(ResetTrashEvent);
+}
+
+pub fn sync_score_text(
+    mut text: Single<&mut Text, With<ScoreText>>,
+    score: Res<Score>
+) {
+    text.0 = format!("{}", score.0);
 }

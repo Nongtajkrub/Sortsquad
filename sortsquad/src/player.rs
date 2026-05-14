@@ -11,6 +11,10 @@ use crate::trash::TrashKind;
 #[derive(Component)]
 pub struct Player;
 
+// Player control label marker.
+#[derive(Component)]
+pub struct PlayerControlLabel(pub Entity);
+
 #[derive(Component)]
 pub struct PlayerControl {
     pub left: KeyCode,
@@ -45,7 +49,6 @@ pub fn move_players(
             continue;
         }
     }
-
     for (mover, target_col) in intended_swaps {
         if let Some(target) = players
             .iter_mut()
@@ -63,6 +66,22 @@ pub fn move_players(
             target_col.set(tmp);
 
             commands.trigger(ColumnResyncEvent);
+        }
+    }
+}
+
+pub fn sync_player_control_label(
+    mut labels: Query<(&PlayerControlLabel, &mut Column), Without<Player>>,
+    players: Query<&Column, (With<Player>, Changed<Column>)>,
+) {
+    // No player column changed.
+    if players.iter().last().is_none() {
+        return;
+    }
+
+    for (control_label, mut lcol) in &mut labels {
+        if let Ok(pcol) = players.get(control_label.0) {
+            lcol.set(pcol.get());
         }
     }
 }

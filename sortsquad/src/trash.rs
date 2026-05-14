@@ -18,6 +18,12 @@ pub struct TrashImages {
 #[derive(Resource)]
 pub struct TrashYPos(pub f32);
 
+impl Default for TrashYPos {
+    fn default() -> Self {
+        Self(0.)
+    }
+}
+
 #[repr(u8)]
 #[derive(Component, PartialEq, Eq)]
 pub enum TrashKind {
@@ -84,14 +90,17 @@ pub struct TrashBundle {
     sprite: Sprite,
 }
 
-pub fn spawn_trashes(
+pub fn spawn_trashes_observer(
     _trigger: On<SpawnTrashEvent>,
     mut commands: Commands,
     mut ypos: ResMut<TrashYPos>,
     assets: Res<TrashImages>,
     window: Query<&Window>,
 ) {
-    let window = window.single().expect("Game dose not have a window");
+    let Ok(window) = window.single() else {
+        return;
+    };
+
     let top_edge = window.height() / 2.;
 
     ypos.0 = top_edge;
@@ -121,7 +130,7 @@ pub fn spawn_trashes(
     commands.trigger(ColumnResyncEvent);
 }
 
-pub fn reset_trashes(
+pub fn reset_trashes_observer(
     _trigger: On<ResetTrashEvent>,
     mut commands: Commands,
     trashes: Query<Entity, With<Trash>>
