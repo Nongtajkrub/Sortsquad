@@ -1,11 +1,10 @@
 use bevy::prelude::*;
 
-use crate::util::align::Align;
-
 use crate::column::Column;
-use crate::column::ColumnResyncEvent;
 
 use crate::trash::TrashKind;
+
+use crate::util::achor::SpriteAchorBottom;
 
 /// Player marker
 #[derive(Component)]
@@ -29,12 +28,11 @@ pub struct PlayerBundle {
     pub control: PlayerControl,
     pub transform: Transform,
     pub sprite: Sprite,
-    pub align: Align,
+    pub achor: SpriteAchorBottom,
 }
 
 /// System for moving the general bin player.
 pub fn move_players(
-    mut commands: Commands,
     keyboard: Res<ButtonInput<KeyCode>>, 
     mut players: Query<(Entity, &mut Column, &PlayerControl), With<Player>>,
 ) {
@@ -64,23 +62,23 @@ pub fn move_players(
             let tmp = mover_col.get();
             mover_col.set(target_col.get());
             target_col.set(tmp);
-
-            commands.trigger(ColumnResyncEvent);
         }
     }
 }
 
 pub fn sync_player_control_label(
-    mut labels: Query<(&PlayerControlLabel, &mut Column), Without<Player>>,
-    players: Query<&Column, (With<Player>, Changed<Column>)>,
+    mut labels: Query<
+        (&PlayerControlLabel, &mut Column, &mut Transform),
+        Without<Player>
+    >,
+    players: Query<(&Column, &Sprite, &Transform), With<Player>>,
 ) {
-    // No player column changed.
-    if players.iter().last().is_none() {
-        return;
-    }
+    for (control_label, mut lcol, mut ltrans) in &mut labels {
+        if let Ok((pcol, sprite, ptrans)) = players.get(control_label.0) {
+            if let Some(size) = sprite.custom_size {
+                ltrans.translation.y = ptrans.translation.y + (size.y / 2.);
+            }
 
-    for (control_label, mut lcol) in &mut labels {
-        if let Ok(pcol) = players.get(control_label.0) {
             lcol.set(pcol.get());
         }
     }

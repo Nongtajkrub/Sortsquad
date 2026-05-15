@@ -1,10 +1,8 @@
 use bevy::prelude::*;
-use bevy::window::WindowResized;
+
+use crate::setup::VIEW_PORT_WIDTH;
 
 const COLUMN_N: u32 = 4;
-
-#[derive(Event)]
-pub struct ColumnResyncEvent;
 
 #[derive(Component)]
 #[require(Transform, Sprite)]
@@ -45,40 +43,18 @@ impl Column {
     }
 }
 
-pub fn column_sync(
-    mut commands: Commands,
-    mut resized: MessageReader<WindowResized>
-) {
-    if resized.read().last().is_some() {
-        commands.trigger(ColumnResyncEvent);
-    }
-}
-
 /// Synce any entity(sprite) that have a Column component to the correct X position and scale.
-pub fn column_sync_observer(
-    _trigger: On<ColumnResyncEvent>,
-    assets: Res<Assets<Image>>,
-    window: Query<&Window>,
+pub fn column_sync(
     mut entities: Query<(&Column, &mut Transform, &mut Sprite)>
 ) {
-    let Ok(window) = window.single() else {
-        return;
-    };
+    let sprite_w = VIEW_PORT_WIDTH / COLUMN_N as f32;
+    let left_edge = -(VIEW_PORT_WIDTH / 2.);
 
-    let sprite_w = window.width() / COLUMN_N as f32;
-    let left_edge = -(window.width() / 2.);
+    for (col, mut transform, mut sprite) in &mut entities {
+        let size = sprite_w * col.size_factor;
+        sprite.custom_size = Some(Vec2::new(size, size));
 
-    for (col, mut transform, sprite) in &mut entities {
-        if let Some(image) = assets.get(&sprite.image) {
-            transform.scale =
-                Vec3::splat((sprite_w / image.size_f32().x) * col.size_factor);
-
-            transform.translation =
-                Vec3::new(
-                    left_edge + ((sprite_w * col.n as f32) + (sprite_w / 2.)),
-                    transform.translation.y,
-                    0.
-                );
-        }
+        transform.translation.x =
+            left_edge + ((sprite_w * col.n as f32) + (sprite_w / 2.));
     }
 }

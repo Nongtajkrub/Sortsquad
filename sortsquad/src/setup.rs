@@ -1,6 +1,7 @@
 use bevy::prelude::*;
+use bevy::camera::ScalingMode;
 
-use crate::util::align::Align;
+use crate::util::achor::SpriteAchorBottom;
 
 use crate::assets::GameState;
 use crate::assets::ImageAssets;
@@ -15,9 +16,10 @@ use crate::trash::TrashImages;
 use crate::trash::TrashKind;
 
 use crate::column::Column;
-use crate::column::ColumnResyncEvent;
 
 use crate::score::ScoreText;
+
+pub const VIEW_PORT_WIDTH: f32 = 1000.;
 
 pub fn setup_game(
     mut commands: Commands,
@@ -25,7 +27,15 @@ pub fn setup_game(
     fonts: Res<FontAssets>,
     mut state: ResMut<NextState<GameState>>
 ) {
-    commands.spawn(Camera2d);
+    commands.spawn((
+        Camera2d,
+        Projection::from(OrthographicProjection {
+            scaling_mode: ScalingMode::FixedHorizontal { 
+                viewport_width: VIEW_PORT_WIDTH 
+            }, 
+            ..OrthographicProjection::default_2d()
+        })
+    ));
 
     // Spawn player entities
     let general_player_id = commands.spawn(
@@ -38,8 +48,12 @@ pub fn setup_game(
                 right: KeyCode::KeyD,
             },
             transform: Transform::from_xyz(0., 0., 0.),
-            sprite: Sprite::from_image(images.bin_general.clone()),
-            align: Align::Bottom,
+            sprite: Sprite {
+                custom_size: Some(Vec2::new(1., 1.)),
+                image: images.bin_general.clone(),
+                ..Default::default()
+            },
+            achor: SpriteAchorBottom,
         }
     ).id();
     commands.spawn((
@@ -59,8 +73,12 @@ pub fn setup_game(
                 right: KeyCode::KeyH,
             },
             transform: Transform::from_xyz(0., 0., 0.),
-            sprite: Sprite::from_image(images.bin_recycle.clone()),
-            align: Align::Bottom,
+            sprite: Sprite {
+                custom_size: Some(Vec2::new(1., 1.)),
+                image: images.bin_recycle.clone(),
+                ..Default::default()
+            },
+            achor: SpriteAchorBottom,
         }
     ).id();
     commands.spawn((
@@ -80,8 +98,12 @@ pub fn setup_game(
                 right: KeyCode::ArrowRight,
             },
             transform: Transform::from_xyz(0., 0., 0.),
-            sprite: Sprite::from_image(images.bin_organic.clone()),
-            align: Align::Bottom,
+            sprite: Sprite {
+                custom_size: Some(Vec2::new(1., 1.)),
+                image: images.bin_organic.clone(),
+                ..Default::default()
+            },
+            achor: SpriteAchorBottom,
         }
     ).id();
     commands.spawn((
@@ -101,8 +123,12 @@ pub fn setup_game(
                 right: KeyCode::BracketRight,
             },
             transform: Transform::from_xyz(0., 0., 0.),
-            sprite: Sprite::from_image(images.bin_hazardous.clone()),
-            align: Align::Bottom,
+            sprite: Sprite {
+                custom_size: Some(Vec2::new(1., 1.)),
+                image: images.bin_hazardous.clone(),
+                ..Default::default()
+            },
+            achor: SpriteAchorBottom,
         }
     ).id();
     commands.spawn((
@@ -160,8 +186,6 @@ pub fn setup_game(
             images.trash_electronic.clone(),
         ],
     });
-
-    commands.trigger(ColumnResyncEvent);
 
     state.set(GameState::Playing);
 }

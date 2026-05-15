@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::window::PrimaryWindow;
 
 use crate::column::Column;
 
@@ -26,7 +27,7 @@ pub fn scoring(
     mut commands: Commands,
     mut score: ResMut<Score>,
     ypos: Res<TrashYPos>,
-    window: Query<&Window>,
+    window: Query<&Window, With<PrimaryWindow>>,
     trashes: Query<(&TrashKind, &Column), With<Trash>>,
     players: Query<(&TrashKind, &Column), With<Player>>
 ) {

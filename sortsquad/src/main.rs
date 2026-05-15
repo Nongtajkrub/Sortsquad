@@ -1,15 +1,17 @@
+pub mod setup;
 pub mod util; 
 pub mod player;
 pub mod trash;
 pub mod score;
 pub mod column;
 pub mod assets;
-mod setup;
 
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
 
 use setup::setup_game;
+
+use util::achor::achor_bottom_sync;
 
 use assets::GameState;
 use assets::ImageAssets;
@@ -17,11 +19,8 @@ use assets::FontAssets;
 
 use crate::column::column_sync;
 use crate::player::sync_player_control_label;
-use crate::util::align::align_sync;
 
 use player::move_players;
-
-use column::column_sync_observer;
 
 use crate::trash::TrashYPos;
 use trash::spawn_trashes_observer;
@@ -52,12 +51,11 @@ fn main() {
                 trash_gravity,
                 scoring,
                 column_sync,
-                align_sync,
+                achor_bottom_sync,
                 sync_player_control_label,
                 sync_score_text.run_if(resource_changed::<Score>),
             ).run_if(in_state(GameState::Playing)))
         .add_observer(spawn_trashes_observer)
         .add_observer(reset_trashes_observer)
-        .add_observer(column_sync_observer)
         .run();
 }

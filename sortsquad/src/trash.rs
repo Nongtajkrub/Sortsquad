@@ -1,11 +1,11 @@
 use bevy::prelude::*;
+use bevy::window::PrimaryWindow;
 
 use rand::seq::IndexedRandom;
 
 use crate::util::random_bag::RandomBag;
 
 use crate::column::Column;
-use crate::column::ColumnResyncEvent;
 
 #[derive(Resource)]
 pub struct TrashImages {
@@ -95,7 +95,7 @@ pub fn spawn_trashes_observer(
     mut commands: Commands,
     mut ypos: ResMut<TrashYPos>,
     assets: Res<TrashImages>,
-    window: Query<&Window>,
+    window: Query<&Window, With<PrimaryWindow>>,
 ) {
     let Ok(window) = window.single() else {
         return;
@@ -126,8 +126,6 @@ pub fn spawn_trashes_observer(
             }
         );
     }
-
-    commands.trigger(ColumnResyncEvent);
 }
 
 pub fn reset_trashes_observer(
