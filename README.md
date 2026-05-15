@@ -1,5 +1,6 @@
 # 🎮 Sortsquad
 
+![Language](https://img.shields.io/badge/language-Rust-e43716?logo=rust&logoColor=white)
 ![Language](https://img.shields.io/badge/language-Python-blue?logo=python)
 ![Language](https://img.shields.io/badge/language-TypeScript-3178C6?logo=typescript&logoColor=blue)
 ![Status](https://img.shields.io/badge/status-Finished-green)
