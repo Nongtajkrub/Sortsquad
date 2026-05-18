@@ -1,11 +1,15 @@
 use bevy::prelude::*;
-use bevy::window::PrimaryWindow;
 
+use bevy::window::PrimaryWindow;
 use rand::seq::IndexedRandom;
+
+use crate::setup::VIEW_PORT_WIDTH;
 
 use crate::util::random_bag::RandomBag;
 
 use crate::column::Column;
+
+use crate::player::Player;
 
 #[derive(Resource)]
 pub struct TrashImages {
@@ -25,7 +29,7 @@ impl Default for TrashYPos {
 }
 
 #[repr(u8)]
-#[derive(Component, PartialEq, Eq)]
+#[derive(Component, Debug, PartialEq, Eq, Clone, Copy)]
 pub enum TrashKind {
     General,
     Recycle,
@@ -34,39 +38,31 @@ pub enum TrashKind {
 }
 
 impl TrashKind {
-    pub fn to_sprite(&self, assets: &TrashImages) -> Sprite {
+    pub fn to_image(&self, assets: &TrashImages) -> Handle<Image> {
         let mut rng = rand::rng();
 
         // Random the trash itself base on its kind.
         match self {
             TrashKind::General =>
-                Sprite::from_image(
-                    assets.general
-                        .choose(&mut rng)
-                        .expect("No general trash assets")
-                        .clone()
-                ),
+                assets.general
+                    .choose(&mut rng)
+                    .expect("No general trash assets")
+                    .clone(),
             TrashKind::Recycle =>
-                Sprite::from_image(
-                    assets.recycle
-                        .choose(&mut rng)
-                        .expect("No recycle trash assets")
-                        .clone()
-                ),
+                assets.recycle
+                    .choose(&mut rng)
+                    .expect("No recycle trash assets")
+                    .clone(),
             TrashKind::Organic =>
-                Sprite::from_image(
-                    assets.organic
-                        .choose(&mut rng)
-                        .expect("No organic trash assets")
-                        .clone()
-                ),
+                assets.organic
+                    .choose(&mut rng)
+                    .expect("No organic trash assets")
+                    .clone(),
             TrashKind::Hazardous =>
-                Sprite::from_image(
-                    assets.hazardous
-                        .choose(&mut rng)
-                        .expect("No hazardous trash assets")
-                        .clone()
-                ),
+                assets.hazardous
+                    .choose(&mut rng)
+                    .expect("No hazardous trash assets")
+                    .clone(),
         }
     }
 }
@@ -96,35 +92,46 @@ pub fn spawn_trashes_observer(
     mut ypos: ResMut<TrashYPos>,
     assets: Res<TrashImages>,
     window: Query<&Window, With<PrimaryWindow>>,
+    players: Query<(&TrashKind, &Column), (With<Player>, Without<Trash>)>,
 ) {
     let Ok(window) = window.single() else {
         return;
     };
 
-    let top_edge = window.height() / 2.;
-
-    ypos.0 = top_edge;
+    ypos.0 = (VIEW_PORT_WIDTH * (window.height() / window.width())) / 2.;
 
     let mut bag = 
         RandomBag::new(vec![
             TrashKind::General,
             TrashKind::Recycle,
             TrashKind::Organic,
-            TrashKind::Hazardous]
-        );
-    
-    for i in 0..bag.size() {
-        let kind = bag.next().expect("Random bag ran out of trash kind");
+            TrashKind::Hazardous,
+        ]);
 
-        commands.spawn(
-            TrashBundle {
+    for tcol in 0..bag.size() {
+        if let Some(pkind) = players
+            .iter()
+            .find_map(|(kind, col)| {
+                if col.get() == tcol as u32 { Some(kind) } else { None }
+            })
+        {
+            let Some(tkind) = bag.try_next_without(*pkind) else {
+                error!("TrashKind random bag ran out.");
+                return;
+            };
+
+            commands.spawn(TrashBundle {
                 trash: Trash,
-                col: Column::with_size_factor(i as u32, 0.5),
-                sprite: kind.to_sprite(&assets),
-                kind: kind,
-                transform: Transform::from_xyz(0., top_edge, 0.),
-            }
-        );
+                col: Column::with_size_factor(tcol as u32, 0.7),
+                kind: tkind,
+                transform: Transform::from_xyz(0., 0., 0.),
+                sprite: Sprite {
+                    custom_size: Some(Vec2::new(0., 0.)),
+                    image: tkind.to_image(&assets),
+                    ..Default::default()
+                }
+            });
+        }
     }
 }
 

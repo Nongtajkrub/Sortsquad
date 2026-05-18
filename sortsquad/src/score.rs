@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
+use crate::setup::VIEW_PORT_WIDTH;
+
 use crate::column::Column;
 
 use crate::trash::TrashYPos;
@@ -35,15 +37,23 @@ pub fn scoring(
         return;
     };
 
-    if ypos.0 > -(window.height() / 2.) + 100. {
+    let bottom_edge =
+        -((VIEW_PORT_WIDTH * (window.height() / window.width())) / 2.);
+
+    if ypos.0 > bottom_edge + 100. {
         return;
     }
+
+    println!("Y pos: {}, Bottom: {}", ypos.0, bottom_edge);
     
     for (tkind, tcol) in &trashes {
-        let pkind = players
+        let Some(pkind) = players
             .iter()
             .find_map(|(k, c)| if c.get() == tcol.get() { Some(k) } else { None })
-            .expect("No player in trash column.");
+        else {
+            error!("No player in trash column.");
+            return;
+        };
 
         if pkind == tkind {
             score.0 += 1;

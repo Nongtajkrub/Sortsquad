@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use bevy::camera::ScalingMode;
+use bevy::window::PrimaryWindow;
 
+use crate::trash::SpawnTrashEvent;
 use crate::util::achor::SpriteAchorBottom;
 
 use crate::assets::GameState;
@@ -49,7 +51,7 @@ pub fn setup_game(
             },
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite {
-                custom_size: Some(Vec2::new(1., 1.)),
+                custom_size: Some(Vec2::new(0., 0.)),
                 image: images.bin_general.clone(),
                 ..Default::default()
             },
@@ -74,7 +76,7 @@ pub fn setup_game(
             },
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite {
-                custom_size: Some(Vec2::new(1., 1.)),
+                custom_size: Some(Vec2::new(0., 0.)),
                 image: images.bin_recycle.clone(),
                 ..Default::default()
             },
@@ -99,7 +101,7 @@ pub fn setup_game(
             },
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite {
-                custom_size: Some(Vec2::new(1., 1.)),
+                custom_size: Some(Vec2::new(0., 0.)),
                 image: images.bin_organic.clone(),
                 ..Default::default()
             },
@@ -124,7 +126,7 @@ pub fn setup_game(
             },
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite {
-                custom_size: Some(Vec2::new(1., 1.)),
+                custom_size: Some(Vec2::new(0., 0.)),
                 image: images.bin_hazardous.clone(),
                 ..Default::default()
             },

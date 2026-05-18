@@ -43,6 +43,8 @@ fn main() {
                 .load_collection::<ImageAssets>()
                 .load_collection::<FontAssets>()
         )
+        .add_observer(spawn_trashes_observer)
+        .add_observer(reset_trashes_observer)
         .add_systems(OnEnter(GameState::Starting), setup_game)
         .add_systems(
             Update,
@@ -55,7 +57,5 @@ fn main() {
                 sync_player_control_label,
                 sync_score_text.run_if(resource_changed::<Score>),
             ).run_if(in_state(GameState::Playing)))
-        .add_observer(spawn_trashes_observer)
-        .add_observer(reset_trashes_observer)
         .run();
 }

@@ -1,16 +1,20 @@
 use rand::seq::SliceRandom;
 
-pub struct RandomBag<T> {
+pub struct RandomBag<T> 
+where 
+    T: Copy + PartialEq + Eq,
+{
     items: Vec<T>,
-    size: usize,
 }
 
-impl<T> RandomBag<T> {
+impl<T> RandomBag<T>
+where 
+    T: Copy + PartialEq + Eq,
+{
     pub fn new(mut items: Vec<T>) -> Self {
         items.shuffle(&mut rand::rng());
 
         Self { 
-            size: items.len(),
             items,
         }
     }
@@ -20,12 +24,25 @@ impl<T> RandomBag<T> {
         self.items.pop()
     }
 
+    /// Returns the next random item, while trying to ignore a certain
+    /// item if possible. Return None if bag is empty.
+    pub fn try_next_without(&mut self, exclude: T) -> Option<T> {
+        for i in (0..self.items.len()).rev() {
+            if self.items[i] != exclude {
+                return Some(self.items.swap_remove(i));
+            }
+        }
+
+        // The excluded item can't be ignored.
+        self.items.pop()
+    }
+
     /// Check if we have more items
     pub fn is_empty(&self) -> bool {
         self.items.is_empty()
     }
 
     pub fn size(&self) -> usize {
-        self.size
+        self.items.len()
     }
 }
