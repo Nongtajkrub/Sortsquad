@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 use bevy::camera::ScalingMode;
-use bevy::window::PrimaryWindow;
 
-use crate::trash::SpawnTrashEvent;
 use crate::util::achor::SpriteAchorBottom;
 
 use crate::assets::GameState;
@@ -14,8 +12,8 @@ use crate::player::PlayerControl;
 use crate::player::PlayerBundle;
 use crate::player::Player;
 
-use crate::trash::TrashImages;
-use crate::trash::TrashKind;
+use crate::trashes::TrashImages;
+use crate::trashes::TrashKind;
 
 use crate::column::Column;
 

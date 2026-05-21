@@ -1,4 +1,5 @@
 use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 
 pub struct RandomBag<T> 
 where 
@@ -45,4 +46,13 @@ where
     pub fn size(&self) -> usize {
         self.items.len()
     }
+}
+
+// Expect a list with elements.
+pub fn random_from_list<T>(list: &[T]) -> T
+where 
+    T: Clone
+{
+    assert!(list.len() > 0);
+    list.choose(&mut rand::rng()).unwrap().clone()
 }

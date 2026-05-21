@@ -1,14 +1,20 @@
 use bevy::prelude::*;
 
+use crate::assets::ImageAssets;
 use crate::column::Column;
 
-use crate::trash::TrashKind;
+use crate::trashes::TrashKind;
 
 use crate::util::achor::SpriteAchorBottom;
 
 /// Player marker
 #[derive(Component)]
 pub struct Player;
+
+
+/// Mark players who can collect power ups.
+#[derive(Component)]
+pub struct PlayerPowerCollector;
 
 // Player control label marker.
 #[derive(Component)]
@@ -32,7 +38,7 @@ pub struct PlayerBundle {
 }
 
 /// System for moving the general bin player.
-pub fn move_players(
+pub fn players_move(
     keyboard: Res<ButtonInput<KeyCode>>, 
     mut players: Query<(Entity, &mut Column, &PlayerControl), With<Player>>,
 ) {
@@ -66,7 +72,34 @@ pub fn move_players(
     }
 }
 
-pub fn sync_player_control_label(
+pub fn players_apply_collector_effect(
+    assets: Res<ImageAssets>,
+    mut player: Query<&mut Sprite, (With<Player>, Added<PlayerPowerCollector>)>
+) {
+    let Ok(mut sprite) = player.single_mut() else {
+        return;
+    };
+
+    sprite.image = assets.trash_shoe.clone();
+}
+
+pub fn players_remove_collector_effect(
+    assets: Res<ImageAssets>,
+    mut players: RemovedComponents<PlayerPowerCollector>,
+    mut sprites: Query<(&mut Sprite, &TrashKind), With<Player>>,
+) {
+    if players.len() > 1 {
+        error!("Only one player should have the PlayerPowerCollector component");
+    }
+
+    for player in &mut players.read() {
+        if let Ok((mut sprite, kind)) = sprites.get_mut(player) {
+            sprite.image = kind.to_image_player(&assets);
+        }
+    }
+}
+
+pub fn players_sync_control_label(
     mut labels: Query<
         (&PlayerControlLabel, &mut Column, &mut Transform),
         Without<Player>
