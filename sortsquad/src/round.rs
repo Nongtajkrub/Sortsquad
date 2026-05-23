@@ -1,10 +1,6 @@
 use bevy::prelude::*;
 
-use crate::items::ResetItemsEvent;
-
-use crate::powerup::Powerup;
-use crate::powerup::SpawnPowerupMessage;
-use crate::powerup::DespawnPowerupEvent;
+use crate::state::RoundState;
 
 #[derive(Resource)]
 pub struct RoundCounter(pub u32);
@@ -15,27 +11,14 @@ impl Default for RoundCounter {
     }
 }
 
-#[derive(Event)]
-pub struct RoundIncrementEvent;
-
-pub fn round_increment_observer(
-    _trigger: On<RoundIncrementEvent>,
-    mut commands: Commands,
-    mut round: ResMut<RoundCounter>,
-    mut msg: MessageWriter<SpawnPowerupMessage>,
-    powerup: Query<&Powerup>,
-) {
+pub fn round_increment(mut round: ResMut<RoundCounter>) {
     round.0 += 1;
+}
 
-    commands.trigger(ResetItemsEvent);
+pub fn setup_round(mut state: ResMut<NextState<RoundState>>) {
+    state.set(RoundState::RoundStarting);
+}
 
-    // Spawn power up every specific round if it does not exist.
-    if round.0 != 0 && round.0 % 2 == 0 && powerup.iter().last().is_none() {
-        msg.write(SpawnPowerupMessage);
-    }
-
-    // Despawn powerup when round end if powerup exist.
-    if powerup.iter().last().is_some() {
-        commands.trigger(DespawnPowerupEvent);
-    }
+pub fn start_round(mut state: ResMut<NextState<RoundState>>) {
+    state.set(RoundState::InRound);
 }

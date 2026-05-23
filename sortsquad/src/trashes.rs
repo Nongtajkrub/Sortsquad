@@ -8,6 +8,10 @@ use crate::assets::ImageAssets;
 
 use crate::column::Column;
 
+/// Trash marker
+#[derive(Component)]
+pub struct Trash;
+
 #[derive(Resource)]
 pub struct TrashImages {
     pub general: Vec<Handle<Image>>,
@@ -23,6 +27,25 @@ pub enum TrashKind {
     Recycle,
     Organic,
     Hazardous,
+}
+
+impl TrashKind {
+    pub const ALL: [Self; 4] = [
+        Self::General,
+        Self::Recycle,
+        Self::Organic,
+        Self::Hazardous
+    ];
+}
+
+#[derive(Bundle)]
+pub struct TrashBundle {
+    pub item: Item,
+    pub trash: Trash,
+    pub col: Column,
+    pub kind: TrashKind,
+    pub transform: Transform,
+    pub sprite: Sprite,
 }
 
 impl TrashKind {
@@ -62,18 +85,4 @@ impl TrashKind {
             TrashKind::Hazardous => assets.bin_hazardous.clone(),
         }
     }
-}
-
-/// Trash marker
-#[derive(Component)]
-pub struct Trash;
-
-#[derive(Bundle)]
-pub struct TrashBundle {
-    pub item: Item,
-    pub trash: Trash,
-    pub col: Column,
-    pub kind: TrashKind,
-    pub transform: Transform,
-    pub sprite: Sprite,
 }

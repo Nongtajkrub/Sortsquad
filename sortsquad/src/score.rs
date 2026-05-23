@@ -5,15 +5,13 @@ use crate::setup::VIEW_PORT_WIDTH;
 
 use crate::column::Column;
 
+use crate::state::RoundState;
 use crate::trashes::TrashKind;
 use crate::trashes::Trash;
 
 use crate::items::ItemsYPos;
-use crate::items::ResetItemsEvent;
 
 use crate::player::Player;
-
-use crate::round::RoundIncrementEvent;
 
 #[derive(Resource)]
 pub struct Score(pub u32);
@@ -29,9 +27,9 @@ impl Default for Score {
 pub struct ScoreText;
 
 pub fn scoring(
-    mut commands: Commands,
     mut score: ResMut<Score>,
-    ypos: Res<ItemsYPos>,
+    mut state: ResMut<NextState<RoundState>>,
+    mut ypos: ResMut<ItemsYPos>,
     window: Query<&Window, With<PrimaryWindow>>,
     trashes: Query<(&TrashKind, &Column), With<Trash>>,
     players: Query<(&TrashKind, &Column), With<Player>>
@@ -40,6 +38,8 @@ pub fn scoring(
         return;
     };
 
+    let top_edge =
+        (VIEW_PORT_WIDTH * (window.height() / window.width())) / 2.;
     let bottom_edge =
         -((VIEW_PORT_WIDTH * (window.height() / window.width())) / 2.);
 
@@ -61,7 +61,8 @@ pub fn scoring(
         }
     }
 
-    commands.trigger(RoundIncrementEvent);
+    ypos.0 = top_edge;
+    state.set(RoundState::RoundEnding);
 }
 
 pub fn sync_score_text(

@@ -1,14 +1,6 @@
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
 
-#[derive(States, Debug, Clone, Hash, PartialEq, Eq, Default)]
-pub enum GameState {
-    #[default]
-    AssetsLoading,
-    Starting,
-    Playing,
-}
-
 #[derive(AssetCollection, Resource)]
 pub struct ImageAssets {
     #[asset(path = "bins/general/static.png")]

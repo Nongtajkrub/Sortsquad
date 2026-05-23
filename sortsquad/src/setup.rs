@@ -1,9 +1,10 @@
 use bevy::prelude::*;
 use bevy::camera::ScalingMode;
 
+use crate::state::RoundState;
 use crate::util::achor::SpriteAchorBottom;
 
-use crate::assets::GameState;
+use crate::state::GameState;
 use crate::assets::ImageAssets;
 use crate::assets::FontAssets;
 
@@ -25,7 +26,8 @@ pub fn setup_game(
     mut commands: Commands,
     images: Res<ImageAssets>,
     fonts: Res<FontAssets>,
-    mut state: ResMut<NextState<GameState>>
+    mut gstate: ResMut<NextState<GameState>>,
+    mut rstate: ResMut<NextState<RoundState>>
 ) {
     commands.spawn((
         Camera2d,
@@ -187,5 +189,6 @@ pub fn setup_game(
         ],
     });
 
-    state.set(GameState::Playing);
+    gstate.set(GameState::Playing);
+    rstate.set(RoundState::RoundStarting);
 }
