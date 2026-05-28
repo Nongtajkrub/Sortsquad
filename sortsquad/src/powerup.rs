@@ -12,9 +12,19 @@ use crate::column::Column;
 pub struct Powerup;
 
 #[repr(u8)]
-#[derive(Component)]
+#[derive(Component, Debug, Clone, Copy)]
 pub enum PowerupKind {
+    NoPowerup,
     Reveal,
+}
+
+#[derive(Resource, Debug)]
+pub struct ActivePowerup(pub PowerupKind); 
+
+impl Default for ActivePowerup {
+    fn default() -> Self {
+        Self(PowerupKind::NoPowerup)
+    }
 }
 
 #[derive(Bundle)]
@@ -29,9 +39,12 @@ pub struct PowerupBundle {
 
 pub fn powerup_despawn(
     mut commands: Commands,
+    mut active: ResMut<ActivePowerup>,
     collector_player: Query<Entity, (With<Player>, With<PlayerPowerCollector>)>,
 ) {
     if let Ok(entity) = collector_player.single() {
         commands.entity(entity).remove::<PlayerPowerCollector>();
     };
+
+    active.0 = PowerupKind::NoPowerup;
 }

@@ -134,7 +134,7 @@ pub fn items_gravity(
     mut ypos: ResMut<ItemsYPos>,
     mut items: Query<&mut Transform, With<Item>>
 ) {
-    const GRAVITY: f32 = 500.;
+    const GRAVITY: f32 = 98.;
 
     ypos.0 -= GRAVITY * time.delta_secs();
     for mut transform in &mut items {

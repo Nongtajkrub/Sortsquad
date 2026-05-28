@@ -17,11 +17,11 @@ use setup::setup_game;
 
 use util::achor::achor_bottom_sync;
 
-use state::GameState;
+use crate::state::GameState;
 use crate::state::RoundState;
 
-use assets::ImageAssets;
-use assets::FontAssets;
+use crate::assets::ImageAssets;
+use crate::assets::FontAssets;
 
 use crate::column::column_sync;
 
@@ -31,6 +31,7 @@ use crate::items::ItemsYPos;
 use crate::items::items_gravity;
 
 use crate::powerup::powerup_despawn;
+use crate::powerup::ActivePowerup;
 
 use crate::round::setup_round;
 use crate::round::start_round;
@@ -51,6 +52,7 @@ fn main() {
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .init_resource::<Score>()
         .init_resource::<ItemsYPos>()
+        .init_resource::<ActivePowerup>()
         .init_resource::<RoundCounter>()
         .init_state::<GameState>()
         .init_state::<RoundState>()

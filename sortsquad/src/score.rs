@@ -1,17 +1,25 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
+use crate::util::random::random_from_list;
+
 use crate::setup::VIEW_PORT_WIDTH;
+
+use crate::player::PlayerPowerCollector;
+use crate::player::Player;
+
+use crate::powerup::Powerup;
+use crate::powerup::PowerupKind;
+use crate::powerup::ActivePowerup;
 
 use crate::column::Column;
 
 use crate::state::RoundState;
+
 use crate::trashes::TrashKind;
 use crate::trashes::Trash;
 
 use crate::items::ItemsYPos;
-
-use crate::player::Player;
 
 #[derive(Resource)]
 pub struct Score(pub u32);
@@ -30,9 +38,15 @@ pub fn scoring(
     mut score: ResMut<Score>,
     mut state: ResMut<NextState<RoundState>>,
     mut ypos: ResMut<ItemsYPos>,
+    mut active: ResMut<ActivePowerup>,
     window: Query<&Window, With<PrimaryWindow>>,
     trashes: Query<(&TrashKind, &Column), With<Trash>>,
-    players: Query<(&TrashKind, &Column), With<Player>>
+    players: Query<
+        (&TrashKind, &Column),
+        (With<Player>, Without<PlayerPowerCollector>)
+    >,
+    powerup: Query<&Column, With<Powerup>>,
+    pcollector: Query<&Column, With<PlayerPowerCollector>>
 ) {
     let Ok(window) = window.single() else {
         return;
@@ -48,16 +62,21 @@ pub fn scoring(
     }
     
     for (tkind, tcol) in &trashes {
-        let Some(pkind) = players
+        if let Some(pkind) = players
             .iter()
-            .find_map(|(k, c)| if c.get() == tcol.get() { Some(k) } else { None })
-        else {
-            error!("No player in trash column.");
-            return;
+            .find_map(|(k, c)| if c.get() == tcol.get() { Some(k) } else { None }) 
+        {
+            if pkind == tkind {
+                score.0 += 1;
+            }
         };
+    }
 
-        if pkind == tkind {
-            score.0 += 1;
+    if let Ok(ccol) = pcollector.single() && let Ok(pcol) = powerup.single() {
+        if ccol.get() == pcol.get() {
+            active.0 = random_from_list(&vec![
+                PowerupKind::Reveal,
+            ]);
         }
     }
 
