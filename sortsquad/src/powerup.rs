@@ -16,11 +16,13 @@ pub struct Powerup;
 pub enum PowerupKind {
     NoPowerup,
     AutoCorrect,
+    DoublePoint,
 }
 
 impl PowerupKind {
-    pub const ALL: [Self; 1] = [
+    pub const ALL: [Self; 2] = [
         Self::AutoCorrect,
+        Self::DoublePoint,
     ];
 }
 
@@ -32,9 +34,6 @@ impl Default for ActivePowerup {
         Self(PowerupKind::NoPowerup)
     }
 }
-
-#[derive(Event)]
-pub struct PowerupApplyAutoCorrectEvent;
 
 #[derive(Bundle)]
 pub struct PowerupBundle {
@@ -51,14 +50,5 @@ pub fn powerup_despawn(
 ) {
     if let Ok(entity) = collector_player.single() {
         commands.entity(entity).remove::<PlayerPowerCollector>();
-    };
-}
-
-pub fn powerup_apply(mut commands: Commands, active: Res<ActivePowerup>) {
-    use PowerupKind::*;
-
-    match active.0 {
-        NoPowerup => (),
-        AutoCorrect => commands.trigger(PowerupApplyAutoCorrectEvent),
     };
 }

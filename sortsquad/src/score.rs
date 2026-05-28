@@ -67,7 +67,11 @@ pub fn scoring(
             .find_map(|(k, c)| if c.get() == tcol.get() { Some(k) } else { None }) 
         {
             if pkind == tkind {
-                score.0 += 1;
+                score.0 += if active.0 == PowerupKind::DoublePoint {
+                    2 
+                } else {
+                    1
+                }
             }
         };
     }
