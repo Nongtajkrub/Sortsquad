@@ -79,7 +79,6 @@ pub fn spawn_items(
                     item: Item,
                     powerup: Powerup,
                     col: Column::with_size_factor(col as u32, 0.7),
-                    kind: PowerupKind::Reveal,
                     transform: Transform::from_xyz(0., 0., 0.),
                     sprite: Sprite {
                         custom_size: Some(Vec2::new(0., 0.)),

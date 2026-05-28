@@ -25,17 +25,17 @@ use crate::assets::FontAssets;
 
 use crate::column::column_sync;
 
+use crate::items::ItemsYPos;
 use crate::items::spawn_items;
 use crate::items::despawn_items;
-use crate::items::ItemsYPos;
 use crate::items::items_gravity;
 
-use crate::powerup::powerup_despawn;
 use crate::powerup::ActivePowerup;
+use crate::powerup::powerup_despawn;
 
+use crate::round::RoundCounter;
 use crate::round::setup_round;
 use crate::round::start_round;
-use crate::round::RoundCounter;
 use crate::round::round_increment;
 
 use crate::player::players_move;
@@ -79,13 +79,13 @@ fn main() {
         .add_systems(
             Update,
             (
-                players_move,
                 players_apply_collector_effect,
                 players_remove_collector_effect,
                 players_sync_control_label,
                 items_gravity,
                 column_sync,
                 achor_bottom_sync,
+                players_move,
                 scoring.run_if(resource_changed::<ItemsYPos>),
                 sync_score_text.run_if(resource_changed::<Score>),
             ).run_if(in_state(GameState::Playing)))

@@ -72,11 +72,11 @@ pub fn scoring(
         };
     }
 
+    active.0 = PowerupKind::NoPowerup;
+
     if let Ok(ccol) = pcollector.single() && let Ok(pcol) = powerup.single() {
         if ccol.get() == pcol.get() {
-            active.0 = random_from_list(&vec![
-                PowerupKind::Reveal,
-            ]);
+            active.0 = random_from_list(&PowerupKind::ALL);
         }
     }
 

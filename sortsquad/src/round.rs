@@ -19,6 +19,8 @@ pub fn setup_round(mut state: ResMut<NextState<RoundState>>) {
     state.set(RoundState::RoundStarting);
 }
 
-pub fn start_round(mut state: ResMut<NextState<RoundState>>) {
+pub fn start_round(
+    mut state: ResMut<NextState<RoundState>>,
+) {
     state.set(RoundState::InRound);
 }

@@ -3,14 +3,17 @@ use bevy::prelude::*;
 use crate::assets::ImageAssets;
 use crate::column::Column;
 
+use crate::powerup::PowerupKind;
+use crate::powerup::ActivePowerup;
+
 use crate::trashes::TrashKind;
+use crate::trashes::Trash;
 
 use crate::util::achor::SpriteAchorBottom;
 
 /// Player marker
 #[derive(Component)]
 pub struct Player;
-
 
 /// Mark players who can collect power ups.
 #[derive(Component)]
@@ -40,11 +43,31 @@ pub struct PlayerBundle {
 /// System for moving the general bin player.
 pub fn players_move(
     keyboard: Res<ButtonInput<KeyCode>>, 
-    mut players: Query<(Entity, &mut Column, &PlayerControl), With<Player>>,
+    active: Res<ActivePowerup>,
+    mut players: Query<
+        (Entity, &mut Column, &TrashKind, &PlayerControl),
+        With<Player>
+    >,
+    trashes: Query<(&Column, &TrashKind), (With<Trash>, Without<Player>)>
 ) {
+    if active.0 == PowerupKind::AutoCorrect {
+        for (_, mut pcol, pkind, _) in &mut players {
+            if let Some(tcol) = trashes
+                .iter()
+                .find_map(|(col, kind)| {
+                    if kind == pkind { Some(col.get()) } else { None }
+                })
+            {
+               pcol.set(tcol); 
+            }
+        }
+
+        return;
+    }
+
     let mut intended_swaps: Vec<(Entity, i32)> = Vec::new();
 
-    for (entity, col, control) in players.iter() {
+    for (entity, col, _, control) in players.iter() {
         if keyboard.just_pressed(control.left) {
             intended_swaps.push((entity, col.get() as i32 - 1));
         } else if keyboard.just_pressed(control.right) {
@@ -56,11 +79,11 @@ pub fn players_move(
     for (mover, target_col) in intended_swaps {
         if let Some(target) = players
             .iter_mut()
-            .find_map(|(entity, col, _)| {
+            .find_map(|(entity, col, _, _)| {
                 if col.get() as i32 == target_col { Some(entity) } else { None }
             })
         {
-            let [(_, mut mover_col, _), (_, mut target_col, _)] = players
+            let [(_, mut mover_col, _, _), (_, mut target_col, _, _)] = players
                 .get_many_mut([mover, target])
                 .expect("Fail to retrive mover or target");
 
