@@ -139,12 +139,17 @@ pub fn despawn_items(
 
 pub fn items_gravity(
     time: Res<Time>,
+    active: Res<ActivePowerup>,
     mut ypos: ResMut<ItemsYPos>,
     mut items: Query<&mut Transform, With<Item>>
 ) {
-    const GRAVITY: f32 = 98.;
+    let gravity: f32 = if active.0 == PowerupKind::SlowDown {
+        64.
+    } else {
+        98.
+    };
 
-    ypos.0 -= GRAVITY * time.delta_secs();
+    ypos.0 -= gravity * time.delta_secs();
     for mut transform in &mut items {
         transform.translation = Vec3::new(transform.translation.x, ypos.0, 0.);
     }

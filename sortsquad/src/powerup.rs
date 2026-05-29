@@ -21,13 +21,15 @@ pub enum PowerupKind {
     AutoCorrect,
     DoublePoint,
     Highlight,
+    SlowDown,
 }
 
 impl PowerupKind {
-    pub const ALL: [Self; 3] = [
+    pub const ALL: [Self; 4] = [
         Self::AutoCorrect,
         Self::DoublePoint,
         Self::Highlight,
+        Self::SlowDown,
     ];
 
     pub fn to_text(&self) -> &'static str {
@@ -38,6 +40,7 @@ impl PowerupKind {
             AutoCorrect => "Auto Correct!",
             DoublePoint => "Double Point!",
             Highlight => "Highlight!",
+            SlowDown => "Slow Down",
         }
     }
 }
