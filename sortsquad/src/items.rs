@@ -4,13 +4,14 @@ use rand::RngExt;
 
 use crate::assets::ImageAssets;
 
+use crate::powerup::ActivePowerup;
+use crate::powerup::PowerupKind;
 use crate::util::random::random_from_list;
 use crate::util::random::RandomBag;
 
 use crate::round::RoundCounter;
 
 use crate::powerup::Powerup;
-use crate::powerup::PowerupKind;
 use crate::powerup::PowerupBundle;
 
 use crate::trashes::Trash;
@@ -41,13 +42,14 @@ pub fn spawn_items(
     round: Res<RoundCounter>,
     iassets: Res<ImageAssets>,
     tassets: Res<TrashImages>,
+    active: Res<ActivePowerup>,
     powerup: Query<&Powerup>,
     players: Query<(Entity, &TrashKind, &Column), With<Player>>,
 ) {
     let mut powerup_info: Option<(TrashKind, u32)> = None;
 
     // Only spawn power up every specific round if it does not exist.
-    if round.0 == 0 || round.0 % 2 != 0 || powerup.iter().last().is_some() {
+    if round.0 > 0 && round.0 % 2 == 0 && powerup.iter().last().is_none() {
         let collector_kind = random_from_list(&TrashKind::ALL);
 
         let Some(collector) = players
@@ -102,7 +104,13 @@ pub fn spawn_items(
                 error!("TrashKind random bag ran out.");
                 return;
             };
-   
+
+            let tint = if active.0 == PowerupKind::Highlight {
+                tkind.to_tint()
+            } else {
+                Color::srgb(1., 1., 1.)
+            };
+
             commands.spawn(TrashBundle {
                 item: Item,
                 trash: Trash,
@@ -112,6 +120,7 @@ pub fn spawn_items(
                 sprite: Sprite {
                     custom_size: Some(Vec2::new(0., 0.)),
                     image: tkind.to_image_trash(&tassets),
+                    color: tint,
                     ..Default::default()
                 }
             });

@@ -11,19 +11,35 @@ use crate::column::Column;
 #[derive(Component)]
 pub struct Powerup;
 
+#[derive(Component)]
+pub struct PowerupText;
+
 #[repr(u8)]
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
 pub enum PowerupKind {
     NoPowerup,
     AutoCorrect,
     DoublePoint,
+    Highlight,
 }
 
 impl PowerupKind {
-    pub const ALL: [Self; 2] = [
+    pub const ALL: [Self; 3] = [
         Self::AutoCorrect,
         Self::DoublePoint,
+        Self::Highlight,
     ];
+
+    pub fn to_text(&self) -> &'static str {
+        use PowerupKind::*;
+
+        match self {
+            NoPowerup => "",
+            AutoCorrect => "Auto Correct!",
+            DoublePoint => "Double Point!",
+            Highlight => "Highlight!",
+        }
+    }
 }
 
 #[derive(Resource, Debug, PartialEq)]
@@ -51,4 +67,11 @@ pub fn powerup_despawn(
     if let Ok(entity) = collector_player.single() {
         commands.entity(entity).remove::<PlayerPowerCollector>();
     };
+}
+
+pub fn powerup_sync_text(
+    mut text: Single<&mut Text, With<PowerupText>>,
+    active: Res<ActivePowerup>
+) {
+    text.0 = format!("{}", active.0.to_text());
 }

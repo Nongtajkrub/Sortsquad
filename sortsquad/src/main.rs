@@ -17,6 +17,7 @@ use setup::setup_game;
 
 use util::achor::achor_bottom_sync;
 
+use crate::powerup::powerup_sync_text;
 use crate::state::GameState;
 use crate::state::RoundState;
 
@@ -88,6 +89,7 @@ fn main() {
                 players_move,
                 scoring.run_if(resource_changed::<ItemsYPos>),
                 sync_score_text.run_if(resource_changed::<Score>),
+                powerup_sync_text.run_if(resource_changed::<ActivePowerup>)
             ).run_if(in_state(GameState::Playing)))
         .run();
 }

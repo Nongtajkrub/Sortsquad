@@ -85,4 +85,13 @@ impl TrashKind {
             TrashKind::Hazardous => assets.bin_hazardous.clone(),
         }
     }
+
+    pub fn to_tint(&self) -> Color {
+        match self {
+            TrashKind::General => Color::srgb(0.3, 0.3, 1.),
+            TrashKind::Recycle => Color::srgb(1., 1., 0.3),
+            TrashKind::Organic => Color::srgb(0.3, 1., 0.3),
+            TrashKind::Hazardous => Color::srgb(1., 0.3, 0.3),
+        }
+    }
 }

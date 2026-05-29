@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use bevy::camera::ScalingMode;
 
+use crate::powerup::PowerupKind;
+use crate::powerup::PowerupText;
 use crate::state::RoundState;
 use crate::util::achor::SpriteAchorBottom;
 
@@ -144,14 +146,15 @@ pub fn setup_game(
     commands.spawn(Node {
         width: percent(100),
         height: percent(100),
-        justify_content: JustifyContent::Center,
-        align_items: AlignItems::FlexStart,
+        justify_content: JustifyContent::FlexStart,
+        align_items: AlignItems::Center,
+        flex_direction: FlexDirection::Column,
         ..Default::default()
     })
     .with_children(|parent| {
         parent.spawn((
             Node {
-                margin: UiRect::all(Val::Px(20.)),
+                margin: UiRect::top(Val::Px(10.)),
                 ..Default::default()
             },
             ScoreText,
@@ -159,6 +162,16 @@ pub fn setup_game(
             TextFont {
                 font: fonts.font.clone(),
                 font_size: 128.,
+                ..Default::default()
+            },
+            TextLayout::new_with_justify(Justify::Center),
+        ));
+        parent.spawn((
+            PowerupText,
+            Text::new(PowerupKind::NoPowerup.to_text()),
+            TextFont {
+                font: fonts.font.clone(),
+                font_size: 32.,
                 ..Default::default()
             },
             TextLayout::new_with_justify(Justify::Center),
