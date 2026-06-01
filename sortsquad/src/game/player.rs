@@ -1,15 +1,16 @@
 use bevy::prelude::*;
 
-use crate::assets::ImageAssets;
-use crate::column::Column;
-
-use crate::powerup::PowerupKind;
-use crate::powerup::ActivePowerup;
-
-use crate::trashes::TrashKind;
-use crate::trashes::Trash;
-
 use crate::util::achor::SpriteAchorBottom;
+
+use crate::assets::ImageAssets;
+
+use crate::game::column::Column;
+
+use crate::game::trashes::TrashKind;
+use crate::game::trashes::Trash;
+
+use crate::game::powerup::PowerupKind;
+use crate::game::powerup::ActivePowerup;
 
 /// Player marker
 #[derive(Component)]

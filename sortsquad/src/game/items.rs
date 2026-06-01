@@ -2,27 +2,27 @@ use bevy::prelude::*;
 
 use rand::RngExt;
 
-use crate::assets::ImageAssets;
-
-use crate::powerup::ActivePowerup;
-use crate::powerup::PowerupKind;
 use crate::util::random::random_from_list;
 use crate::util::random::RandomBag;
 
-use crate::round::RoundCounter;
+use crate::assets::ImageAssets;
 
-use crate::powerup::Powerup;
-use crate::powerup::PowerupBundle;
+use crate::game::round::RoundCounter;
 
-use crate::trashes::Trash;
-use crate::trashes::TrashKind;
-use crate::trashes::TrashImages;
-use crate::trashes::TrashBundle;
+use crate::game::column::Column;
 
-use crate::column::Column;
+use crate::game::powerup::Powerup;
+use crate::game::powerup::ActivePowerup;
+use crate::game::powerup::PowerupKind;
+use crate::game::powerup::PowerupBundle;
 
-use crate::player::Player;
-use crate::player::PlayerPowerCollector;
+use crate::game::trashes::Trash;
+use crate::game::trashes::TrashKind;
+use crate::game::trashes::TrashImages;
+use crate::game::trashes::TrashBundle;
+
+use crate::game::player::Player;
+use crate::game::player::PlayerPowerCollector;
 
 // Item marker.
 #[derive(Component)]

@@ -1,11 +1,11 @@
 use bevy::prelude::*;
 
-use crate::player::Player;
-use crate::player::PlayerPowerCollector;
+use crate::game::items::Item;
 
-use crate::items::Item;
+use crate::game::column::Column;
 
-use crate::column::Column;
+use crate::game::player::Player;
+use crate::game::player::PlayerPowerCollector;
 
 // Powerup marker.
 #[derive(Component)]

@@ -1,26 +1,29 @@
 use bevy::prelude::*;
 use bevy::camera::ScalingMode;
 
-use crate::powerup::PowerupKind;
-use crate::powerup::PowerupText;
-use crate::state::RoundState;
 use crate::util::achor::SpriteAchorBottom;
 
-use crate::state::GameState;
 use crate::assets::ImageAssets;
 use crate::assets::FontAssets;
 
-use crate::player::PlayerControlLabel;
-use crate::player::PlayerControl;
-use crate::player::PlayerBundle;
-use crate::player::Player;
+use crate::state::RoundState;
+use crate::state::GameState;
 
-use crate::trashes::TrashImages;
-use crate::trashes::TrashKind;
+use crate::game::column::Column;
 
-use crate::column::Column;
+use crate::game::score::ScoreText;
 
-use crate::score::ScoreText;
+use crate::game::trashes::TrashImages;
+use crate::game::trashes::TrashKind;
+
+use crate::game::powerup::PowerupKind;
+use crate::game::powerup::PowerupText;
+
+use crate::game::player::PlayerControlLabel;
+use crate::game::player::PlayerControl;
+use crate::game::player::PlayerBundle;
+use crate::game::player::Player;
+
 
 pub const VIEW_PORT_WIDTH: f32 = 1000.;
 

@@ -1,12 +1,12 @@
 use bevy::prelude::*;
 
-use crate::items::Item;
-
 use rand::seq::IndexedRandom;
 
 use crate::assets::ImageAssets;
 
-use crate::column::Column;
+use crate::game::column::Column;
+
+use crate::game::items::Item;
 
 /// Trash marker
 #[derive(Component)]

@@ -5,21 +5,21 @@ use crate::util::random::random_from_list;
 
 use crate::setup::VIEW_PORT_WIDTH;
 
-use crate::player::PlayerPowerCollector;
-use crate::player::Player;
-
-use crate::powerup::Powerup;
-use crate::powerup::PowerupKind;
-use crate::powerup::ActivePowerup;
-
-use crate::column::Column;
-
 use crate::state::RoundState;
 
-use crate::trashes::TrashKind;
-use crate::trashes::Trash;
+use crate::game::column::Column;
 
-use crate::items::ItemsYPos;
+use crate::game::items::ItemsYPos;
+
+use crate::game::trashes::TrashKind;
+use crate::game::trashes::Trash;
+
+use crate::game::powerup::Powerup;
+use crate::game::powerup::PowerupKind;
+use crate::game::powerup::ActivePowerup;
+
+use crate::game::player::PlayerPowerCollector;
+use crate::game::player::Player;
 
 #[derive(Resource)]
 pub struct Score(pub u32);
