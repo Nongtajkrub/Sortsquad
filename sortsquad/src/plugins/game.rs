@@ -2,6 +2,8 @@ use bevy::prelude::*;
 
 use crate::util::achor::achor_bottom_sync;
 
+use crate::game::setup::setup_game;
+
 use crate::state::GameState;
 use crate::state::RoundState;
 
@@ -40,6 +42,7 @@ impl Plugin for GamePlugin {
             .init_resource::<ActivePowerup>()
             .init_state::<RoundState>()
             .init_resource::<RoundCounter>()
+            .add_systems(OnEnter(GameState::GameSetup), setup_game)
             .add_systems(
                 OnEnter(RoundState::RoundStarting),
                 (spawn_items, start_round).chain()

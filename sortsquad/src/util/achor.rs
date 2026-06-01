@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
-use crate::setup::VIEW_PORT_WIDTH;
+use crate::configs::VIEW_PORT_WIDTH;
 
 #[derive(Component)]
 #[require(Sprite, Transform)]

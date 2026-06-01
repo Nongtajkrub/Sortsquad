@@ -3,7 +3,7 @@ use bevy::window::PrimaryWindow;
 
 use crate::util::random::random_from_list;
 
-use crate::setup::VIEW_PORT_WIDTH;
+use crate::configs::VIEW_PORT_WIDTH;
 
 use crate::state::RoundState;
 

@@ -4,10 +4,19 @@ use bevy::prelude::*;
 pub enum GameState {
     #[default]
     AssetsLoading,
+    MenuSetup,
     Menu,
-    Starting,
+    GameSetup,
     Playing,
     Ended,
+}
+
+#[derive(States, Debug, Clone, Hash, PartialEq, Eq, Default)]
+pub enum MenuState {
+    #[default]
+    Main,
+    Cutscene,
+    CutsceneEnded,
 }
 
 #[derive(States, Debug, Clone, Hash, PartialEq, Eq, Default)]

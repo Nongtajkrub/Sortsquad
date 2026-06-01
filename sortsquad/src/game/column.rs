@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::setup::VIEW_PORT_WIDTH;
+use crate::configs::VIEW_PORT_WIDTH;
 
 const COLUMN_N: u32 = 4;
 

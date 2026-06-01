@@ -72,6 +72,44 @@ pub struct ImageAssets {
 
     #[asset(path = "ui/controls/al_ar.png")]
     pub control_al_ar: Handle<Image>,
+
+    // Cutscene
+ 
+    #[asset(path = "cutscene/1.png")]
+    pub cutscene_1: Handle<Image>,
+
+    #[asset(path = "cutscene/2.png")]
+    pub cutscene_2: Handle<Image>,
+
+    #[asset(path = "cutscene/3.png")]
+    pub cutscene_3: Handle<Image>,
+
+    #[asset(path = "cutscene/4.png")]
+    pub cutscene_4: Handle<Image>,
+
+    #[asset(path = "cutscene/5.png")]
+    pub cutscene_5: Handle<Image>,
+
+    #[asset(path = "cutscene/6.png")]
+    pub cutscene_6: Handle<Image>,
+
+    #[asset(path = "cutscene/7.png")]
+    pub cutscene_7: Handle<Image>,
+
+    #[asset(path = "cutscene/8.png")]
+    pub cutscene_8: Handle<Image>,
+
+    #[asset(path = "cutscene/9.png")]
+    pub cutscene_9: Handle<Image>,
+
+    #[asset(path = "cutscene/10.png")]
+    pub cutscene_10: Handle<Image>,
+
+    #[asset(path = "cutscene/11.png")]
+    pub cutscene_11: Handle<Image>,
+
+    #[asset(path = "cutscene/12.png")]
+    pub cutscene_12: Handle<Image>,
 }
 
 #[derive(AssetCollection, Resource)]
