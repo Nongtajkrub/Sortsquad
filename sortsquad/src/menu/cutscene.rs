@@ -31,6 +31,8 @@ impl FromWorld for CutsceneSequence {
                 images.cutscene_10.clone(),
                 images.cutscene_11.clone(),
                 images.cutscene_12.clone(),
+                images.tutorial.clone(),
+                images.readying.clone(),
             ],
             presenting: None, 
         }

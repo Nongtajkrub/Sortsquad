@@ -7,6 +7,8 @@ use crate::util::random::RandomBag;
 
 use crate::assets::ImageAssets;
 
+use crate::game::setup::GameEntity;
+
 use crate::game::round::RoundCounter;
 
 use crate::game::column::Column;
@@ -77,17 +79,20 @@ pub fn spawn_items(
         // Spawn powerup instead of in powerup round.
         if let Some((_, powerup_col)) = powerup_info {
             if powerup_col == col {
-                commands.spawn(PowerupBundle {
-                    item: Item,
-                    powerup: Powerup,
-                    col: Column::with_size_factor(col as u32, 0.7),
-                    transform: Transform::from_xyz(0., 0., 0.),
-                    sprite: Sprite {
-                        custom_size: Some(Vec2::new(0., 0.)),
-                        image: iassets.powerup.clone(),
-                        ..Default::default()
+                commands.spawn((
+                    GameEntity,
+                    PowerupBundle {
+                        item: Item,
+                        powerup: Powerup,
+                        col: Column::with_size_factor(col as u32, 0.7),
+                        transform: Transform::from_xyz(0., 0., 0.),
+                        sprite: Sprite {
+                            custom_size: Some(Vec2::new(0., 0.)),
+                            image: iassets.powerup.clone(),
+                            ..Default::default()
+                        }
                     }
-                });
+                ));
 
                 continue;
             }
@@ -111,19 +116,22 @@ pub fn spawn_items(
                 Color::srgb(1., 1., 1.)
             };
 
-            commands.spawn(TrashBundle {
-                item: Item,
-                trash: Trash,
-                col: Column::with_size_factor(col as u32, 0.7),
-                kind: tkind,
-                transform: Transform::from_xyz(0., 0., 0.),
-                sprite: Sprite {
-                    custom_size: Some(Vec2::new(0., 0.)),
-                    image: tkind.to_image_trash(&tassets),
-                    color: tint,
-                    ..Default::default()
+            commands.spawn((
+                GameEntity,
+                TrashBundle {
+                    item: Item,
+                    trash: Trash,
+                    col: Column::with_size_factor(col as u32, 0.7),
+                    kind: tkind,
+                    transform: Transform::from_xyz(0., 0., 0.),
+                    sprite: Sprite {
+                        custom_size: Some(Vec2::new(0., 0.)),
+                        image: tkind.to_image_trash(&tassets),
+                        color: tint,
+                        ..Default::default()
+                    }
                 }
-            });
+            ));
         }
     }
 }

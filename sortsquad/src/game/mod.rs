@@ -1,5 +1,6 @@
 pub mod setup;
 pub mod round;
+pub mod timer;
 pub mod column;
 pub mod items;
 pub mod score;

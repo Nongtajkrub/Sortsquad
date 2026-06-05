@@ -59,6 +59,16 @@ pub struct ImageAssets {
     #[asset(path = "trashes/hazardous/electronic.png")]
     pub trash_electronic: Handle<Image>,
 
+    // Powerup
+    
+    #[asset(path = "powerup/powerup.png")]
+    pub powerup: Handle<Image>,
+
+    // Environments
+
+    #[asset(path = "environment/sky.jpg")]
+    pub sky: Handle<Image>,
+
     // Controls labels
     
     #[asset(path = "ui/controls/a_d.png")]
@@ -72,6 +82,17 @@ pub struct ImageAssets {
 
     #[asset(path = "ui/controls/al_ar.png")]
     pub control_al_ar: Handle<Image>,
+
+    // Menu
+    
+    #[asset(path = "ui/menu/background.png")]
+    pub titlescree: Handle<Image>,
+
+    #[asset(path = "ui/menu/buttonnormal.png")]
+    pub buttonnormal: Handle<Image>,
+
+    #[asset(path = "ui/menu/buttonhover.png")]
+    pub buttonhover: Handle<Image>,
 
     // Cutscene
  
@@ -110,6 +131,12 @@ pub struct ImageAssets {
 
     #[asset(path = "cutscene/12.png")]
     pub cutscene_12: Handle<Image>,
+
+    #[asset(path = "cutscene/tutorial.png")]
+    pub tutorial: Handle<Image>,
+
+    #[asset(path = "cutscene/readying.png")]
+    pub readying: Handle<Image>,
 }
 
 #[derive(AssetCollection, Resource)]

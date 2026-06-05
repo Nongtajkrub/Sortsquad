@@ -14,7 +14,8 @@ pub enum GameState {
 #[derive(States, Debug, Clone, Hash, PartialEq, Eq, Default)]
 pub enum MenuState {
     #[default]
-    Main,
+    PreTitlescreen,
+    Titlescreen,
     Cutscene,
     CutsceneEnded,
 }
@@ -22,7 +23,7 @@ pub enum MenuState {
 #[derive(States, Debug, Clone, Hash, PartialEq, Eq, Default)]
 pub enum RoundState {
     #[default]
-    GameSetup,
+    PreRound,
     RoundStarting,
     InRound,
     RoundEnding,

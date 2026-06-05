@@ -1,6 +1,9 @@
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 use crate::util::achor::SpriteAchorBottom;
+
+use crate::configs::GAME_TIME_MS;
 
 use crate::assets::ImageAssets;
 use crate::assets::FontAssets;
@@ -11,6 +14,8 @@ use crate::state::GameState;
 use crate::game::column::Column;
 
 use crate::game::score::ScoreText;
+
+use crate::game::timer::TimerText;
 
 use crate::game::trashes::TrashImages;
 use crate::game::trashes::TrashKind;
@@ -23,6 +28,9 @@ use crate::game::player::PlayerControl;
 use crate::game::player::PlayerBundle;
 use crate::game::player::Player;
 
+#[derive(Component)]
+pub struct GameEntity;
+
 pub fn setup_game(
     mut commands: Commands,
     assets: Res<ImageAssets>,
@@ -31,7 +39,8 @@ pub fn setup_game(
     mut rstate: ResMut<NextState<RoundState>>
 ) {
     // Spawn player entities
-    let general_player_id = commands.spawn(
+    let general_player_id = commands.spawn((
+        GameEntity,
         PlayerBundle {
             player: Player,
             kind: TrashKind::General,
@@ -48,15 +57,17 @@ pub fn setup_game(
             },
             achor: SpriteAchorBottom,
         }
-    ).id();
+    )).id();
     commands.spawn((
+        GameEntity,
         PlayerControlLabel(general_player_id),
         Column::with_size_factor(0, 0.7),
         Sprite::from_image(assets.control_a_d.clone()),
         Transform::from_xyz(0., 0., 1.),
     ));
 
-    let recycle_player_id = commands.spawn(
+    let recycle_player_id = commands.spawn((
+        GameEntity,
         PlayerBundle {
             player: Player,
             kind: TrashKind::Recycle,
@@ -73,15 +84,17 @@ pub fn setup_game(
             },
             achor: SpriteAchorBottom,
         }
-    ).id();
+    )).id();
     commands.spawn((
+        GameEntity,
         PlayerControlLabel(recycle_player_id),
         Column::with_size_factor(1, 0.7),
         Sprite::from_image(assets.control_g_h.clone()),
         Transform::from_xyz(0., 0., 1.),
     ));
 
-    let organic_player_id = commands.spawn(
+    let organic_player_id = commands.spawn((
+        GameEntity,
         PlayerBundle {
             player: Player,
             kind: TrashKind::Organic,
@@ -98,15 +111,17 @@ pub fn setup_game(
             },
             achor: SpriteAchorBottom,
         }
-    ).id();
+    )).id();
     commands.spawn((
+        GameEntity,
         PlayerControlLabel(organic_player_id),
         Column::with_size_factor(2, 0.7),
         Sprite::from_image(assets.control_al_ar.clone()),
         Transform::from_xyz(0., 0., 1.),
     ));
 
-    let hazardous_player_id = commands.spawn(
+    let hazardous_player_id = commands.spawn((
+        GameEntity,
         PlayerBundle {
             player: Player,
             kind: TrashKind::Hazardous,
@@ -123,8 +138,9 @@ pub fn setup_game(
             },
             achor: SpriteAchorBottom,
         }
-    ).id();
+    )).id();
     commands.spawn((
+        GameEntity,
         PlayerControlLabel(hazardous_player_id),
         Column::with_size_factor(2, 0.7),
         Sprite::from_image(assets.control_bl_br.clone()),
@@ -132,14 +148,30 @@ pub fn setup_game(
     ));
 
     // Initialize UI elements.
-    commands.spawn(Node {
-        width: percent(100),
-        height: percent(100),
-        justify_content: JustifyContent::FlexStart,
-        align_items: AlignItems::Center,
-        flex_direction: FlexDirection::Column,
-        ..Default::default()
-    })
+    commands.spawn((
+        GameEntity,
+        TimerText,
+        Text2d::new(format!("{}", (GAME_TIME_MS as f32 / 1000.).round())),
+        TextFont {
+            font: fonts.font.clone(),
+            font_size: 64.,
+            ..Default::default()
+        },
+        TextColor::from(Color::srgba(1., 1., 1., 0.6)),
+        Anchor::CENTER,
+    ));
+
+    commands.spawn((
+        GameEntity,
+        Node {
+            width: percent(100),
+            height: percent(100),
+            justify_content: JustifyContent::FlexStart,
+            align_items: AlignItems::Center,
+            flex_direction: FlexDirection::Column,
+            ..Default::default()
+        }
+    ))
     .with_children(|parent| {
         parent.spawn((
             Node {
@@ -193,4 +225,13 @@ pub fn setup_game(
 
     gstate.set(GameState::Playing);
     rstate.set(RoundState::RoundStarting);
+}
+
+pub fn desetup_game(
+    mut commands: Commands,
+    entities: Query<Entity, With<GameEntity>>
+) {
+    for entity in &entities {
+        commands.entity(entity).despawn();
+    }
 }

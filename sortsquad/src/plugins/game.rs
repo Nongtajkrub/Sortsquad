@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use crate::game::setup::desetup_game;
 use crate::util::achor::achor_bottom_sync;
 
 use crate::game::setup::setup_game;
@@ -11,6 +12,9 @@ use crate::game::round::RoundCounter;
 use crate::game::round::setup_round;
 use crate::game::round::start_round;
 use crate::game::round::round_increment;
+
+use crate::game::timer::GameTimer;
+use crate::game::timer::timer_update;
 
 use crate::game::column::column_sync;
 
@@ -40,9 +44,11 @@ impl Plugin for GamePlugin {
             .init_resource::<Score>()
             .init_resource::<ItemsYPos>()
             .init_resource::<ActivePowerup>()
-            .init_state::<RoundState>()
             .init_resource::<RoundCounter>()
+            .init_resource::<GameTimer>()
+            .init_state::<RoundState>()
             .add_systems(OnEnter(GameState::GameSetup), setup_game)
+            .add_systems(OnEnter(GameState::Ended), desetup_game)
             .add_systems(
                 OnEnter(RoundState::RoundStarting),
                 (spawn_items, start_round).chain()
@@ -59,6 +65,7 @@ impl Plugin for GamePlugin {
             .add_systems(
                 Update,
                 (
+                    timer_update,
                     column_sync,
                     achor_bottom_sync,
                     items_gravity,
@@ -69,6 +76,7 @@ impl Plugin for GamePlugin {
                     scoring.run_if(resource_changed::<ItemsYPos>),
                     sync_score_text.run_if(resource_changed::<Score>),
                     powerup_sync_text.run_if(resource_changed::<ActivePowerup>)
-                ).run_if(in_state(GameState::Playing)));
+                ).run_if(in_state(GameState::Playing))
+            );
     }
 }
