@@ -49,7 +49,7 @@ pub fn spawn_items(
     let mut powerup_info: Option<(TrashKind, u32)> = None;
 
     // Only spawn power up every specific round if it does not exist.
-    if round.0 > 0 && round.0 % 2 == 0 && powerup.iter().last().is_none() {
+    if round.0 > 0 && round.0 % 5 == 0 && powerup.iter().last().is_none() {
         let collector_kind = random_from_list(&TrashKind::ALL);
 
         let Some(collector) = players
@@ -84,7 +84,7 @@ pub fn spawn_items(
                     transform: Transform::from_xyz(0., 0., 0.),
                     sprite: Sprite {
                         custom_size: Some(Vec2::new(0., 0.)),
-                        image: iassets.bin_general.clone(),
+                        image: iassets.powerup.clone(),
                         ..Default::default()
                     }
                 });

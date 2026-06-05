@@ -25,12 +25,11 @@ use crate::game::player::Player;
 
 pub fn setup_game(
     mut commands: Commands,
-    images: Res<ImageAssets>,
+    assets: Res<ImageAssets>,
     fonts: Res<FontAssets>,
     mut gstate: ResMut<NextState<GameState>>,
     mut rstate: ResMut<NextState<RoundState>>
 ) {
-
     // Spawn player entities
     let general_player_id = commands.spawn(
         PlayerBundle {
@@ -44,7 +43,7 @@ pub fn setup_game(
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite {
                 custom_size: Some(Vec2::new(0., 0.)),
-                image: images.bin_general.clone(),
+                image: assets.bin_general.clone(),
                 ..Default::default()
             },
             achor: SpriteAchorBottom,
@@ -53,7 +52,7 @@ pub fn setup_game(
     commands.spawn((
         PlayerControlLabel(general_player_id),
         Column::with_size_factor(0, 0.7),
-        Sprite::from_image(images.control_a_d.clone()),
+        Sprite::from_image(assets.control_a_d.clone()),
         Transform::from_xyz(0., 0., 1.),
     ));
 
@@ -69,7 +68,7 @@ pub fn setup_game(
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite {
                 custom_size: Some(Vec2::new(0., 0.)),
-                image: images.bin_recycle.clone(),
+                image: assets.bin_recycle.clone(),
                 ..Default::default()
             },
             achor: SpriteAchorBottom,
@@ -78,7 +77,7 @@ pub fn setup_game(
     commands.spawn((
         PlayerControlLabel(recycle_player_id),
         Column::with_size_factor(1, 0.7),
-        Sprite::from_image(images.control_g_h.clone()),
+        Sprite::from_image(assets.control_g_h.clone()),
         Transform::from_xyz(0., 0., 1.),
     ));
 
@@ -94,7 +93,7 @@ pub fn setup_game(
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite {
                 custom_size: Some(Vec2::new(0., 0.)),
-                image: images.bin_organic.clone(),
+                image: assets.bin_organic.clone(),
                 ..Default::default()
             },
             achor: SpriteAchorBottom,
@@ -103,7 +102,7 @@ pub fn setup_game(
     commands.spawn((
         PlayerControlLabel(organic_player_id),
         Column::with_size_factor(2, 0.7),
-        Sprite::from_image(images.control_al_ar.clone()),
+        Sprite::from_image(assets.control_al_ar.clone()),
         Transform::from_xyz(0., 0., 1.),
     ));
 
@@ -119,7 +118,7 @@ pub fn setup_game(
             transform: Transform::from_xyz(0., 0., 0.),
             sprite: Sprite {
                 custom_size: Some(Vec2::new(0., 0.)),
-                image: images.bin_hazardous.clone(),
+                image: assets.bin_hazardous.clone(),
                 ..Default::default()
             },
             achor: SpriteAchorBottom,
@@ -128,7 +127,7 @@ pub fn setup_game(
     commands.spawn((
         PlayerControlLabel(hazardous_player_id),
         Column::with_size_factor(2, 0.7),
-        Sprite::from_image(images.control_bl_br.clone()),
+        Sprite::from_image(assets.control_bl_br.clone()),
         Transform::from_xyz(0., 0., 1.),
     ));
 
@@ -168,27 +167,27 @@ pub fn setup_game(
         ));
     });
 
-    // Initialize trash images resource.
+    // Initialize trash assets resource.
     commands.insert_resource(TrashImages {
         general: vec![
-            images.trash_ciggarette.clone(),
-            images.trash_shoe.clone(),
-            images.trash_tissue.clone(),
+            assets.trash_ciggarette.clone(),
+            assets.trash_shoe.clone(),
+            assets.trash_tissue.clone(),
         ],
         recycle: vec![
-            images.trash_coke.clone(),
-            images.trash_newspaper.clone(),
-            images.trash_tissue.clone(),
+            assets.trash_coke.clone(),
+            assets.trash_newspaper.clone(),
+            assets.trash_tissue.clone(),
         ],
         organic: vec![
-            images.trash_apple.clone(),
-            images.trash_fishbone.clone(),
-            images.trash_vegatable.clone(),
+            assets.trash_apple.clone(),
+            assets.trash_fishbone.clone(),
+            assets.trash_vegatable.clone(),
         ],
         hazardous: vec![
-            images.trash_battery.clone(),
-            images.trash_bleach.clone(),
-            images.trash_electronic.clone(),
+            assets.trash_battery.clone(),
+            assets.trash_bleach.clone(),
+            assets.trash_electronic.clone(),
         ],
     });
 
