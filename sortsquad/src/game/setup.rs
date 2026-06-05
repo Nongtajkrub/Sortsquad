@@ -49,7 +49,7 @@ pub fn setup_game(
                 left: KeyCode::KeyA,
                 right: KeyCode::KeyD,
             },
-            transform: Transform::from_xyz(0., 0., 0.),
+            transform: Transform::from_xyz(0., 0., 1.),
             sprite: Sprite {
                 custom_size: Some(Vec2::new(0., 0.)),
                 image: assets.bin_general.clone(),
@@ -61,9 +61,13 @@ pub fn setup_game(
     commands.spawn((
         GameEntity,
         PlayerControlLabel(general_player_id),
-        Column::with_size_factor(0, 0.7),
-        Sprite::from_image(assets.control_a_d.clone()),
-        Transform::from_xyz(0., 0., 1.),
+        Column::with_size_factor(0, 0.7, 0.5),
+        Sprite {
+            image: assets.control_a_d.clone(),
+            color: Color::srgba(1., 1., 1., 0.8),
+            ..default()
+        },
+        Transform::from_xyz(0., 0., 0.),
     ));
 
     let recycle_player_id = commands.spawn((
@@ -76,7 +80,7 @@ pub fn setup_game(
                 left: KeyCode::KeyG,
                 right: KeyCode::KeyH,
             },
-            transform: Transform::from_xyz(0., 0., 0.),
+            transform: Transform::from_xyz(0., 0., 1.),
             sprite: Sprite {
                 custom_size: Some(Vec2::new(0., 0.)),
                 image: assets.bin_recycle.clone(),
@@ -88,9 +92,13 @@ pub fn setup_game(
     commands.spawn((
         GameEntity,
         PlayerControlLabel(recycle_player_id),
-        Column::with_size_factor(1, 0.7),
-        Sprite::from_image(assets.control_g_h.clone()),
-        Transform::from_xyz(0., 0., 1.),
+        Column::with_size_factor(1, 0.7, 0.5),
+        Sprite {
+            image: assets.control_g_h.clone(),
+            color: Color::srgba(1., 1., 1., 0.8),
+            ..default()
+        },
+        Transform::from_xyz(0., 0., 0.),
     ));
 
     let organic_player_id = commands.spawn((
@@ -103,7 +111,7 @@ pub fn setup_game(
                 left: KeyCode::ArrowLeft,
                 right: KeyCode::ArrowRight,
             },
-            transform: Transform::from_xyz(0., 0., 0.),
+            transform: Transform::from_xyz(0., 0., 1.),
             sprite: Sprite {
                 custom_size: Some(Vec2::new(0., 0.)),
                 image: assets.bin_organic.clone(),
@@ -115,9 +123,13 @@ pub fn setup_game(
     commands.spawn((
         GameEntity,
         PlayerControlLabel(organic_player_id),
-        Column::with_size_factor(2, 0.7),
-        Sprite::from_image(assets.control_al_ar.clone()),
-        Transform::from_xyz(0., 0., 1.),
+        Column::with_size_factor(2, 0.7, 0.5),
+        Sprite {
+            image: assets.control_al_ar.clone(),
+            color: Color::srgba(1., 1., 1., 0.8),
+            ..default()
+        },
+        Transform::from_xyz(0., 0., 0.),
     ));
 
     let hazardous_player_id = commands.spawn((
@@ -130,7 +142,7 @@ pub fn setup_game(
                 left: KeyCode::BracketLeft,
                 right: KeyCode::BracketRight,
             },
-            transform: Transform::from_xyz(0., 0., 0.),
+            transform: Transform::from_xyz(0., 0., 1.),
             sprite: Sprite {
                 custom_size: Some(Vec2::new(0., 0.)),
                 image: assets.bin_hazardous.clone(),
@@ -142,9 +154,13 @@ pub fn setup_game(
     commands.spawn((
         GameEntity,
         PlayerControlLabel(hazardous_player_id),
-        Column::with_size_factor(2, 0.7),
-        Sprite::from_image(assets.control_bl_br.clone()),
-        Transform::from_xyz(0., 0., 1.),
+        Column::with_size_factor(2, 0.7, 0.5),
+        Sprite {
+            image: assets.control_bl_br.clone(),
+            color: Color::srgba(1., 1., 1., 0.8),
+            ..default()
+        },
+        Transform::from_xyz(0., 0., 0.),
     ));
 
     // Initialize UI elements.
@@ -154,11 +170,12 @@ pub fn setup_game(
         Text2d::new(format!("{}", (GAME_TIME_MS as f32 / 1000.).round())),
         TextFont {
             font: fonts.font.clone(),
-            font_size: 64.,
+            font_size: 128.,
             ..Default::default()
         },
         TextColor::from(Color::srgba(1., 1., 1., 0.6)),
         Anchor::CENTER,
+        Transform::from_xyz(0., 0., -1.)
     ));
 
     commands.spawn((

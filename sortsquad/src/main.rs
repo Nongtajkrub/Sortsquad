@@ -29,7 +29,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .init_state::<GameState>()
-        .insert_resource(ClearColor(Color::from(Srgba::hex("#36b8ff").unwrap())))
+        .insert_resource(ClearColor(Color::from(Srgba::hex("#242424").unwrap())))
         .add_loading_state(
             LoadingState::new(GameState::AssetsLoading)
                 .continue_to_state(GameState::MenuSetup)

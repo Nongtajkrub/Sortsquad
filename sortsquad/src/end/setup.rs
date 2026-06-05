@@ -8,10 +8,7 @@ pub fn setup_end(
     mut commands: Commands,
     assets: Res<FontAssets>,
     score: Res<Score>,
-    mut color: ResMut<ClearColor>,
 ) {
-    color.0 = Color::from(Srgba::hex("#242424").unwrap());
-
     commands.spawn(
         Node {
             width: percent(100),

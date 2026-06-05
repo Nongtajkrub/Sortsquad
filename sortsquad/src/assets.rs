@@ -15,6 +15,9 @@ pub struct ImageAssets {
     #[asset(path = "bins/hazardous/static.png")]
     pub bin_hazardous: Handle<Image>,
 
+    #[asset(path = "bins/powerup/static.png")]
+    pub bin_powerup: Handle<Image>,
+
     // General trashes
     
     #[asset(path = "trashes/general/ciggarette.png")]

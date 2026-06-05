@@ -104,7 +104,7 @@ pub fn players_apply_collector_effect(
         return;
     };
 
-    sprite.image = assets.trash_shoe.clone();
+    sprite.image = assets.bin_powerup.clone();
 }
 
 pub fn players_remove_collector_effect(

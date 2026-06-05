@@ -84,7 +84,7 @@ pub fn spawn_items(
                     PowerupBundle {
                         item: Item,
                         powerup: Powerup,
-                        col: Column::with_size_factor(col as u32, 0.7),
+                        col: Column::with_size_factor(col as u32, 0.7, 0.7),
                         transform: Transform::from_xyz(0., 0., 0.),
                         sprite: Sprite {
                             custom_size: Some(Vec2::new(0., 0.)),
@@ -121,7 +121,7 @@ pub fn spawn_items(
                 TrashBundle {
                     item: Item,
                     trash: Trash,
-                    col: Column::with_size_factor(col as u32, 0.7),
+                    col: Column::with_size_factor(col as u32, 0.7, 0.7),
                     kind: tkind,
                     transform: Transform::from_xyz(0., 0., 0.),
                     sprite: Sprite {
